@@ -1,6 +1,10 @@
 # MuzawedProject
 project name: Muzawed
+
+
+
 Description: A website that connects local suppliers in Saudi Arabia with small food business owners, including food trucks, cloud kitchens, small restaurants, and home-based businesses.
+
 
 
 Group members: Manar alamri - Sabreen - wijdan alqarni - Raghad alqarni
