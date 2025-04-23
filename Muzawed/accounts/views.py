@@ -101,14 +101,18 @@ def sign_up_supplier(request: HttpRequest):
     
     if request.method == 'POST':
         try:
-            new_user = User.objects.create_user(username=request.POST["username"],password=request.POST["password"],email=request.POST["email"], first_name=request.POST["first_name"], last_name=request.POST["last_name"])            
+            new_user = User.objects.create_user(username=request.POST["username"],
+                                                password=request.POST["password"],
+                                                email=request.POST["email"],
+                                                first_name=request.POST["first_name"],
+                                                last_name=request.POST["last_name"])            
             new_user.save()
             
-            messages.success(request, "Registered User Successfuly", "alert-success")
+            messages.success(request, "Registered Supplier Successfuly", "alert-success")
             return redirect("accounts:sign_in")
         
         except Exception as e:
-            messages.error(request, "Couldn't register user. Try again", "alert-danger")
+            messages.error(request, "Couldn't register Supplier. Try again", "alert-danger")
             print(e)
 
 
