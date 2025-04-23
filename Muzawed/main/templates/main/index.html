@@ -1,11 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    fgsdfvs
-</body>
-</html>
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %}مزود{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row align-items-center">
+       
+        <div class="col-md-7 text-center text-md-start mb-4 mb-md-0">
+            <h2 class="fw-bold mb-3" style="color: #1F3F2E;">
+                مع مزود، تقدر توصل لموردين محليين يدعمون نجاح مشروعك الغذائي.
+            </h2>
+            <p class="mb-4" style="color: #4F4F4F; font-size: 1.1rem;">
+                إذا كنت صاحب مشروع غذائي أو منتج منزلي، تقدر من خلال مزود تتواصل مع موردين موثوقين وتوفر احتياجاتك بسهولة، بجودة عالية وسعر مناسب.
+            </p>
+            <a href="#" class="btn btn-primary-custom">ابدأ الآن</a>
+        </div>
+
+        
+        <div class="col-md-5 text-center">
+            <img src="{% static 'img/man.svg'%}" width="500">
+        </div>
+    </div>
+
+    
+    <div class="mt-5">
+        <h3 class="text-center mb-4 fw-bold" style="color: #1F3F2E;">ليش تختار مزود؟</h3>
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="p-4 bg-white shadow-sm rounded-4 h-100">
+                    <span class="material-symbols-outlined" style="font-size: 48px; color: #1F3F2E;">storefront</span>
+                    <h5 class="fw-semibold mt-3">ندعم المورد المحلي</h5>
+                    <p class="text-muted">منصتنا تتيح للموردين عرض منتجاتهم والتوسع في الوصول لأصحاب المشاريع الصغيرة والمتوسطة.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="p-4 bg-white shadow-sm rounded-4 h-100">
+                    <span class="material-symbols-outlined" style="font-size: 48px; color: #1F3F2E;">local_shipping</span>
+                    <h5 class="fw-semibold mt-3">توصيل سهل وموثوق</h5>
+                    <p class="text-muted">اطلب منتجاتك بكل سهولة، والموردين يتواصلون معك مباشرة لتأكيد وتسليم الطلب.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="p-4 bg-white shadow-sm rounded-4 h-100">
+                    <span class="material-symbols-outlined" style="font-size: 48px; color: #1F3F2E;">emoji_people</span>
+                    <h5 class="fw-semibold mt-3">بدون وسطاء</h5>
+                    <p class="text-muted">نتيح تواصل مباشر وشفاف بين الطرفين، لتضمن جودة وسرعة في التعامل.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
