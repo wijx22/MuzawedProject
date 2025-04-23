@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar-001" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة منتج</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<body>
+    <main>
+        <section class="page-section d-flex justify-content-center align-items-center" style="height: 100vh;">
+            <div class="container-fluid w-100">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 col-md-10 col-sm-12 bg-black p-5 text-white">
+                        <form method="post" action="" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-12 col-lg-6 mb-3">
+                                    <label class="form-label">اسم المنتج</label>
+                                    <input type="text" class="form-control" id="product_name" name="name" required>
+                                </div>
+                                <div class="col-12 col-lg-6 mb-3">
+                                    <label class="form-label">الصورة</label>
+                                    <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">وصف المنتج</label>
+                                    <textarea class="form-control" id="description" name="description" rows="1"></textarea>
+                                </div>
+                                <div class="col-6 col-lg-3 mb-3">
+                                    <label class="form-label">سعر المنتج</label>
+                                    <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+                                </div>
+                                <div class="col-6 col-lg-3 mb-3">
+                                    <label class="form-label">الكمية في المخزن</label>
+                                    <input type="number" class="form-control" id="stock" name="stock" required>
+                                </div>
+                                <div class="col-6 col-lg-3 mb-3">
+                                    <label class="form-label">الحد الأدنى للكمية في المخزن</label>
+                                    <input type="number" class="form-control" id="min_stock_alert" name="min_stock_alert" value="0">
+                                </div>
+                                <div class="col-6 col-lg-3 mb-3">
+                                    <label class="form-label">الحد الأدنى للطلب</label>
+                                    <input type="number" class="form-control" id="min_order_quantity" name="min_order_quantity" value="1" required>
+                                </div>
+                                <div class="col-6 col-lg-3 mb-3">
+                                    <label class="form-label">طريقة البيع</label>
+                                    <select class="form-select" id="sale_method" name="sale_method" required>
+                                        <option value="" disabled selected>اختر طريقة البيع</option>
+                                        {% for choice in product.SaleMethodChoices.choices %}
+                                            <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-6 col-lg-3 mb-3">
+                                    <label class="form-label">الفئة</label>
+                                    <select class="form-select" id="category" name="category" required>
+                                        <option value="" disabled selected>اختر الفئة</option>
+                                        {% for choice in product.ProductCategory.choices %}
+                                            <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-6 col-lg-3 mb-3">
+                                    <label class="form-label">الفئة الفرعية</label>
+                                    <select class="form-select" id="subcategory" name="subcategory">
+                                        <option value="" disabled selected>اختر الفئة الفرعية</option>
+                                    </select>
+                                </div>
+                                <div class="col-6 col-lg-3 mb-3">
+                                    <label class="form-label">المكونات</label>
+                                    <textarea class="form-control" id="ingredients" name="ingredients" rows="1"></textarea>
+                                </div>
+                                <div class="col-6 col-lg-3 mb-3">
+                                    <label class="form-label">معلومات التغذية</label>
+                                    <textarea class="form-control" id="nutrition_info" name="nutrition_info" rows="1"></textarea>
+                                </div>
+                                <div class="col-6 col-lg-3 mb-3">
+                                    <label class="form-label">تاريخ الانتهاء (اختياري)</label>
+                                    <input type="date" class="form-control" id="expiration_date" name="expiration_date">
+                                </div>
+                                <button type="submit" id="submit" class="mt-3 btn btn-primary">
+                                    إضافة المنتج
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
