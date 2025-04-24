@@ -48,7 +48,20 @@ class Product(models.Model):
     class MiscellaneousSubcategory(models.TextChoices):
         HONEY_AND_OILS = 'honey_and_oils', 'عسل وزيوت'
         OTHER = 'other', 'غير ذلك'
-
+    
+    @staticmethod
+    def get_subcategories(category):
+        if category == Product.ProductCategory.AGRICULTURAL_PRODUCTS:
+            return [choice for choice in Product.AgriculturalSubcategory.choices]
+        elif category == Product.ProductCategory.PROCESSED_FOOD:
+            return [choice for choice in Product.ProcessedFoodSubcategory.choices]
+        elif category == Product.ProductCategory.INDUSTRIAL_PRODUCTS:
+            return [choice for choice in Product.IndustrialSubcategory.choices]
+        elif category == Product.ProductCategory.SPECIAL_PRODUCTS:
+            return [choice for choice in Product.SpecialProductsSubcategory.choices]
+        elif category == Product.ProductCategory.MISCELLANEOUS:
+            return [choice for choice in Product.MiscellaneousSubcategory.choices]
+        return []
     # supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)  
