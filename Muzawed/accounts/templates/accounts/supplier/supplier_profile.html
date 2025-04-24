@@ -1,0 +1,33 @@
+{% extends 'main/base.html'%}
+
+
+{% block content %}
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-lg">
+        <div class="card-body">
+          <div class="text-center mb-4">
+            <h3 class="mt-3">@{{ user.username }}</h3>
+          </div>
+
+          <div class="mb-4">
+            <h5 class="text-custom">معلومات الشخصية </h5>
+            <hr>
+            <p><strong>الاسم الاول :</strong>{{user.first_name}}</p>
+            <p><strong>الاسم الثاني :</strong>{{user.last_name}}</p>
+            <p><strong>معلومات الاتصال :</strong> {{ profile.contact_info }}</p>
+
+          </div>
+
+          <div class="text-center">
+            <a href="{%url 'accounts:update_supplier_profile'%}" class="btn btn-outline-custom ">حدث البروفايل </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
