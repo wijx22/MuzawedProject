@@ -48,9 +48,12 @@
                       </div>
                       <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
-                          <a href="{% url 'accounts:delete_account' %}" class="btn btn-danger">
-                            نعم، حذف الحساب
-                          </a>
+                          <form action="{% url 'accounts:delete_account' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                              نعم، حذف الحساب
+                            </button>
+                          </form>
                       </div>
                   </div>
               </div>

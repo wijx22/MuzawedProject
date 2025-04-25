@@ -12,6 +12,8 @@ from django.contrib import messages
 
 # Create your views here.
 def sign_up_beneficiary(request: HttpRequest):
+    if request.user.is_authenticated:
+        return redirect("main:index_view")
     
     if request.method == 'POST':
         try:
@@ -33,6 +35,9 @@ def sign_up_beneficiary(request: HttpRequest):
     return render(request, "accounts/beneficiary/signup.html")
 
 def sign_in(request:HttpRequest):
+    if request.user.is_authenticated:
+        return redirect("main:index_view")
+    
     if request.method == "POST":
         user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         if user:
@@ -50,7 +55,9 @@ def sign_in(request:HttpRequest):
 
 
 
+@login_required
 def beneficiary_profile_view(request: HttpRequest, user_name):
+    
     try:
         user = User.objects.get(username=user_name)
         profile = ProfileBeneficiary.objects.filter(user=user).first()
@@ -103,6 +110,8 @@ def update_beneficiary_profile(request: HttpRequest):
 
 
 def sign_up_supplier(request: HttpRequest):
+    if request.user.is_authenticated:
+        return redirect("main:index_view")
     
     if request.method == 'POST':
         try:
@@ -129,7 +138,9 @@ def sign_up_supplier(request: HttpRequest):
 
 
 
+@login_required
 def supplier_profile_view(request: HttpRequest, user_name):
+  
     try:
         user = User.objects.get(username=user_name)
         profile = SupplierProfile.objects.filter(user=user).first()
@@ -183,11 +194,11 @@ def delete_account(request):
         user = request.user
         user.delete()
         messages.success(request, "تم حذف حسابك بنجاح.")
-        return redirect('home')  # Redirect to home or another page after deletion
 
     return redirect('main:index_view')
 
 
+@login_required
 def log_out(request: HttpRequest):
 
     logout(request)
