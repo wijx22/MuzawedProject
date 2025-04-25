@@ -1,6 +1,10 @@
+{% extends 'main/base.html'%}
+
+
+{% block content %}
 
 <div class="container d-flex flex-column justify-content-center align-items-center mt-5 mb-5">
-  <h2 class="mb-4">Sign Up Supplier</h2>
+  <h2 class="mb-4">تسجيل جديد كمورد</h2>
   <form class="d-flex flex-column gap-3 w-75" action="{% url 'accounts:sign_up_supplier' %}" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       
@@ -24,6 +28,12 @@
           <label for="floatingInput">Last name</label>
       </div>
 
+      <div class="form-floating">
+        <input type="text" class="form-control" id="floatingInput" placeholder="contact_info" name="contact_info" required>
+        <label for="floatingInput">Contact Info</label>
+    </div>
+
+
 
 
       <div class="form-floating">
@@ -32,7 +42,7 @@
     </div>
     
 
-      <button class="btn btn-primary w-100 py-2" type="submit">Sign up</button>
+      <button class="btn-primary-custom w-100 py-2" type="submit">سجل كمورد</button>
 
     </form>
 
@@ -40,3 +50,4 @@
 </div>
 
 
+{% endblock %}

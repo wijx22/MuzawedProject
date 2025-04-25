@@ -1,6 +1,11 @@
+{% extends 'main/base.html'%}
+
+
+{% block content %}
+
 <div class="container d-flex flex-column justify-content-center align-items-center">
 
-  <h2>Sign In </h2>
+  <h2>تسجيل دخول </h2>
 
   <form class="d-flex flex-column gap-3 w-50" action="{% url 'accounts:sign_in' %}{% if 'next' in request.GET %}?next={{request.GET.next}}{% endif %}" method="POST">
       {% csrf_token %}
@@ -18,17 +23,21 @@
       </div>
   
 
-      <button class="btn btn-primary w-100 py-2" type="submit">Sign In</button>
+      <button class="btn btn-primary-custom w-100 py-2" type="submit">Sign In</button>
     </form>
   </div>
 
 
 
         <div class="text-center mt-3">
-          <p>Don't have an account? <a href="{% url 'accounts:sign_up_beneficiary' %}" class="text-decoration-none">Sign Up</a></p>
+          <p>ليس لديك حساب؟ <a href="{% url 'accounts:sign_up_beneficiary' %}" class="text-decoration-none">سجل الان</a></p>
+          <p><a href="{% url 'accounts:sign_up_supplier' %}" class="text-decoration-none">  سجل كمورد الان</a></p>
       </div>
+
 
         </div>
     </div>
   </div>
         
+
+{% endblock %}
