@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.http import HttpRequest, HttpResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from .models import ProfileBeneficiary
+from .models import ProfileBeneficiary, SupplierProfile
 from django.db import transaction
 # Create your views here.
 def sign_up_beneficiary(request: HttpRequest):
@@ -25,7 +25,7 @@ def sign_up_beneficiary(request: HttpRequest):
 
 
     
-    return render(request, "accounts/signup.html")
+    return render(request, "accounts/beneficiary/signup.html")
 
 def sign_in(request:HttpRequest):
     if request.method == "POST":
@@ -52,7 +52,7 @@ def beneficiary_profile_view(request: HttpRequest, user_name):
         if not profile:
             profile = ProfileBeneficiary.objects.create(user=user)
 
-        return render(request, 'accounts/beneficiary_profile.html', {
+        return render(request, 'accounts/beneficiary/beneficiary_profile.html', {
             'user': user,
             'profile': profile
         })
@@ -90,7 +90,7 @@ def update_beneficiary_profile(request: HttpRequest):
         messages.error(request, "Couldn't update profile", "alert-danger")
         print(e)
     
-    return render(request, 'accounts/update_beneficiary_profile.html')
+    return render(request, 'accounts/beneficiary/update_beneficiary_profile.html')
 
 
 
@@ -101,20 +101,73 @@ def sign_up_supplier(request: HttpRequest):
     
     if request.method == 'POST':
         try:
-            new_user = User.objects.create_user(username=request.POST["username"],password=request.POST["password"],email=request.POST["email"], first_name=request.POST["first_name"], last_name=request.POST["last_name"])            
+            new_user = User.objects.create_user(username=request.POST["username"],
+                                                password=request.POST["password"],
+                                                email=request.POST["email"],
+                                                first_name=request.POST["first_name"],
+                                                last_name=request.POST["last_name"])            
             new_user.save()
+            profile = SupplierProfile(user=new_user,name=new_user.get_full_name(),contact_info=request.POST['contact_info'])
+            profile.save()
+
             
-            messages.success(request, "Registered User Successfuly", "alert-success")
+            messages.success(request, "Registered Supplier Successfuly", "alert-success")
             return redirect("accounts:sign_in")
         
         except Exception as e:
-            messages.error(request, "Couldn't register user. Try again", "alert-danger")
+            messages.error(request, "Couldn't register Supplier. Try again", "alert-danger")
             print(e)
 
 
     
-    return render(request, "accounts/supplier_signup.html")
+    return render(request, "accounts/supplier/supplier_signup.html")
 
+
+
+def supplier_profile_view(request: HttpRequest, user_name):
+    try:
+        user = User.objects.get(username=user_name)
+        profile = SupplierProfile.objects.filter(user=user).first()
+        if not profile:
+            profile = SupplierProfile.objects.create(user=user)
+
+        return render(request, 'accounts/supplier/supplier_profile.html', {
+            'user': user,
+            'profile': profile
+        })
+
+    except Exception as e:
+        print(e)
+        return render(request, '404.html')
+
+
+
+def update_supplier_profile(request: HttpRequest):
+    if not request.user.is_authenticated:
+        messages.warning(request, 'Only registered users can update profile', 'alert-warning')
+        return redirect('accounts:sign_in')
+    
+    try:
+        with transaction.atomic():
+            user: User = request.user
+
+            user.first_name = request.POST.get('first_name', user.first_name)
+            user.last_name = request.POST.get('last_name', user.last_name)
+            user.email = request.POST.get('email', user.email)
+            user.save()
+
+            profile, created = SupplierProfile.objects.get_or_create(user=user)
+            
+            profile.contact_info = request.POST.get('contact_info', profile.contact_info)
+            profile.save()
+
+            messages.success(request, 'Profile updated successfully', 'alert-success')
+
+    except Exception as e:
+        messages.error(request, "Couldn't update profile", "alert-danger")
+        print(e)
+    
+    return render(request, 'accounts/supplier/update_profile.html')
 
 
 def log_out(request: HttpRequest):

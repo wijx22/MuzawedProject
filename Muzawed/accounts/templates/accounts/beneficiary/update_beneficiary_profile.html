@@ -1,6 +1,12 @@
+
+{% extends 'main/base.html'%}
+
+
+{% block content %}
+
 <div class="container d-flex flex-column justify-content-center align-items-center">
 
-    <h2>Update Profile</h2>
+    <h2>تحديث ملف شخصي</h2>
     <form class="d-flex flex-column gap-3 w-50" action="{% url 'accounts:update_beneficiary_profile' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         
@@ -39,7 +45,8 @@
 
 
 
-        <button class="btn btn-primary w-100 py-2" type="submit">Update</button>
+        <button class="btn-primary-custom  w-100 py-2" type="submit">حدث </button>
       </form>
 </div>
 
+{% endblock %}
