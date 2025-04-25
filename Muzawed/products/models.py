@@ -5,7 +5,7 @@ from django.db import models
 from django.db import models
 
 class Product(models.Model):
-    class SaleMethodChoices(models.TextChoices):
+    class Unit(models.TextChoices):
         UNIT = 'unit', 'حبة'
         KG = 'kg', 'كيلو'
         CARTON = 'carton', 'كرتون'
@@ -67,16 +67,24 @@ class Product(models.Model):
     description = models.TextField(blank=True)  
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField()
-    image = models.ImageField(upload_to='Media/')
+    image = models.ImageField(upload_to='product-img/' ,blank=True )
     min_stock_alert = models.IntegerField(default=0)
     min_order_quantity = models.IntegerField(default=1)  
-    sale_method = models.CharField(max_length=20, choices=SaleMethodChoices.choices)
+    unit = models.CharField(max_length=20, choices=Unit.choices)
     category = models.CharField(max_length=20, choices=ProductCategory.choices)
     subcategory = models.CharField(max_length=20, choices=[]) 
-    ingredients = models.TextField(blank=True) 
-    # expiration_date = models.DateField(null=True, blank=True)  
-    nutrition_info = models.TextField(blank=True)  # معلومات التغذية
-    # package_size = models.CharField(max_length=50, blank=True)  # حجم العبوة
-    # sku = models.CharField(max_length=50, unique=True)  # رمز المنتج
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def get_subcategory_display(self):
+        if self.category == self.ProductCategory.AGRICULTURAL_PRODUCTS:
+            return self.AgriculturalSubcategory(self.subcategory).label
+        elif self.category == self.ProductCategory.PROCESSED_FOOD:
+            return self.ProcessedFoodSubcategory(self.subcategory).label
+        elif self.category == self.ProductCategory.INDUSTRIAL_PRODUCTS:
+            return self.IndustrialSubcategory(self.subcategory).label
+        elif self.category == self.ProductCategory.SPECIAL_PRODUCTS:
+            return self.SpecialProductsSubcategory(self.subcategory).label
+        elif self.category == self.ProductCategory.MISCELLANEOUS:
+            return self.MiscellaneousSubcategory(self.subcategory).label
+        return self.subcategory
