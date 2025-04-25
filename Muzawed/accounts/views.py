@@ -5,6 +5,11 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from .models import ProfileBeneficiary, SupplierProfile
 from django.db import transaction
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
 # Create your views here.
 def sign_up_beneficiary(request: HttpRequest):
     
@@ -168,6 +173,19 @@ def update_supplier_profile(request: HttpRequest):
         print(e)
     
     return render(request, 'accounts/supplier/update_profile.html')
+
+
+# View for confirming account deletion
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        # Delete the user account
+        user = request.user
+        user.delete()
+        messages.success(request, "تم حذف حسابك بنجاح.")
+        return redirect('home')  # Redirect to home or another page after deletion
+
+    return redirect('main:index_view')
 
 
 def log_out(request: HttpRequest):

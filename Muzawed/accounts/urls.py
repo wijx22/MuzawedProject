@@ -14,7 +14,8 @@ urlpatterns = [
   path('update/profile', views.update_beneficiary_profile, name='update_beneficiary_profile'),
   
   path('profile/supplier/<user_name>/', views.supplier_profile_view, name='supplier_profile_view'),
-  path('update/profile/supplier', views.update_supplier_profile, name='update_supplier_profile')
+  path('update/profile/supplier', views.update_supplier_profile, name='update_supplier_profile'),
+  path('delete-account', views.delete_account, name='delete_account')
 
 
 
