@@ -1,15 +1,13 @@
-/* ========================= */
-/*      الخط العام واللون    */
-/* ========================= */
+
+/*      الخط واللون    */
 body {
     font-family: 'Tajawal', sans-serif;
     background-color: #F3F1EC;
     color: #1F3F2E;
 }
 
-/* ========================= */
 /*          الهيدر           */
-/* ========================= */
+
 .navbar {
     background-color: transparent;
 }
@@ -49,9 +47,9 @@ body {
     color: white;
 }
 
-/* ========================= */
+
 /*         الأزرار           */
-/* ========================= */
+
 .btn-primary-custom {
     background-color: #1F3F2E;
     color: white;
@@ -79,23 +77,8 @@ body {
     color: white;
 }
 
-.mazood-main-btn {
-    background-color: #EFC234;
-    color: #000;
-    border-radius: 30px;
-    padding: 10px 30px;
-    font-weight: 600;
-    transition: 0.3s ease-in-out;
-}
 
-.mazood-main-btn:hover {
-    background-color: #d1a900;
-    color: #fff;
-}
-
-/* ========================= */
 /*         الفوتر            */
-/* ========================= */
 footer {
     background-color: #FFFFFF;
     border-top: 1px solid #ddd;
@@ -115,9 +98,8 @@ footer .text-dark:hover {
     color: #6AA894;
 }
 
-/* ========================= */
 /*         الأيقونات         */
-/* ========================= */
+
 .material-symbols-outlined {
     font-size: 64px;
     color: #1F3F2E;
@@ -128,52 +110,9 @@ footer .text-dark:hover {
     transform: scale(1.1);
 }
 
-/* ========================= */
-/*     بطاقات الميزات        */
-/* ========================= */
-.mazood-feature-card {
-    padding: 25px;
-    background-color: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    transition: transform 0.3s;
-}
 
-.mazood-feature-card:hover {
-    transform: translateY(-5px);
-}
+/*     ايفكت     */
 
-.mazood-feature-icon {
-    font-size: 48px;
-    color: #1F3F2E;
-}
-
-.mazood-feature-text {
-    color: #4F4F4F;
-}
-
-/* ========================= */
-/*       عناوين الأقسام      */
-/* ========================= */
-.mazood-section-title {
-    color: #1F3F2E;
-    font-size: 1.8rem;
-    font-weight: 700;
-}
-
-.mazood-title {
-    color: #1F3F2E;
-    font-size: 2rem;
-}
-
-.mazood-subtitle {
-    color: #4F4F4F;
-    font-size: 1.1rem;
-}
-
-/* ========================= */
-/*      فاصل زخرفي بسيط      */
-/* ========================= */
 .section-divider {
     height: 2px;
     background-color: #6AA894;
@@ -181,32 +120,13 @@ footer .text-dark:hover {
     margin: 20px auto;
 }
 
+/*         روابط          */
 
-
-
-body {
-    font-family: 'Tajawal', sans-serif;
-    background-color: #F3F1EC;
-    color: #1F3F2E;
-}
-.btn-primary-custom {
-    background-color: #1F3F2E;
-    color: white;
-    border-radius: 999px;
-    padding: 8px 24px;
-}
-.btn-outline-custom {
-    border: 1px solid #1F3F2E;
-    color: #1F3F2E;
-    border-radius: 999px;
-    padding: 8px 24px;
-}
-.navbar-nav .nav-link {
-    font-weight: 500;
-    color: #1F3F2E;
+a {
+  color: #1F3F2E;
+  transition: color 0.3s ease;
 }
 
-footer {
-    background-color: white;
-    border-top: 1px solid #ccc;
+a:hover {
+  color: #6AA894; 
 }
