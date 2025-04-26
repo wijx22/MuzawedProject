@@ -1,25 +1,70 @@
-// // category-subcategory.js
+window.onload = function () {
+    const categorySelect = document.getElementById('category');
+    const agriculturalContainer = document.querySelector('.agricultural');
+    const processedContainer = document.querySelector('.processed');
+    const industrialContainer = document.querySelector('.industrial');
+    const specialContainer = document.querySelector('.special');
+    const miscellaneousContainer = document.querySelector('.miscellaneous');
 
+    // Function to show the relevant subcategory container
+    function showRelevantSubcategory() {
+        const containers = document.querySelectorAll('.agricultural, .processed, .industrial, .special, .miscellaneous');
+        // Hide all subcategory containers first
+ 
+        containers.forEach(container => {
+            container.style.display = 'none'; // Hide all
+            const select = container.querySelector('select');
+            select.removeAttribute('name'); // Remove name attribute
+        });
+        // Show the relevant subcategory container based on selected category
+        let selectedSubcategory;
+        switch (categorySelect.value) {
+            case 'agricultural':
+                agriculturalContainer.style.display = 'block';
+                selectedSubcategory = agriculturalContainer.querySelector('select');
+                selectedSubcategory.setAttribute('name', 'subcategory'); 
 
-// document.addEventListener('DOMContentLoaded', function() {
-//     const categorySelect = document.getElementById('category');
-//     const subcategorySelect = document.getElementById('subcategory');
+                
+                break;
+            case 'processed':
+                processedContainer.style.display = 'block';
+                selectedSubcategory = processedContainer.querySelector('select');
+                selectedSubcategory.setAttribute('name', 'subcategory'); 
 
-//     categorySelect.addEventListener('change', function() {
-//         const selectedCategory = this.value;
-//         console.log(selectedCategory);
-//         // const options = subcategoryOptions[selectedCategory] || [];
+                break;
+            case 'industrial':
+                industrialContainer.style.display = 'block';
+                selectedSubcategory = industrialContainer.querySelector('select');
+                selectedSubcategory.setAttribute('name', 'subcategory'); 
 
-//         // Clear the subcategory select
-//         subcategorySelect.innerHTML = '<option value="" disabled selected>اختر الفئة الفرعية</option>';
+                break;
+            case 'special':
+                specialContainer.style.display = 'block';
+                selectedSubcategory = specialContainer.querySelector('select');
+                selectedSubcategory.setAttribute('name', 'subcategory'); 
+
+                break;
+            case 'miscellaneous':
+                miscellaneousContainer.style.display = 'block';
+                selectedSubcategory = miscellaneousContainer.querySelector('select');
+                selectedSubcategory.setAttribute('name', 'subcategory'); 
+
+                break;
+        }
+        // Set required attribute on the relevant subcategory select
+        if (selectedSubcategory) {
+            selectedSubcategory.setAttribute('required', 'required');
+
+        }
         
-//         // Populate subcategory options
-//         options.forEach(option => {
-//             const newOption = document.createElement('option');
-//             newOption.value = option[0];
-//             newOption.text = option[1];
-//             subcategorySelect.appendChild(newOption);
-//         });
-//     });
-// });
+        
+    }
 
+    // Add event listener to category dropdown
+    categorySelect.addEventListener('change', function () {
+        showRelevantSubcategory();
+    });
+
+    // Call the function on page load to set the initial state
+    showRelevantSubcategory();
+};

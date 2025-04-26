@@ -44,10 +44,10 @@
                             <input type="number" class="form-control" id="min_stock_alert" name="min_stock_alert" value="0" min="0">
                         </div>
                         <div class="col-12 col-md-6 mb-3">
-                            <label class="form-label">طريقة البيع</label>
-                            <select class="form-select" id="sale_method" name="sale_method" required>
-                                <option value="" disabled selected>اختر طريقة البيع</option>
-                                {% for choice in sale_method %}
+                            <label class="form-label">الوحدة</label>
+                            <select class="form-select" id="unit" name="unit" required>
+                                <option value="" disabled selected>اختر الوحدة</option>
+                                {% for choice in unit %}
                                     <option value="{{ choice.0 }}">{{ choice.1 }}</option>
                                 {% endfor %}
                             </select>
@@ -61,7 +61,17 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-12 col-md-6 mb-3">
+                        <div class="col-12 col-md-6 mb-3 agricultural" style="display:none;">
+                            <label class="form-label">الفئة الفرعية</label>
+                            <select class="form-select" id="subcategory" name="subcategory" >
+                                <option value="" disabled selected>اختر الفئة الفرعية</option>
+                                {% for choice in subcategories.agricultural %}
+                                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-12 col-md-6 mb-3 processed" style="display:none;">
                             <label class="form-label">الفئة الفرعية</label>
                             <select class="form-select" id="subcategory" name="subcategory">
                                 <option value="" disabled selected>اختر الفئة الفرعية</option>
@@ -70,7 +80,35 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <button type="submit" id="submit" class="col-11 col-md-6 mt-3 btn btn-light mx-auto d-flex justify-content-center">
+                        <div class="col-12 col-md-6 mb-3 industrial" style="display:none;">
+                            <label class="form-label">الفئة الفرعية</label>
+                            <select class="form-select" id="subcategory" name="subcategory">
+                                <option value="" disabled selected>اختر الفئة الفرعية</option>
+                                {% for choice in subcategories.industrial %}
+                                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3 special" style="display:none;">
+                            <label class="form-label">الفئة الفرعية</label>
+                            <select class="form-select" id="subcategory" name="subcategory">
+                                <option value="" disabled selected>اختر الفئة الفرعية</option>
+                                {% for choice in subcategories.special %}
+                                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3 miscellaneous" style="display:none;">
+                            <label class="form-label">الفئة الفرعية</label>
+                            <select class="form-select" id="subcategory" name="subcategory">
+                                <option value="" disabled selected>اختر الفئة الفرعية</option>
+                                {% for choice in subcategories.miscellaneous %}
+                                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                     
+                        <button type="submit" id="submit" class="col-11 col-md-7 mt-3 btn btn-light mx-auto d-flex justify-content-center">
                             إضافة المنتج
                         </button>
                     </div>
