@@ -1,0 +1,137 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}تحديث منتج{% endblock %}
+{% block ref %}
+<link rel="stylesheet" href="{% static 'css/products_style.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="d-flex justify-content-center align-items-center">
+    <div class="container-fluid w-100">
+
+        <div class="row justify-content-center">
+
+            <div class="col-10 col-lg-8 container-section p-3 p-md-5">
+
+                <form method="post" action="{% url 'products:update_product_view' product.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-12 col-lg-6 img-card">
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}" class="img-fluid w-100 " />
+                            {% else %}
+                            <img src="{% static 'image/default.png' %}" class="img-fluid w-100 " />
+                            {% endif %}
+                        </div>
+                        <div class="col-12 col-lg-6 mb-3">
+                            <label class="form-label">اسم المنتج</label>
+                            <input type="text" class="form-control" id="product_name" name="name"
+                                value="{{product.name}}" required>
+                            <label class="form-label">صورة المنتج</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <label class="form-label">وصف المنتج</label>
+                            <textarea class="form-control" id="description" name="description"
+                                rows="4">{{product.description}}</textarea>
+                        </div>
+
+                        <div class="col-12 col-md-4 mb-3">
+                            <label class="form-label">سعر المنتج</label>
+                            <input type="number" class="form-control" id="price" name="price" step="0.5" min="0"
+                                value="{{product.price}}" required>
+                        </div>
+                        <div class="col-12 col-md-4 mb-3">
+                            <label class="form-label">الحد الأدنى للطلب</label>
+                            <input type="number" class="form-control" id="min_order_quantity" name="min_order_quantity"
+                                value="{{product.min_order_quantity}}" min="1" required>
+                        </div>
+                        <div class="col-12 col-md-4 mb-3">
+                            <label class="form-label">الكمية في المخزن</label>
+                            <input type="number" class="form-control" id="stock" name="stock" value="{{product.stock}}"
+                                required min="0">
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">الكمية للحد الأدنى للتنبيه في المخزن</label>
+                            <input type="number" class="form-control" id="min_stock_alert" name="min_stock_alert"
+                                value="{{product.min_stock_alert}}" min="0">
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">الوحدة</label>
+                            <select class="form-select" id="unit" name="unit" required>
+                                {% for choice in unit %}
+                                <option value="{{ choice.0 }}" {% if product.unit == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">الفئة</label>
+                            <select class="form-select" id="category" name="category" required>
+                                {% for choice in categories %}
+                                <option value="{{ choice.0 }}" {% if product.category == choice.0 %}selected{% endif %}>
+                                    {{choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3 agricultural">
+                            <label class="form-label">الفئة الفرعية</label>
+                            <select class="form-select" id="subcategory" >
+                                {% for choice in subcategories.agricultural %}
+                                <option value="{{ choice.0 }}" {% if product.subcategory == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6 mb-3 processed">
+                            <label class="form-label">الفئة الفرعية</label>
+                            <select class="form-select" id="subcategory">
+                                {% for choice in subcategories.processed %}
+                                <option value="{{ choice.0 }}" {% if product.subcategory == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3 industrial">
+                            <label class="form-label">الفئة الفرعية</label>
+                            <select class="form-select" id="subcategory" >
+                                {% for choice in subcategories.industrial %}
+                                <option value="{{ choice.0 }}" {% if product.subcategory == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3 special">
+                            <label class="form-label">الفئة الفرعية</label>
+                            <select class="form-select" id="subcategory">
+                                {% for choice in subcategories.special %}
+                                <option value="{{ choice.0 }}" {% if product.subcategory == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3 miscellaneous">
+                            <label class="form-label">الفئة الفرعية</label>
+                            <select class="form-select" id="subcategory" >
+                                {% for choice in subcategories.miscellaneous %}
+                                <option value="{{ choice.0 }}" {% if product.subcategory == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <button type="submit" id="submit"
+                            class="col-11 col-md-7 mt-3 btn btn-light mx-auto d-flex justify-content-center">
+                            تحديث المنتج
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="{% static 'js/category_subcategory.js' %}"></script>
+{% endblock %}
