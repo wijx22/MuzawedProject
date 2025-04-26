@@ -29,3 +29,7 @@ def contact_view(request):
             messages.error(request, 'يرجى تعبئة جميع الحقول.')
 
     return render(request, 'main/contact.html')
+
+
+def about_view(request):
+    return render(request, 'main/about.html')
