@@ -83,12 +83,6 @@ def update_product_view(request: HttpRequest, product_id):
             product.category = request.POST.get('category')
             product.subcategory = request.POST.get('subcategory')
 
-            # Debugging output
-            print("------------------------------------")
-            print(f"Category: {request.POST.get('category')}")
-            print(f"Subcategory: {request.POST.get('subcategory')}")
-
-            # Handle the image upload
             if "image" in request.FILES:
                 product.image = request.FILES["image"]
 
@@ -98,7 +92,7 @@ def update_product_view(request: HttpRequest, product_id):
 
         else:
             unit = Product.Unit.choices
-            categories = Product.ProductCategory.choices  # Get category choices
+            categories = Product.ProductCategory.choices 
             subcategories = {
                 'agricultural': Product.AgriculturalSubcategory.choices,
                 'processed': Product.ProcessedFoodSubcategory.choices,
@@ -123,7 +117,26 @@ def update_product_view(request: HttpRequest, product_id):
     
 def stock_view(request:HttpRequest):
     products = Product.objects.all()
-    print(products[0].subcategory)
-    # return render(request, 'product_list.html', {'products': products})
 
     return render(request, "products/product_stock.html",{'products': products})
+
+def product_details_view(request:HttpRequest,product_id):
+    try:
+        product = get_object_or_404(Product, pk=product_id)
+
+
+       
+        return render(request,"products/product_details.html",{"product": product})
+    except Http404 as e:
+        print(e)
+        return redirect('main:index_view')
+    except Exception as error:
+        print(error)
+        return redirect('main:index_view')
+    
+
+def products_view(request:HttpRequest):
+    products = Product.objects.all()
+
+    return render(request, "products/product_list.html",{'products': products})
+        
