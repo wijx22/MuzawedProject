@@ -1,0 +1,104 @@
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة التحكم</title>
+  <link href="{% static 'css/admin-dashboard.css' %}" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+</head>
+<body>
+<!-- Header -->
+<div class="header">
+  <span>مرحبًا، Admin</span>
+  <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+</div>
+
+<!-- Dashboard -->
+<div class="dashboard">
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <ul>
+      <li><a href="#">لوحة التحكم</a></li>
+      <li><a href="#">الشكاوى</a></li> 
+      <li><a href="{% url 'administration:suppliers_list_view' %}"> الموردون</a></li>
+      <li><a href="{% url 'administration:beneficiary_list_view' %}">المستفيدين</a></li>
+      <li><a href="#">الملفات الشخصية</a></li>
+      <li><a href="#">الإعدادات</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="stats">
+      <div class="card">
+        <h3>الموردين الجدد</h3>
+        <p>{{ new_suppliers_count }}</p>
+      </div>
+      <div class="card">
+        <h3>المستفيدين</h3>
+        <p>{{ beneficiaries_count }}</p>
+      </div>
+      <div class="card">
+        <h3>إجمالي المستخدمين</h3>
+        <p>{{ total_users }}</p>
+      </div>
+        </div>
+        <hr>
+    
+    <!--<div class="card">
+      <h3>توزيع المستخدمين</h3>
+      <div class="chart-container">
+        <canvas id="userChart"></canvas>
+      </div>
+    </div>-->
+
+    <div class="card">
+      <h3>توزيع المستخدمين</h3>
+      <div class="chart-container">
+        <canvas id="userChart"
+          data-suppliers="{{ new_suppliers_count }}"
+          data-beneficiaries="{{ beneficiaries_count }}"
+          data-total="{{ total_users }}">
+        </canvas>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<hr>
+<!--<div class="card">
+  <h3>إحصائيات الشكاوى</h3>
+  <table style="width:100%; border-collapse: collapse; text-align: center;">
+    <thead>
+      <tr>
+        <th style="border:1px solid #ccc; padding:8px;">الحالة</th>
+        <th style="border:1px solid #ccc; padding:8px;">العدد</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="border:1px solid #ccc; padding:8px;">مفتوحة</td>
+        <td style="border:1px solid #ccc; padding:8px;">{{ open_count }}</td>
+      </tr>
+      <tr>
+        <td style="border:1px solid #ccc; padding:8px;">مغلقة</td>
+        <td style="border:1px solid #ccc; padding:8px;">{{ closed_count }}</td>
+      </tr>
+      <tr>
+        <td style="border:1px solid #ccc; padding:8px;">قيد المعالجة</td>
+        <td style="border:1px solid #ccc; padding:8px;">{{ processing_count }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>-->
+<script src="{% static 'js/admin-dashboard.js' %}"></script>
+
+</body>
