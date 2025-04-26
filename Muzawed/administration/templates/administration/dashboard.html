@@ -24,14 +24,23 @@
 
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
-    <ul>
+    <!--<ul>
       <li><a href="#">لوحة التحكم</a></li>
       <li><a href="#">الشكاوى</a></li> 
       <li><a href="{% url 'administration:suppliers_list_view' %}"> الموردون</a></li>
       <li><a href="{% url 'administration:beneficiary_list_view' %}">المستفيدين</a></li>
       <li><a href="#">الملفات الشخصية</a></li>
       <li><a href="#">الإعدادات</a></li>
+    </ul>-->
+    <ul>
+      <li><a href="#"><i class="fas fa-home"></i> لوحة التحكم</a></li>
+      <li><a href="#"><i class="fas fa-comment-alt"></i> الشكاوى</a></li> 
+      <li><a href="{% url 'administration:suppliers_list_view' %}"><i class="fas fa-truck"></i> الموردون</a></li>
+      <li><a href="{% url 'administration:beneficiary_list_view' %}"><i class="fas fa-users"></i> المستفيدين</a></li>
+      <li><a href="#"><i class="fas fa-id-badge"></i> الملفات الشخصية</a></li>
+      <li><a href="#"><i class="fas fa-cogs"></i> الإعدادات</a></li>
     </ul>
+  
   </div>
 
   <!-- Main Content -->
