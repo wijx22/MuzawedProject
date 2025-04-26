@@ -22,8 +22,43 @@
           </div>
 
           <div class="text-center">
-            <a href="{%url 'accounts:update_supplier_profile'%}" class="btn btn-outline-custom ">حدث البروفايل </a>
+            <a href="{% url 'accounts:update_supplier_profile' %}" class="btn btn-outline-custom ">حدث البروفايل </a>
           </div>
+          
+          <div class="text-center mt-4">
+            <a href="{% url 'accounts:log_out' %}" class="btn btn-outline-danger">تسجيل الخروج</a>
+          </div>
+          <div>
+            <!-- Delete Account Button -->
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal">
+              حذف الحساب
+            </button>
+          </div>
+
+          <!-- Modal -->
+          <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="confirmModalLabel">تأكيد الحذف</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                          هل انت واثق؟
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                          <form action="{% url 'accounts:delete_account' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                              نعم، حذف الحساب
+                            </button>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
         </div>
       </div>
     </div>
