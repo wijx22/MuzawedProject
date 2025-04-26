@@ -8,9 +8,10 @@ from django.db import transaction
 
 
 
-
 # Create your views here.
 def sign_up_beneficiary(request: HttpRequest):
+    if request.user.is_authenticated:
+        return redirect("main:index_view")
     
     if request.method == 'POST':
         try:
@@ -34,6 +35,9 @@ def sign_up_beneficiary(request: HttpRequest):
 
 
 def sign_in(request:HttpRequest):
+    if request.user.is_authenticated:
+        return redirect("main:index_view")
+    
     if request.method == "POST":
         user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         if user:
@@ -54,6 +58,7 @@ def sign_in(request:HttpRequest):
 
 
 def beneficiary_profile_view(request: HttpRequest, user_name):
+    
     try:
         user = User.objects.get(username=user_name)
         if request.user != user or not ProfileBeneficiary.objects.filter(user=user).exists():
@@ -116,6 +121,8 @@ def update_beneficiary_profile(request: HttpRequest):
 
 
 def sign_up_supplier(request: HttpRequest):
+    if request.user.is_authenticated:
+        return redirect("main:index_view")
     
     if request.method == 'POST':
         try:
@@ -140,28 +147,55 @@ def sign_up_supplier(request: HttpRequest):
     
     return render(request, "accounts/supplier/supplier_signup.html")
 
-
-
 def supplier_profile_view(request: HttpRequest, user_name):
+    if not request.user.is_authenticated:
+        messages.error(request, "يجب عليك تسجيل الدخول لمشاهدة الملف الشخصي.", "alert-danger")
+        return redirect('accounts:sign_in')
+
     try:
         user = User.objects.get(username=user_name)
-        if request.user != user or not SupplierProfile.objects.filter(user=user).exists():
+
+        if request.user != user:
             messages.error(request, "لا يحق لك مشاهدة هذا الملف الشخصي.", "alert-danger")
             return redirect('accounts:sign_in')
 
-        profile = SupplierProfile.objects.filter(user=user).first()
-        if not profile:
-            profile = SupplierProfile.objects.create(user=user)
+        profile, created = SupplierProfile.objects.get_or_create(user=user)
 
         return render(request, 'accounts/supplier/supplier_profile.html', {
             'user': user,
             'profile': profile
         })
 
+    except User.DoesNotExist:
+        messages.error(request, "المستخدم غير موجود.", "alert-danger")
+        return redirect('main:index_view')
+
     except Exception as e:
         print(e)
         return render(request, '404.html')
 
+
+#def supplier_profile_view(request: HttpRequest, user_name):
+#  
+#    try:
+#        user = User.objects.get(username=user_name)
+#        if request.user != user or not SupplierProfile.objects.filter(user=user).exists():
+#            messages.error(request, "لا يحق لك مشاهدة هذا الملف الشخصي.", "alert-danger")
+#            return redirect('accounts:sign_in')
+#
+#        profile = SupplierProfile.objects.filter(user=user).first()
+#        if not profile:
+#            profile = SupplierProfile.objects.create(user=user)
+#
+#        return render(request, 'accounts/supplier/supplier_profile.html', {
+#            'user': user,
+#            'profile': profile
+#        })
+#
+#    except Exception as e:
+#        print(e)
+#        return render(request, '404.html')
+#
 
 
 def update_supplier_profile(request: HttpRequest):
@@ -190,11 +224,6 @@ def update_supplier_profile(request: HttpRequest):
         print(e)
     
     return render(request, 'accounts/supplier/update_profile.html')
-
-
-
-
-
 
 
 def log_out(request: HttpRequest):
