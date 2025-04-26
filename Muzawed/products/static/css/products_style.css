@@ -1,4 +1,6 @@
-
+.brown-title{
+    color: #4A3A20;
+}
 .container-section {
     background-color: #ffffff;
     padding: 20px;
@@ -30,30 +32,134 @@ label{
     outline: 0;
     box-shadow: 0 0 0 .25rem rgba(38, 79, 63, .25); /* استخدام اللون الجديد */
 }
-/* .form-control:focus{
-    background-color: 264f3f;
-    
-}  */
-.tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black;
+
+.form-select:focus {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: #264f3f;
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgba(38, 79, 63, .25);
 }
 
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
+/* Change color for the selected option */
+.form-select option {
+    color: #000; 
+    background-color: #fff; 
 }
 
-.tooltip:hover .tooltiptext {
-  visibility: visible;
+.form-select:focus option:checked {
+    background-color: #264f3f; 
+    color: #fff; 
+}
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead td{
+    font-weight: 600;
+    text-align: start;
+    vertical-align: top;
+    color: #204a3a;
+    border-bottom:1px solid #204a3a;
+}
+
+table tr{
+    border-bottom: 1px solid #5b585815;
+}
+tbody td{
+    border-bottom: none;
+    color: #333;
+}
+table tr:last-child{
+    border-bottom: none;
+    color: #333;
+}
+
+td{
+    padding: 9px 5px;
+}
+
+td i{
+    padding: 7px;
+    color: #fff;
+    border-radius: 50px;
+}
+.bi-plus-circle-fill{
+    font-size: larger;
+    color: #204a3a;
+}
+.bi-pencil-square{
+    background: #204a3a;
+}
+.bi-trash3-fill{
+    background: rgb(159, 11, 0);
+}
+.container-section table tbody td:last-child{
+    white-space: nowrap;
+}
+.board{
+    padding: 30px;
+    width: 94%;
+    margin: 30px 0 30px 0;
+    overflow: auto;
+    background: #ffffff;
+    border-radius: 8px;
+}
+
+.img-card {
+    height: 300px;
+}
+
+.img-card img {
+    max-height: 100%; /* Ensure the image does not exceed its container */
+    width: auto; /* Adjust as necessary */
+    object-fit: fill;
+    height: 280px;
+
+}
+
+.city-card{
+    background-color: #4A3A20;
+    border-radius: 10px;
+    color: #fff;
+    height: 30px;
+    width: 100px;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+}
+.counter {
+    width: 100px;
+    text-align: center;
+}
+.product-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+.product-image {
+    max-width: 100%;
+    max-height: 100%; /* Ensure the image does not exceed its container */
+    object-fit: fill;
+    height: 350px;    border-radius: 10px;
+}
+.product-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+}
+.product-category{
+    font-size:12px ;
+}
+.product-description {
+    font-size: 18px;
+    color: #666;
+}
+.price {
+    font-size: 24px;
+    color: #e67e22;
+    margin: 10px 0;
 }

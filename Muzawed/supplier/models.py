@@ -7,9 +7,6 @@ User = get_user_model()
 class Supplier(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     logo = models.ImageField(upload_to="supplier_logos/", null=True, blank=True)
-    status = models.CharField(
-        choices=[("active", "متاح"), ("inactive", "غير متاح")], max_length=10
-    )
     supply_sector = models.CharField(
         max_length=50,
         choices=[
@@ -22,13 +19,18 @@ class Supplier(models.Model):
         max_length=50,
         choices=[("fast", "سريع"), ("shipping", "شحن"), ("both", "كلاهما")],
     )
-    order_lead_time_days = models.IntegerField()
+    order_lead_time_days = models.IntegerField(null=True, blank=True)
     is_available = models.BooleanField(default=True)
     unavailable_from = models.DateTimeField(null=True, blank=True)
     unavailable_to = models.DateTimeField(null=True, blank=True)
+    fast_service_details = models.CharField(max_length=255, blank=True)
+    late_payment_options = models.BooleanField(default=False)
+    supply_days = models.CharField(
+        max_length=6,
+        help_text="Days the supplier is available to supply (e.g., 'Saturday to Thursday')",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    official_holidays = models.CharField(max_length=50)
 
     @property
     def logo_url(self):
@@ -43,10 +45,22 @@ class Supplier(models.Model):
 
 
 class Branch(models.Model):
-    supplier = models.ManyToManyField(
-        Supplier, related_name="branches"
+    CITY_CHOICES = [
+        ("riyadh", "الرياض"),
+        ("jeddah", "جدة"),
+        ("mecca", "مكة"),
+        ("medina", "المدينة"),
+        ("dammam", "الدمام"),
+        ("khobar", "الخبر"),
+        ("tabuk", "تبوك"),
+        ("abha", "أبها"),
+        ("hail", "حائل"),
+        ("najran", "نجران"),
+    ]
+    supplier = models.ForeignKey(
+        Supplier, related_name="branches", on_delete=models.CASCADE
     )
-    city = models.CharField(max_length=100)
+    city = models.CharField(max_length=100, choices=CITY_CHOICES)
 
     def __str__(self):
         return f"{self.supplier.user.username} - {self.city}"
@@ -92,15 +106,9 @@ class CommercialInfo(models.Model):
         return f"{self.supplier.user.username} - Commercial Info"
 
 
-class SupplyMethod(models.Model):
+class SupplyDetail(models.Model):
     supplier = models.OneToOneField(
         Supplier, on_delete=models.CASCADE, related_name="supply_method"
-    )
-    fast_service_details = models.CharField(max_length=255, blank=True)
-    late_payment_options = models.BooleanField(default=False)
-    supply_days = models.CharField(
-        max_length=100,
-        help_text="Days the supplier is available to supply (e.g., 'Saturday to Thursday')",
     )
     supply_type = models.CharField(
         max_length=50,

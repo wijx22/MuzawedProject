@@ -1,0 +1,38 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">إرسال شكوى جديدة</h2>
+
+    <form method="post" enctype="multipart/form-data" class="shadow p-4 rounded bg-light">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="category" class="form-label">الفئة:</label>
+            <select name="category" id="category" class="form-select" required>
+                <option value="supplier">ضد المورد</option>
+                <option value="product">مشكلة في المنتج</option>
+                <option value="payment">مشكلة في الدفع</option>
+                <option value="other">أخرى</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="subject" class="form-label">الموضوع:</label>
+            <input type="text" name="subject" id="subject" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">الوصف:</label>
+            <textarea name="description" id="description" rows="5" class="form-control" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="attachment" class="form-label">ملف مرفق (اختياري):</label>
+            <input type="file" name="attachment" id="attachment" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">إرسال الشكوى</button>
+    </form>
+</div>
+{% endblock %}
