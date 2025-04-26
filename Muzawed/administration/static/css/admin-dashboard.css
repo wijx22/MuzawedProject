@@ -154,3 +154,21 @@ body {
   height: 200px;
   position: relative;
 }
+
+/* في الشاشات الصغيرة نخفي أعمدة معينة */
+
+.bg-dark-green {
+  background-color: #0a371d !important;
+  color: #000;
+}
+
+/* في الشاشات الصغيرة نخفي أعمدة معينة */
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none;
+  }
+  .table td, .table th {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+}

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from accounts.models import ProfileBeneficiary, SupplierProfile
 from django.contrib.auth import get_user_model
-
+from main.models import Contact
 User = get_user_model()
 
 def dashboard(request):
@@ -34,3 +34,10 @@ def beneficiary_list_view(request):
         'beneficiaries': beneficiaries
     })
 
+
+
+def contact_messages_list_view(request):
+    messages = Contact.objects.all().order_by('-created_at')
+    return render(request, 'administration/contact_list.html', {
+        'messages': messages
+    })
