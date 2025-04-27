@@ -4,7 +4,19 @@ body {
     font-family: 'Tajawal', sans-serif;
     background-color: #F3F1EC;
     color: #1F3F2E;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
+/*     ترتيب اماكن الهيدر والفوتر    */
+main {
+    flex: 1; 
+}
+
+html, body {
+    height: 100%;
+  }
+
 
 /*          الهيدر           */
 
@@ -129,8 +141,4 @@ a {
 
 a:hover {
   color: #6AA894; 
-}
-
-main {
-    flex: 1; 
 }

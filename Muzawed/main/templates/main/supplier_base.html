@@ -21,32 +21,7 @@
       <a class="navbar-brand" href="#">
         <img src="{% static 'img/logo.svg' %}" alt="مزود" width="70">
       </a>
-  
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#supplierNavbar"
-        aria-controls="supplierNavbar" aria-expanded="false" aria-label="تبديل القائمة">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-  
-      <div class="collapse navbar-collapse justify-content-center" id="supplierNavbar">
-        <ul class="navbar-nav text-center">
-          <li class="nav-item">
-            <a class="nav-link" href="#">الرئيسية</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">منتجاتي</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">الطلبات</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">سجل الطلبات</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">تعديل الحساب</a>
-          </li>
-        </ul>
-      </div>
-  
+
       <div class="d-none d-lg-block">
         <a href="{% url 'accounts:log_out' %}" class="btn btn-outline-danger">تسجيل الخروج</a>
       </div>
@@ -54,8 +29,26 @@
     </div>
   </nav>
   <main>
-    {% block content %}
-    {% endblock %}
+    {% if messages %}
+    <div class="container mt-3">
+      {% for message in messages %}
+        {% if 'success' in message.tags %}
+          <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        {% elif 'error' in message.tags %}
+          <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+        {% elif 'warning' in message.tags %}
+          <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+        {% else %}
+          <div class="alert alert-info alert-dismissible fade show text-center" role="alert">
+        {% endif %}
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+          </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  {% block content %}
+  {% endblock %}
   </main>
 
   
