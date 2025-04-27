@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Supplier
+from .models import Branch, Supplier
 
 
 class SupplierForm(forms.ModelForm):
@@ -22,3 +22,9 @@ class SupplierForm(forms.ModelForm):
             "unavailable_from": forms.DateTimeInput(attrs={"type": "datetime-local"}),
             "unavailable_to": forms.DateTimeInput(attrs={"type": "datetime-local"}),
         }
+
+
+class BranchForm(forms.ModelForm):
+    class Meta:
+        model = Branch
+        fields = ["city"]
