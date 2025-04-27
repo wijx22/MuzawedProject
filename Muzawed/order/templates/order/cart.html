@@ -1,0 +1,132 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}العربة {% endblock %}
+{% block ref %}
+
+{% endblock %}
+
+{% block content %}
+
+<section class="h-100">
+    <div class="container h-100 py-5">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-7">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-normal mb-0">سلة التسوق</h3>
+                </div>
+                {%for item in items%}
+                <div class="card rounded-3 mb-4">
+                    <div class="card-body p-4">
+                        <div class="row d-flex justify-content-between align-items-center">
+                            <div class="col-4">
+                                {% if item.image %}
+                                <img src="{{ item.image.url }}" class="img-fluid rounded-3" />
+                                {% else %}
+                                <img src="{% static 'image/default.png' %}" class="img-fluid rounded-3" />
+                                {% endif %}
+                            </div>
+                            <div class="col-3">
+                                <p class="lead fw-normal mb-2">{{item.name}}</p>
+                                <p><span class="text-muted">الكمية :{{item.price}} </span> </p>
+                            </div>
+                            <!-- <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
+                                            onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+
+                                        <input id="form1" min="0" name="quantity" value="2" type="number"
+                                            class="form-control form-control-sm" />
+
+                                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
+                                            onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div> -->
+                            <div class="col-3 ">
+                                <h5 class="mb-0">{{item.price}} ﷼</h5>
+                            </div>
+                            <div class="col-1 text-end">
+                                <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {%endfor%}
+
+            </div>
+            <section class="col-12 col-md-5">
+
+                <div class="card p-5">
+
+                    <div class="container mt-5">
+                        <div class="payment-card">
+                            <h1>اتمام الطلب </h1>
+                            <form>
+                                <div class="mb-3">
+                                    <label class="form-label">اختر طريقة الدفع</label>
+                                    <div>
+                                        <input type="radio" id="cash" name="paymentMethod" value="cash" checked>
+                                        <label for="cash">نقد</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="card" name="paymentMethod" value="card">
+                                        <label for="card">بطاقة</label>
+                                    </div>
+                                </div>
+
+                                <div id="cardDetails" class="d-none">
+                                    <div class="mb-3">
+                                        <label for="cardholderName" class="form-label">Cardholder Name</label>
+                                        <input type="text" class="form-control" id="cardholderName"
+                                            placeholder="John Doe">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="cardNumber" class="form-label">Card Number</label>
+                                        <input type="text" class="form-control" id="cardNumber"
+                                            placeholder="1234 5678 9012 3456">
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <label for="expirationDate" class="form-label">Expiration Date</label>
+                                            <input type="text" class="form-control" id="expirationDate"
+                                                placeholder="MM/YY">
+                                        </div>
+                                        <div class="col">
+                                            <label for="cvv" class="form-label">CVV</label>
+                                            <input type="text" class="form-control" id="cvv" placeholder="123">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" data-mdb-button-init data-mdb-ripple-init
+                                    class="btn btn-warning btn-block btn-lg w-100">اتمام الطلب</button>
+                            </form>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </section>
+        </div>
+    </div>
+</section>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('input[name="paymentMethod"]').change(function () {
+            if ($(this).val() === 'card') {
+                $('#cardDetails').removeClass('d-none');
+            } else {
+                $('#cardDetails').addClass('d-none');
+            }
+        });
+    });
+</script>
+{%endblock%}
