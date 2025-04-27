@@ -130,3 +130,7 @@ a {
 a:hover {
   color: #6AA894; 
 }
+
+main {
+    flex: 1; 
+}
