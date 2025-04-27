@@ -7,7 +7,6 @@ class SupplierForm(forms.ModelForm):
     class Meta:
         model = Supplier
         fields = [
-            "user",
             "logo",
             "supply_sector",
             "delivery_service",

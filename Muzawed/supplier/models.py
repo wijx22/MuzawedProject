@@ -6,7 +6,7 @@ User = get_user_model()
 
 class Supplier(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    logo = models.ImageField(upload_to="supplier_logos/", null=True, blank=True)
+    logo = models.ImageField(upload_to="Media/supplier_logos/", null=True, blank=True)
     supply_sector = models.CharField(
         max_length=50,
         choices=[
@@ -31,12 +31,24 @@ class Supplier(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    rejection_reason = models.TextField(blank=True, null=True)
+
+    STATUS_CHOICES = [
+        ("rejected", "رفض"),
+        ("accepted", "مقبول"),
+        ("pending", "قيد المعالجة"),
+    ]
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default="pending",
+    )
 
     @property
     def logo_url(self):
         if self.logo:
             return self.logo.url
-        return None
+        return "/static/images/placeholder.svg"
 
     def __str__(self):
         return (
@@ -76,13 +88,13 @@ class CommercialInfo(models.Model):
     store_address = models.CharField(max_length=255)
     # Legal Docs
     registration_document = models.FileField(
-        upload_to="commercial_documents/", null=True, blank=True
+        upload_to="Media/commercial_documents/", null=True, blank=True
     )
     license_document = models.FileField(
-        upload_to="commercial_documents/", null=True, blank=True
+        upload_to="Media/commercial_documents/", null=True, blank=True
     )
     tax_certificate = models.FileField(
-        upload_to="commercial_documents/", null=True, blank=True
+        upload_to="Media/commercial_documents/", null=True, blank=True
     )
 
     # Bank Details
@@ -108,14 +120,14 @@ class CommercialInfo(models.Model):
 
 class SupplyDetail(models.Model):
     supplier = models.OneToOneField(
-        Supplier, on_delete=models.CASCADE, related_name="supply_method"
+        Supplier, on_delete=models.CASCADE, related_name="supply_detail"
     )
     supply_type = models.CharField(
         max_length=50,
         choices=[
-            ("on_demand", "On-Demand"),
-            ("scheduled", "Scheduled"),
-            ("both", "Both"),
+            ("on_demand", "حسب الطلب"),
+            ("scheduled", "مجدول"),
+            ("both", "كلاهما"),
         ],
         default="scheduled",
     )
@@ -124,4 +136,4 @@ class SupplyDetail(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.supplier.user.username} - Supply Method"
+        return f"{self.supplier.user.username} - Supply Detail"
