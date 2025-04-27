@@ -14,39 +14,45 @@
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-
-ِ<nav class="navbar navbar-expand-lg py-3">
+  <nav class="navbar navbar-expand-lg py-3 bg-transparent">
     <div class="container d-flex align-items-center justify-content-between">
   
-      <a class="navbar-brand" href="#">
-        <img src="{% static 'img/logo.svg' %}" alt="مزود" width="70">
+      
+      <a class="navbar-brand" href="{% url 'main:index_view' %}">
+        <img src="{% static 'img/logo.svg' %}" alt="مزود" width="200">
       </a>
-
+  
+      
       <div class="d-none d-lg-block">
-        <a href="{% url 'accounts:log_out' %}" class="btn btn-outline-danger">تسجيل الخروج</a>
+        <a href="{% url 'accounts:log_out' %}" class="btn btn-outline-custom">تسجيل الخروج</a>
       </div>
   
     </div>
   </nav>
+  
   <main>
     {% if messages %}
     <div class="container mt-3">
       {% for message in messages %}
         {% if 'success' in message.tags %}
           <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> {{ message }}
         {% elif 'error' in message.tags %}
           <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-x-circle-fill me-2"></i> {{ message }}
         {% elif 'warning' in message.tags %}
           <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ message }}
         {% else %}
           <div class="alert alert-info alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i> {{ message }}
         {% endif %}
-            {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
           </div>
       {% endfor %}
     </div>
   {% endif %}
+
   {% block content %}
   {% endblock %}
   </main>
@@ -54,7 +60,7 @@
   
 <footer class="text-center py-4 mt-5">
   <div class="container">
-    <img src="{% static 'img/logo.png'%}" alt="شعار مزود" class="mb-3" width="80">
+    <img src="{% static 'img/logo.svg' %}" alt="مزود" class="mb-3" width="100">
     <div class="mb-2">
       <a href="https://facebook.com" class="text-dark me-2"><i class="fab fa-facebook-f"></i></a>
       <a href="https://linkedin.com" class="text-dark me-2"><i class="fab fa-linkedin-in"></i></a>

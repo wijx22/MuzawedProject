@@ -16,11 +16,12 @@
 </head>
 <body>
 
+<!-- هيدر الموقع -->
 <nav class="navbar navbar-expand-lg py-3">
   <div class="container d-flex align-items-center justify-content-between">
 
     <a class="navbar-brand" href="{% url 'main:index_view' %}">
-      <img src="{% static 'img/logo.svg' %}" alt="مزود" width="70">
+      <img src="{% static 'img/logo.svg' %}" alt="مزود" width="200">
     </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -30,58 +31,71 @@
 
     <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
       <ul class="navbar-nav text-center">
-        <li class="nav-item">
-          <a class="nav-link mx-2" href="{% url 'main:index_view' %}">الرئيسية</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-2" href="#">منتجاتنا</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-2" href="{% url 'main:contact_view' %}">تواصل معنا</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-2" href="{% url 'main:about_view' %}">عن مزود</a>
-        </li>
+        <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:index_view' %}">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link mx-2" href="#">منتجاتنا</a></li>
+        <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:contact_view' %}">تواصل معنا</a></li>
+        <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:about_view' %}">عن مزود</a></li>
       </ul>
     </div>
 
-    <div class="d-none d-lg-block">
-      {% if request.user.is_authenticated %}
-        <a href="{% url 'accounts:log_out' %}" class="btn btn-outline-danger">تسجيل الخروج</a>
-      {% else %}
-        <a href="{% url 'accounts:sign_in' %}" class="btn btn-primary-custom">تسجيل الدخول</a>
-      {% endif %}
-    </div>
-
+    {% if request.user.is_authenticated %}
+      <div class="d-flex gap-2 align-items-center">
+        <img src="{% static 'img/profle.png' %}" class="rounded-circle" width="40" height="40" alt="صورة المستخدم">
+        <div class="dropdown">
+          <a class="btn btn-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ request.user.username }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            {% if request.user.supplierprofile %}
+            <li><a class="dropdown-item" href="{% url 'accounts:supplier_profile_view' request.user.username %}">الملف الشخصي</a></li>
+            {% else %}
+              <li><a class="dropdown-item" href="{% url 'accounts:beneficiary_profile_view' request.user.username%}">الملف الشخصي</a></li>
+            {% endif %}
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="{% url 'accounts:log_out' %}?next={{ request.path }}">تسجيل الخروج</a></li>
+          </ul>
+        </div>
+      </div>
+    {% else %}
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-custom" href="{% url 'accounts:sign_in' %}">تسجيل الدخول</a>
+        <a class="btn btn-primary-custom" href="{% url 'accounts:sign_up_beneficiary' %}">إنشاء حساب</a>
+      </div>
+    {% endif %}
   </div>
 </nav>
 
+
 <main class="mt-4">
   {% if messages %}
-  <div class="container mt-3">
-    {% for message in messages %}
-      {% if 'success' in message.tags %}
-        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
-      {% elif 'error' in message.tags %}
-        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
-      {% elif 'warning' in message.tags %}
-        <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
-      {% else %}
-        <div class="alert alert-info alert-dismissible fade show text-center" role="alert">
-      {% endif %}
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
-        </div>
-    {% endfor %}
-  </div>
-{% endif %}
+    <div class="container mt-3">
+      {% for message in messages %}
+        {% if 'success' in message.tags %}
+          <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> {{ message }}
+        {% elif 'error' in message.tags %}
+          <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-x-circle-fill me-2"></i> {{ message }}
+        {% elif 'warning' in message.tags %}
+          <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ message }}
+        {% else %}
+          <div class="alert alert-info alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i> {{ message }}
+        {% endif %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+          </div>
+      {% endfor %}
+    </div>
+  {% endif %}
 
-{% block content %}{% endblock %}
+  {% block content %}{% endblock %}
 </main>
 
+<!-- فوتر الموقع -->
 <footer class="text-center py-4 mt-5">
   <div class="container">
-    <img src="{% static 'img/logo.png'%}" alt="شعار مزود" class="mb-3" width="80">
+    <img src="{% static 'img/logo.svg' %}" alt="مزود" class="mb-3" width="100">
     <div class="mb-2">
       <a href="https://facebook.com" class="text-dark me-2"><i class="fab fa-facebook-f"></i></a>
       <a href="https://linkedin.com" class="text-dark me-2"><i class="fab fa-linkedin-in"></i></a>
