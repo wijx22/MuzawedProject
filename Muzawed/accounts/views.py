@@ -21,11 +21,11 @@ def sign_up_beneficiary(request: HttpRequest):
             profile = ProfileBeneficiary(user=new_user,name=new_user.get_full_name(),contact_info=request.POST['contact_info'], address=request.POST['address'])
             profile.save()
             
-            messages.success(request,"مرحبًا بك تم تسجيلك بنجاح", "alert-success")
+            messages.success(request,"مرحبًا بك تم تسجيلك بنجاح")
             return redirect("accounts:sign_in")
         
         except Exception as e:
-            messages.error(request, "تعذر تسجيل المستخدم. حاول مرة أخرى.", "alert-danger")
+            messages.error(request, "تعذر تسجيل المستخدم. حاول مرة أخرى.")
             print(e)
 
 
@@ -45,7 +45,7 @@ def sign_in(request:HttpRequest):
             messages.success(request,"مرحبًا بك من جديد", "alert-success" )
             return redirect(request.GET.get("next", "/"))
         else:
-            messages.error(request, "اسم المستخدم أو كلمة المرور غير صالحة", "alert-danger")
+            messages.error(request, "اسم المستخدم أو كلمة المرور غير صالحة")
 
     
 
@@ -62,7 +62,7 @@ def beneficiary_profile_view(request: HttpRequest, user_name):
     try:
         user = User.objects.get(username=user_name)
         if request.user != user or not ProfileBeneficiary.objects.filter(user=user).exists():
-            messages.error(request, "لا يحق لك مشاهدة هذا الملف الشخصي.", "alert-danger")
+            messages.error(request, "لا يحق لك مشاهدة هذا الملف الشخصي.")
             return redirect('accounts:sign_in')
         
         #if SupplierProfile.objects.filter(user=user).exists():
@@ -88,11 +88,11 @@ def beneficiary_profile_view(request: HttpRequest, user_name):
 
 def update_beneficiary_profile(request: HttpRequest):
     if not request.user.is_authenticated:
-        messages.warning(request, 'يمكن فقط للمستخدمين المسجلين تحديث الملف الشخصي', 'alert-warning')
+        messages.warning(request, 'يمكن فقط للمستخدمين المسجلين تحديث الملف الشخصي')
         return redirect('accounts:sign_in')
     
     if SupplierProfile.objects.filter(user=request.user).exists():
-        messages.error(request, "لا يمكن للموردين تحديث ملف المستفيد", "alert-danger")
+        messages.error(request, "لا يمكن للموردين تحديث ملف المستفيد")
         return redirect('/')  
 
     try:
@@ -136,11 +136,11 @@ def sign_up_supplier(request: HttpRequest):
             profile.save()
 
             
-            messages.success(request, "تم تسجيل المورد بنجاح", "alert-success")
+            messages.success(request, "تم تسجيل المورد بنجاح")
             return redirect("accounts:sign_in")
         
         except Exception as e:
-            messages.error(request, "تعذّر تسجيل المورّد. حاول مجددًا.", "alert-danger")
+            messages.error(request, "تعذّر تسجيل المورّد. حاول مجددًا.")
             print(e)
 
 
@@ -149,14 +149,14 @@ def sign_up_supplier(request: HttpRequest):
 
 def supplier_profile_view(request: HttpRequest, user_name):
     if not request.user.is_authenticated:
-        messages.error(request, "يجب عليك تسجيل الدخول لمشاهدة الملف الشخصي.", "alert-danger")
+        messages.error(request, "يجب عليك تسجيل الدخول لمشاهدة الملف الشخصي.")
         return redirect('accounts:sign_in')
 
     try:
         user = User.objects.get(username=user_name)
 
         if request.user != user:
-            messages.error(request, "لا يحق لك مشاهدة هذا الملف الشخصي.", "alert-danger")
+            messages.error(request, "لا يحق لك مشاهدة هذا الملف الشخصي.")
             return redirect('accounts:sign_in')
 
         profile, created = SupplierProfile.objects.get_or_create(user=user)
@@ -167,7 +167,7 @@ def supplier_profile_view(request: HttpRequest, user_name):
         })
 
     except User.DoesNotExist:
-        messages.error(request, "المستخدم غير موجود.", "alert-danger")
+        messages.error(request, "المستخدم غير موجود.")
         return redirect('main:index_view')
 
     except Exception as e:
@@ -200,7 +200,7 @@ def supplier_profile_view(request: HttpRequest, user_name):
 
 def update_supplier_profile(request: HttpRequest):
     if not request.user.is_authenticated:
-        messages.warning(request, 'يمكن للمورد المسجل فقط تحديث الملف الشخصي', 'alert-warning')
+        messages.warning(request, 'يمكن للمورد المسجل فقط تحديث الملف الشخصي')
         return redirect('accounts:sign_in')
     
     try:
@@ -217,10 +217,10 @@ def update_supplier_profile(request: HttpRequest):
             profile.contact_info = request.POST.get('contact_info', profile.contact_info)
             profile.save()
 
-            messages.success(request, 'تم تحديث الملف الشخصي بنجاح', 'alert-success')
+            messages.success(request, 'تم تحديث الملف الشخصي بنجاح')
 
     except Exception as e:
-        messages.error(request, "لم أتمكن من تحديث الملف الشخصي", "alert-danger")
+        messages.error(request, "لم أتمكن من تحديث الملف الشخصي")
         print(e)
     
     return render(request, 'accounts/supplier/update_profile.html')
@@ -229,7 +229,7 @@ def update_supplier_profile(request: HttpRequest):
 def log_out(request: HttpRequest):
 
     logout(request)
-    messages.success(request, "تم تسجيل الخروج بنجاح", "alert-warning")
+    messages.success(request, "تم تسجيل الخروج بنجاح")
     return redirect(request.GET.get("next", "/"))
 
 

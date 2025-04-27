@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
         datasets: [{
           label: 'عدد المستخدمين',
           data: [suppliersCount, beneficiariesCount, totalUsers],
-          backgroundColor: ['#8FBC8F', '#356150', '#2E4B43'],
+          backgroundColor: ['#204a3a', '#e67e22', '#4A3A20'],
           borderWidth: 1
         }]
       },
