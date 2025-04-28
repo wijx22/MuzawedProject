@@ -1,0 +1,131 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %}إضافة مورد جديد{% endblock %}
+
+{% block content %}
+    <style>
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px auto;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        }
+        .submit-btn {
+            background-color: #2c5545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            width: 100%;
+            font-weight: 500;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+    </style>
+
+    <div class="container">
+        <!-- Form Container -->
+        <div class="form-container">
+            <h3 class="text-center mb-4">إضافة مورد جديد</h3>
+            
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <!-- Logo Upload -->
+                <div class="mb-3">
+                    <label for="supplierLogo" class="form-label">شعار المورد</label>
+                    <input class="form-control" type="file" id="supplierLogo" accept="image/*"  name="logo" required>
+                </div>
+
+                <!-- Supply Sector -->
+                <div class="mb-3">
+                    <label for="supplySector" class="form-label">قطاع التوريد</label>
+                    <select class="form-select" id="supplySector" required name="supply_sector">
+                        <option value="" selected disabled>اختر قطاع التوريد</option>
+                        <option value="retail">بيع بالتجزئة</option>
+                        <option value="wholesale">بالجملة</option>
+                        <option value="both">كلاهما</option>
+                    </select>
+                </div>
+
+                <!-- Delivery Service -->
+                <div class="mb-3">
+                    <label for="deliveryService" class="form-label">خدمة التوصيل</label>
+                    <select class="form-select" id="deliveryService" name="delivery_service" required>
+                        <option value="" selected disabled>اختر خدمة التوصيل</option>
+                        <option value="fast">سريع</option>
+                        <option value="shipping">شحن</option>
+                        <option value="both">كلاهما</option>
+                    </select>
+                </div>
+
+                <!-- Order Lead Time -->
+                <div class="mb-3">
+                    <label for="orderLeadTime" class="form-label">مدة تنفيذ الطلب (بالأيام)</label>
+                    <input type="number" class="form-control" id="orderLeadTime" min="0" name="order_lead_time_days" required>
+                </div>
+
+                <!-- Availability -->
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isAvailable" name="is_available" checked>
+                        <label class="form-check-label" for="isAvailable">
+                            متاح حالياً
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Unavailable Period -->
+                <div class="row mb-3" id="unavailablePeriod" style="display: none;">
+                    <div class="col-md-6">
+                        <label for="unavailableFrom" class="form-label">غير متاح من</label>
+                        <input type="datetime-local" class="form-control" id="unavailableFrom" name="unavailable_from">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="unavailableTo" class="form-label">غير متاح إلى</label>
+                        <input type="datetime-local" class="form-control" id="unavailableTo" name="unavailable_to">
+                    </div>
+                </div>
+
+                <!-- Fast Service Details -->
+                <div class="mb-3">
+                    <label for="fastServiceDetails" class="form-label">تفاصيل الخدمة السريعة</label>
+                    <input type="text" class="form-control" id="fastServiceDetails" maxlength="255" name="fast_service_details">
+                </div>
+
+                <!-- Late Payment Options -->
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="latePaymentOptions" name="late_payment_options">
+                        <label class="form-check-label" for="latePaymentOptions">
+                            خيارات الدفع المتأخر
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Supply Days -->
+                <div class="mb-3">
+                    <label for="supplyDays" class="form-label">أيام التوريد</label>
+                    <input type="text" class="form-control" id="supplyDays" placeholder="مثال: السبت إلى الخميس" name="supply_days" required>
+                    <div class="form-text">أيام الأسبوع التي يكون فيها المورد متاحًا للتوريد</div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn mt-4">إضافة المورد</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Toggle unavailable period fields based on availability checkbox
+        document.getElementById('isAvailable').addEventListener('change', function() {
+            const unavailablePeriod = document.getElementById('unavailablePeriod');
+            if (this.checked) {
+                unavailablePeriod.style.display = 'none';
+            } else {
+                unavailablePeriod.style.display = 'flex';
+            }
+        });
+    </script>
+{% endblock %}

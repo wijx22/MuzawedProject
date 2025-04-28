@@ -1,0 +1,16 @@
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <h3>معلوماتك التجارية:</h3>
+    <div>
+        <p>اسم المتجر: {{ commercial_info.store_name }}</p>
+        <p>وصف المتجر: {{ commercial_info.store_description }}</p>
+        <p>عنوان المتجر: {{ commercial_info.store_address }}</p>
+        <!-- يمكنك إضافة المزيد من الحقول إذا كانت موجودة -->
+    </div>
+    
+    <h3>طلب التوريد:</h3>
+    {{ form.as_p }}
+    
+    <button type="submit">إرسال طلب التوريد</button>
+</form>
