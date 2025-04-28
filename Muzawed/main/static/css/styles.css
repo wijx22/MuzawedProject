@@ -4,7 +4,19 @@ body {
     font-family: 'Tajawal', sans-serif;
     background-color: #F3F1EC;
     color: #1F3F2E;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
+/*     ترتيب اماكن الهيدر والفوتر    */
+main {
+    flex: 1; 
+}
+
+html, body {
+    height: 100%;
+  }
+
 
 /*          الهيدر           */
 
@@ -131,6 +143,33 @@ a:hover {
   color: #6AA894; 
 }
 
-main {
-    flex: 1; 
+.custom {
+    color: #FFFFFF; 
+    transition: 0.3s ease; 
 }
+
+.custom:hover {
+    color: #FFFFFF; 
+    font-weight: 500; 
+}
+
+
+/* يشيل اللون الازرق الافتراضي */
+.dropdown-menu .dropdown-item {
+    background-color: transparent;
+    color: #212529; 
+  }
+  
+
+  .dropdown-menu .dropdown-item:hover,
+  .dropdown-menu .dropdown-item:focus {
+    background-color: #f8f9fa; 
+    color: #006C48; 
+  }
+  
+  
+  .dropdown-menu .dropdown-item:active {
+    background-color: #f8f9fa;
+    color: #006C48;
+  }
+  
