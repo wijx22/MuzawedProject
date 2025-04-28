@@ -1,0 +1,40 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<h2>عرض الشكاوى</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>اسم المستخدم</th>
+            <th>الرسالة</th>
+            <th>الحالة</th>
+            <th>تاريخ الرسالة</th>
+            <th>رد</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for report in reports %}
+            <tr>
+                <td>{{ report.user.username }}</td>
+                <td>{{ report.description }}</td>
+                <td>
+                    {% if report.status == 'open' %}
+                        مفتوحة
+                    {% elif report.status == 'in_progress' %}
+                        قيد المعالجة
+                    {% else %}
+                        مغلقة
+                    {% endif %}
+                </td>
+                <td>{{ report.created_at }}</td>
+                <td>
+                    <a href="{% url 'support:reply_to_report_view' report.id %}">
+                        <i class="fas fa-reply"></i> <!-- أيقونة الرد -->
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{%endblock%}

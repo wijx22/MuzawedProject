@@ -34,7 +34,10 @@ class ReportReply(models.Model):
     responder = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     message = models.TextField()
     attachment = models.FileField(upload_to='reply_attachments/', null=True, blank=True)
+    reply_to = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='child_replies')
+
     created_at = models.DateTimeField(auto_now_add=True)
+    is_admin_reply = models.BooleanField(default=False)
 
     def __str__(self):
         return f"رد على: {self.report.subject} من {self.responder}"

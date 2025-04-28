@@ -1,0 +1,115 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<!--<div>
+<h2>الردود على الشكوى: {{ report.subject }}</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>النوع</th>
+            <th>المستخدم</th>
+            <th>الرسالة</th>
+            <th>تاريخ الإرسال</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reply in replies %}
+        <tr>
+            <td>
+                {% if reply.is_admin_reply %}
+                    رد من الأدمن
+                {% else %}
+                    رد من المستخدم
+                {% endif %}
+            </td>
+            <td>{{ reply.responder.username }}</td>
+            <td>{{ reply.message }}</td>
+            <td>{{ reply.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+</div>
+
+
+test5555
+<div>
+  <h2>الردود على الشكوى: {{ report.subject }}</h2>
+  
+  <table class="table table-bordered">
+      <thead>
+          <tr>
+              <th>نوع الرد</th>
+              <th>الرسالة</th>
+              <th>تاريخ الإرسال</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for reply in replies %}
+          <tr>
+              <td>
+                  {% if reply.is_admin_reply %}
+                      رد الأدمن
+                  {% else %}
+                      رد المستخدم
+                  {% endif %}
+              </td>
+              <td>{{ reply.message }}</td>
+              <td>{{ reply.created_at }}</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+  
+  <br>
+  </div>-->
+  
+
+
+  <div>
+    <h2>الردود على الشكوى: {{ report.subject }}</h2>
+    
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>نوع الرد</th>
+                <th>الرسالة</th>
+                <th>تاريخ الإرسال</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reply in replies %}
+            <tr>
+                <td>
+                    {% if reply.is_admin_reply %}
+                        رد الأدمن
+                    {% else %}
+                        رد المستخدم
+                    {% endif %}
+                </td>
+                <td>{{ reply.message }}</td>
+                <td>{{ reply.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <br>
+  
+    {% if not request.user.is_staff %}  <!-- تأكد من أن المستخدم ليس أدمن -->
+        <h3>رد على الأدمن</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="message">الرسالة</label>
+                <textarea name="message" class="form-control" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">إرسال الرد</button>
+        </form>
+    {% endif %}
+  </div>
+  
+{% endblock %}

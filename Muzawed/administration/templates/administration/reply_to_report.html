@@ -1,0 +1,70 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div>
+<!-- reports/reply_to_report.html page admin is reply  -->
+<h2>رد على الشكوى: {{ report.subject }}</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="message">الرد:</label>
+        <textarea name="message" id="message" class="form-control" required></textarea>
+    </div>
+    
+    <div class="form-group">
+        <label for="status">تغيير الحالة:</label>
+        <select name="status" id="status" class="form-control">
+            <option value="open" {% if report.status == 'open' %}selected{% endif %}>مفتوحة</option>
+            <option value="in_progress" {% if report.status == 'in_progress' %}selected{% endif %}>قيد المعالجة</option>
+            <option value="closed" {% if report.status == 'closed' %}selected{% endif %}>مغلقة</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">إرسال الرد</button>
+</form>
+
+<!--<h3>الردود السابقة:</h3>
+<ul>
+    {% for reply in replies %}
+        <li>
+            {% if reply.is_admin_reply %}
+                <strong>رد من الأدمن:</strong>
+            {% else %}
+                <strong>رد من المستخدم:</strong>
+            {% endif %}
+            {{ reply.responder.username }}: {{ reply.message }} ({{ reply.created_at }})
+        </li>
+    {% endfor %}
+</ul>
+
+
+<h3>الردود السابقة:</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>النوع</th>
+            <th>المستخدم</th>
+            <th>الرسالة</th>
+            <th>تاريخ الإرسال</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reply in replies %}
+        <tr>
+            <td>
+                {% if reply.is_admin_reply %}
+                    رد من الأدمن
+                {% else %}
+                    رد من المستخدم
+                {% endif %}
+            </td>
+            <td>{{ reply.responder.username }}</td>
+            <td>{{ reply.message }}</td>
+            <td>{{ reply.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>-->
+
+{% endblock %}

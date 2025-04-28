@@ -161,6 +161,11 @@ def supplier_profile_view(request: HttpRequest, user_name):
 
         profile, created = SupplierProfile.objects.get_or_create(user=user)
 
+        if not profile.is_active:
+            messages.error(request, "حسابك قيد المراجعة من قبل الإدارة. سيتم تفعيله قريبًا.")
+            return redirect('main:index_view') 
+
+
         return render(request, 'accounts/supplier/supplier_profile.html', {
             'user': user,
             'profile': profile
