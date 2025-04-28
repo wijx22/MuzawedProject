@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Branch, Supplier
+from .models import Branch, Supplier, SupplyRequest, CommercialInfo
 
 
 class SupplierForm(forms.ModelForm):
@@ -28,3 +28,16 @@ class BranchForm(forms.ModelForm):
     class Meta:
         model = Branch
         fields = ["city"]
+
+
+
+
+class CommercialInfoForm(forms.ModelForm):
+    class Meta:
+        model = CommercialInfo
+        exclude = ['supplier'] 
+
+class SupplyRequestForm(forms.ModelForm):
+    class Meta:
+        model = SupplyRequest
+        exclude = ['reason', 'status']  

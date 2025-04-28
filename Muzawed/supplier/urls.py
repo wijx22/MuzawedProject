@@ -13,4 +13,6 @@ urlpatterns = [
     ),
     path("branch-create/", views.branch_create, name="branch_create"),
     path("branch-delete/", views.branch_delete, name="branch_delete"),
+    path("crete/request/", views.crete_request_view,  name='crete_request_view'),
+    path('commercial-info/', views.add_commercial_info_view, name='commercial_info_form')
 ]

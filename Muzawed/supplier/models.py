@@ -108,8 +108,8 @@ class CommercialInfo(models.Model):
     commercial_contact_phone = models.CharField(max_length=20, blank=True, null=True)
     commercial_contact_email = models.EmailField(blank=True, null=True)
 
-    # Status
-    is_verified = models.BooleanField(default=False)
+    # Status reson add this?
+    #is_verified = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -137,3 +137,19 @@ class SupplyDetail(models.Model):
 
     def __str__(self):
         return f"{self.supplier.user.username} - Supply Detail"
+
+
+
+
+class SupplyRequest(models.Model):
+    commercialInfo = models.ForeignKey(CommercialInfo, on_delete=models.CASCADE)
+    request_date = models.DateTimeField(auto_now_add=True)
+    reason = models.CharField(max_length=250)
+    STATUS_CHOICES = [
+        ('pending', 'قيد الانتظار'),
+        ('accepted', 'مقبولة'),
+        ('rejected', 'مرفوضة'),
+    ]
+    
+    status = models.CharField(max_length=255, choices=STATUS_CHOICES, default='pending')
+

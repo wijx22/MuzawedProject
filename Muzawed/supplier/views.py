@@ -1,10 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import BranchForm, SupplierForm
-from .models import Branch, Supplier
+from .forms import BranchForm, SupplierForm, SupplyRequestForm, CommercialInfoForm
+from .models import Branch, Supplier , CommercialInfo, SupplyRequest
 
 
 @login_required
@@ -63,3 +63,60 @@ def branch_delete(request):
 
     messages.success(request, "غير قادر على حذف الفرع!")
     return redirect("supplier:supplier_details")
+
+
+
+
+
+
+def add_commercial_info_view(request):
+    supplier = Supplier.objects.filter(user=request.user).first()
+    if not supplier:
+        return redirect("supplier:create_supplier_details")
+
+    form = CommercialInfoForm(request.POST or None, request.FILES or None)
+
+    if request.method == 'POST' and form.is_valid():
+        commercial_info = form.save(commit=False)
+        commercial_info.supplier = request.user.supplier
+        commercial_info.save()
+        messages.success(request, 'تم بنجاح إضافة المعلومات التجارية للمورد.')
+
+    return render(request, 'supplier/commercial_info_form.html', {'form': form})
+
+
+def update_commercial_info_view(request):
+    pass
+
+
+
+
+def crete_request_view(request: HttpRequest):
+    supplier = Supplier.objects.get(user=request.user)
+    
+    commercial_info = CommercialInfo.objects.filter(supplier=supplier).first()
+
+    if not commercial_info:
+        messages.error(request, 'يرجى إضافة معلوماتك التجارية قبل إرسال طلب التوريد.')
+        return redirect('supplier:add_commercial_info')
+    
+        
+        
+    existing_request = SupplyRequest.objects.filter(commercialInfo=commercial_info, status='pending').first()
+    if existing_request:
+        messages.error(request, 'لقد قمت بالفعل بإرسال طلب توريد قيد الانتظار.')
+        return redirect('supplier:commercial_info_form')  
+
+
+    if request.method == 'POST':
+        form = SupplyRequestForm(request.POST)
+        if form.is_valid():
+            supply_request = form.save(commit=False)
+            supply_request.commercialInfo = commercial_info  
+            supply_request.save()
+            messages.success(request, 'تم إرسال طلب التوريد بنجاح.')
+            return redirect('supplier:commercial_info_form') 
+    else:
+        form = SupplyRequestForm()
+
+    return render(request, 'supplier/crete_request.html', {'form': form, 'commercial_info': commercial_info})
