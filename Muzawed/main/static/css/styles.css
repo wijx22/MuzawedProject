@@ -142,3 +142,34 @@ a {
 a:hover {
   color: #6AA894; 
 }
+
+.custom {
+    color: #FFFFFF; 
+    transition: 0.3s ease; 
+}
+
+.custom:hover {
+    color: #FFFFFF; 
+    font-weight: 500; 
+}
+
+
+/* يشيل اللون الازرق الافتراضي */
+.dropdown-menu .dropdown-item {
+    background-color: transparent;
+    color: #212529; 
+  }
+  
+
+  .dropdown-menu .dropdown-item:hover,
+  .dropdown-menu .dropdown-item:focus {
+    background-color: #f8f9fa; 
+    color: #006C48; 
+  }
+  
+  
+  .dropdown-menu .dropdown-item:active {
+    background-color: #f8f9fa;
+    color: #006C48;
+  }
+  

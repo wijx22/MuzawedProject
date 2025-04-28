@@ -42,24 +42,3 @@ def supplie_view(request):
     else:
         return redirect('main:index_view')  
     
-
-class CustomLoginView(LoginView):
-    template_name = 'accounts/signin.html'
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        user = self.request.user
-
-        if hasattr(user, 'supplierprofile'):
-            messages.success(self.request, "أهلاً بك كمورد في مزود! 🌟")
-        else:
-            messages.success(self.request, "أهلاً بك معنا في مزود! 🌿")
-
-        return response
-
-    def get_success_url(self):
-        user = self.request.user
-
-        if hasattr(user, 'supplierprofile'):
-            return reverse('main:supplie_view')  
-        return reverse('main:index_view')
