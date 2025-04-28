@@ -55,6 +55,24 @@
             font-size: 0.85rem;
             color: #6c757d;
         }
+        .branch-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .branch-actions {
+            width: 100px;
+        }
+        .modal-header, .modal-footer {
+            border-color: #e9ecef;
+        }
+        .modal-title {
+            color: #2c5545;
+            font-weight: 600;
+        }
+        .btn-add-branch {
+            background-color: #2c5545;
+            color: white;
+        }
     </style>
 
     <div class="container">
@@ -62,9 +80,9 @@
         <div class="details-container">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h3>تفاصيل المورد</h3>
-                <div>
+                <!-- <div>
                     <a href="#" class="btn action-btn"><i class="bi bi-pencil-square me-1"></i> تعديل</a>
-                </div>
+                </div> -->
             </div>
             
             <!-- Basic Info Section -->
@@ -134,7 +152,46 @@
                     </div>
                 </div>
             </div>
-
+            <!-- Branches Section -->
+            <div class="detail-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">الفروع</h5>
+                    <button class="btn btn-add-branch btn-sm" data-bs-toggle="modal" data-bs-target="#addBranchModal">
+                        <i class="bi bi-plus-circle me-1"></i> إضافة فرع
+                    </button>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered branch-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>المدينة</th>
+                                <th class="branch-actions">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="branchesTableBody">
+                            {% for branch in branches %}
+                            <tr data-branch-id="{{branch.id}}">
+                                <td>{{forloop.counter}}</td>
+                                <td>{{branch.get_city_display}}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger delete-branch" data-id="1">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Empty state for no branches -->
+                <div id="noBranchesMessage" class="text-center py-4" style="display: none;">
+                    <i class="bi bi-building text-muted" style="font-size: 2rem;"></i>
+                    <p class="mt-2 text-muted">لا توجد فروع مضافة حالياً</p>
+                </div>
+            </div>
             <!-- System Info Section -->
             <div class="detail-section">
                 <h5 class="mb-3">معلومات النظام</h5>
@@ -155,12 +212,139 @@
                     </div>
                 </div>
             </div>
+            <!-- Status Info Section -->
+            <div class="detail-section">
+                <h5 class="mb-3">معلومات الحالة</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="detail-label">حالة المورد</div>
+                        <div class="detail-value timestamp">
+                            {{supplier.get_status_display}}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="detail-label">ملحوظة اضافية</div>
+                        <div class="detail-value timestamp">
+                            {{supplier.rejection_reason|default_if_none:"لا يوجد"}}
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Action Buttons -->
             <div class="d-flex justify-content-end mt-4">
                 <a href="#" class="btn btn-outline-secondary me-2">العودة للقائمة</a>
-                <a href="#" class="btn action-btn"><i class="bi bi-pencil-square me-1"></i> تعديل</a>
+                <!-- <a href="#" class="btn action-btn"><i class="bi bi-pencil-square me-1"></i> تعديل</a> -->
             </div>
         </div>
     </div>
+
+    <!-- Add Branch Modal -->
+    <div class="modal fade" id="addBranchModal" tabindex="-1" aria-labelledby="addBranchModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBranchModalLabel">إضافة فرع جديد</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+                <form id="addBranchForm" method="post" action="{% url 'supplier:branch_create' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                                <label for="branchCity" class="form-label">المدينة</label>
+                                <select class="form-select" id="branchCity" name="city" required>
+                                    <option value="" selected disabled>اختر المدينة</option>
+                                    <option value="riyadh">الرياض</option>
+                                    <option value="jeddah">جدة</option>
+                                    <option value="mecca">مكة</option>
+                                    <option value="medina">المدينة</option>
+                                    <option value="dammam">الدمام</option>
+                                    <option value="khobar">الخبر</option>
+                                    <option value="tabuk">تبوك</option>
+                                    <option value="abha">أبها</option>
+                                    <option value="hail">حائل</option>
+                                    <option value="najran">نجران</option>
+                                </select>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-add-branch" id="saveBranchBtn">حفظ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal for Delete -->
+    <div class="modal fade" id="deleteBranchModal" tabindex="-1" aria-labelledby="deleteBranchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteBranchModalLabel">تأكيد الحذف</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+                <div class="modal-body">
+                    هل أنت متأكد من حذف هذا الفرع؟
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <form method="post" action="{% url 'supplier:branch_delete' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="branch_id">
+                        <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">حذف</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize variables
+            let branchToDelete = null;
+            
+            // Get DOM elements
+            const branchesTableBody = document.getElementById('branchesTableBody');
+            const noBranchesMessage = document.getElementById('noBranchesMessage');
+            const deleteBranchModal = new bootstrap.Modal(document.getElementById('deleteBranchModal'));
+            
+            // Check if there are branches and show/hide empty state
+            function checkBranches() {
+                if (branchesTableBody.children.length === 0) {
+                    noBranchesMessage.style.display = 'block';
+                } else {
+                    noBranchesMessage.style.display = 'none';
+                }
+            }
+            
+            // Delete branch (using event delegation)
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('delete-branch') || 
+                    (e.target.parentElement && e.target.parentElement.classList.contains('delete-branch'))) {
+                    
+                    // Get the button element
+                    const deleteBtn = e.target.classList.contains('delete-branch') ? 
+                                      e.target : e.target.parentElement;
+                    
+                    // Get branch ID
+                    branchToDelete = deleteBtn.closest('tr').getAttribute("data-branch-id");
+                    const branchField = document.querySelector('input[name="branch_id"]');
+
+                    // Update its value
+                    if (branchField) {
+                        branchField.value = branchToDelete;
+                    }
+                    console.log('branchToDelete:',branchToDelete);
+                    // Show confirmation modal
+                    deleteBranchModal.show();
+                }
+            });
+            
+            
+            // Initial check
+            checkBranches();
+        });
+    </script>
 {% endblock %}

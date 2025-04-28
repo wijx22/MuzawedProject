@@ -3,117 +3,172 @@
 
 {% block title %}العربة {% endblock %}
 {% block ref %}
+<link rel="stylesheet" href="{% static 'css/order_style.css' %}">
 
 {% endblock %}
 
 {% block content %}
-
-<section class="h-100">
-    <div class="container h-100 py-5">
+<section class="h-100 h-custom">
+    <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-12 col-md-7">
-
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="fw-normal mb-0">سلة التسوق</h3>
-                </div>
-                {%for item in items%}
-                <div class="card rounded-3 mb-4">
+            <div class="col">
+                <div class="card">
                     <div class="card-body p-4">
-                        <div class="row d-flex justify-content-between align-items-center">
-                            <div class="col-4">
-                                {% if item.image %}
-                                <img src="{{ item.image.url }}" class="img-fluid rounded-3" />
-                                {% else %}
-                                <img src="{% static 'image/default.png' %}" class="img-fluid rounded-3" />
-                                {% endif %}
+
+                        <div class="row">
+                            <!-- Items -->
+                            <div class="col-lg-7">
+
+
+
+                                <div class="d-flex  justify-content-between align-items-center mb-4">
+
+                                    <h2 class="fw-normal mb-0">سلة التسوق</h2>
+                                    <p class="mb-0">لديك {{items.count}} منتجات في السلة</p>
+                                </div>
+                                <h5 class="mb-3"></h5>
+                                <hr>
+                                <div style="max-height: 700px; overflow-y: auto;">
+                                    {%for item in items%}
+
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex flex-row align-items-center">
+                                                    <div>
+                                                        <img src={% if item.image %} "{{ item.image.url }}" {% else
+                                                            %} "{% static 'image/default.png' %}" {% endif %}
+                                                            class="img-fluid rounded-3" alt="product item"
+                                                            style="width: 65px;">
+                                                    </div>
+                                                    <div class="ms-3">
+                                                        <h5>{{item.name}} </h5>
+                                                        <p class="small mb-0">الكمية :{{item.price}}
+                                                            {{item.get_unit_display}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex flex-row align-items-center">
+                                                    <div style="width: 100px;">
+                                                        <h5 class="mb-0">{{item.price}} ﷼</h5>
+                                                    </div>
+                                                    <a href="#!" style="color: #cecece;"><i
+                                                            class="fas fa-trash-alt"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {%endfor%}
+                    
+
+                                </div>
+
+
                             </div>
-                            <div class="col-3">
-                                <p class="lead fw-normal mb-2">{{item.name}}</p>
-                                <p><span class="text-muted">الكمية :{{item.price}} </span> </p>
-                            </div>
-                            <!-- <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                            onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                                            <i class="fas fa-minus"></i>
+                            <!-- payment method -->
+                            <div class="col-lg-5">
+
+                                <div class="card bg-orange text-white rounded-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <h5 class="mb-0">اختر طريقة الدفع</h5>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div>
+                                                <input type="radio" id="cash" name="paymentMethod" value="cash" checked>
+                                                <label for="cash">نقد</label>
+                                            </div>
+                                            <div>
+                                                <input type="radio" id="late-payment" name="paymentMethod"
+                                                    value="late-payment">
+                                                <label for="late-payment">دفع آجل</label>
+                                            </div>
+                                            <div>
+                                                <input type="radio" id="card" name="paymentMethod" value="card">
+                                                <label for="card">بطاقة</label>
+                                            </div>
+                                        </div>
+
+
+
+                                        <form class="mt-4 d-none" id="cardDetails">
+                                            <p class="small mb-2">نوع البطاقة</p>
+                                            <a href="#!" type="submit" class="text-white"><i
+                                                    class="fab fa-cc-mastercard fa-2x me-2"></i></a>
+                                            <a href="#!" type="submit" class="text-white"><i
+                                                    class="fab fa-cc-visa fa-2x me-2"></i></a>
+                                            <div data-mdb-input-init class="form-outline form-white mb-3">
+                                                <input type="text" id="typeName" class="form-control form-control-lg"
+                                                    siez="17" placeholder="SABREEN BIN SALMAN" />
+                                                <label class="form-label" for="typeName">اسم حامل البطاقة</label>
+                                            </div>
+
+                                            <div data-mdb-input-init class="form-outline form-white mb-3">
+                                                <input type="text" id="typeText" class="form-control form-control-lg"
+                                                    siez="17" placeholder="1234 5678 9012 3457" minlength="19"
+                                                    maxlength="19" />
+                                                <label class="form-label" for="typeText">رقم البطاقة</label>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div data-mdb-input-init class="form-outline form-white">
+                                                        <input type="text" id="typeExp"
+                                                            class="form-control form-control-lg" placeholder="MM/YYYY"
+                                                            size="7" id="exp" minlength="7" maxlength="7" />
+                                                        <label class="form-label" for="typeExp">تاريخ الانتهاء</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div data-mdb-input-init class="form-outline form-white">
+                                                        <input type="password" id="typeText"
+                                                            class="form-control form-control-lg"
+                                                            placeholder="&#9679;&#9679;&#9679;" size="1" minlength="3"
+                                                            maxlength="3" />
+                                                        <label class="form-label" for="typeText">CVV</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </form>
+
+                                        <hr class="my-4">
+
+                                        <div class="d-flex justify-content-between">
+                                            <p class="mb-2">المجموع الفرعي </p>
+                                            <p class="mb-2">{{items.price}} ﷼</p>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between">
+                                            <p class="mb-2">رسوم التوصيل</p>
+                                            <p class="mb-2"> 20.00 ﷼</p>
+                                        </div>
+                                        <hr class="my-4">
+
+                                        <div class="d-flex justify-content-between mb-4">
+                                            <p class="mb-2">المجموع (شامل ضريبة القيمة المضافة)</p>
+                                            <p class="mb-2">{{items.price}} ﷼</p>
+                                        </div>
+
+                                        <button type="submit" class="btn-primary-custom">
+                                            <div class="d-flex justify-content-between">
+                                                <span>اتمام الطلب </span>
+                                            </div>
                                         </button>
 
-                                        <input id="form1" min="0" name="quantity" value="2" type="number"
-                                            class="form-control form-control-sm" />
+                                    </div>
+                                </div>
 
-                                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                            onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div> -->
-                            <div class="col-3 ">
-                                <h5 class="mb-0">{{item.price}} ﷼</h5>
                             </div>
-                            <div class="col-1 text-end">
-                                <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
-                            </div>
+
                         </div>
+
                     </div>
                 </div>
-                {%endfor%}
-
             </div>
-            <section class="col-12 col-md-5">
-
-                <div class="card p-5">
-
-                    <div class="container mt-5">
-                        <div class="payment-card">
-                            <h1>اتمام الطلب </h1>
-                            <form>
-                                <div class="mb-3">
-                                    <label class="form-label">اختر طريقة الدفع</label>
-                                    <div>
-                                        <input type="radio" id="cash" name="paymentMethod" value="cash" checked>
-                                        <label for="cash">نقد</label>
-                                    </div>
-                                    <div>
-                                        <input type="radio" id="card" name="paymentMethod" value="card">
-                                        <label for="card">بطاقة</label>
-                                    </div>
-                                </div>
-
-                                <div id="cardDetails" class="d-none">
-                                    <div class="mb-3">
-                                        <label for="cardholderName" class="form-label">Cardholder Name</label>
-                                        <input type="text" class="form-control" id="cardholderName"
-                                            placeholder="John Doe">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="cardNumber" class="form-label">Card Number</label>
-                                        <input type="text" class="form-control" id="cardNumber"
-                                            placeholder="1234 5678 9012 3456">
-                                    </div>
-                                    <div class="row mb-3">
-                                        <div class="col">
-                                            <label for="expirationDate" class="form-label">Expiration Date</label>
-                                            <input type="text" class="form-control" id="expirationDate"
-                                                placeholder="MM/YY">
-                                        </div>
-                                        <div class="col">
-                                            <label for="cvv" class="form-label">CVV</label>
-                                            <input type="text" class="form-control" id="cvv" placeholder="123">
-                                        </div>
-                                    </div>
-                                </div>
-                                <button type="submit" data-mdb-button-init data-mdb-ripple-init
-                                    class="btn btn-warning btn-block btn-lg w-100">اتمام الطلب</button>
-                            </form>
-                        </div>
-                    </div>
-
-
-
-                </div>
-
-            </section>
         </div>
     </div>
 </section>
+
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -2,78 +2,144 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}مزود{% endblock %}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}مزود{% endblock %}</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    {% block ref %}{% endblock %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  {% block ref %}{% endblock %}
 </head>
 <body>
 
+<!-- هيدر الموقع -->
 <nav class="navbar navbar-expand-lg py-3">
   <div class="container d-flex align-items-center justify-content-between">
 
+    <!-- الشعار -->
     <a class="navbar-brand" href="{% url 'main:index_view' %}">
-      <img src="{% static 'img/logo.svg' %}" alt="مزود" width="70">
+      <img src="{% static 'img/logo.svg' %}" alt="مزود" width="200">
     </a>
 
+    <!-- زر البرقر في الجوال -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="تبديل القائمة">
       <span class="navbar-toggler-icon"></span>
     </button>
 
+    <!-- روابط النافبار -->
     <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
       <ul class="navbar-nav text-center">
-        <li class="nav-item">
-          <a class="nav-link mx-2" href="{% url 'main:index_view' %}">الرئيسية</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-2" href="#">منتجاتنا</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-2" href="{% url 'main:contact_view' %}">تواصل معنا</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-2" href="{% url 'main:about_view' %}">عن مزود</a>
-        </li>
+        <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:index_view' %}">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link mx-2" href="#">منتجاتنا</a></li>
+        <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:contact_view' %}">تواصل معنا</a></li>
+        <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:about_view' %}">عن مزود</a></li>
       </ul>
     </div>
 
-    <div class="d-none d-lg-block">
-      {% if request.user.is_authenticated %}
-        <a href="{% url 'accounts:log_out' %}" class="btn btn-outline-danger">تسجيل الخروج</a>
-      {% else %}
-        <a href="{% url 'accounts:sign_in' %}" class="btn btn-primary-custom">تسجيل الدخول</a>
-      {% endif %}
+    <!-- أيقونات المستخدم -->
+    {% if request.user.is_authenticated %}
+    <div class="d-flex align-items-center gap-3">
+      <!-- صورة البروفايل مع المنيو -->
+      <div class="dropdown">
+        <a class="p-0" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="{% static 'img/profle.png' %}" class="rounded-circle" width="40" height="40" alt="صورة المستخدم">
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end text-center " aria-labelledby="userDropdown">
+          <li class="dropdown-item fw-bold">{{ request.user.username }}</li>
+          {% if request.user.supplierprofile %}
+            <li><a class="dropdown-item" href="{% url 'accounts:supplier_profile_view' request.user.username %}">الملف الشخصي</a></li>
+          {% else %}
+            <li><a class="dropdown-item" href="{% url 'accounts:beneficiary_profile_view' request.user.username%}">الملف الشخصي</a></li>
+          {% endif %}
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-danger" href="{% url 'accounts:log_out' %}?next={{ request.path }}">تسجيل الخروج</a></li>
+        </ul>
+      </div>
+            <!-- الجرس -->
+            <div style="position: relative; cursor: pointer;" onclick="toggleSidebar()">
+              <span class="material-symbols-outlined" style="font-size: 30px;">notifications</span>
+              <span style="
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                background: red;
+                color: white;
+                font-size: 10px;
+                padding: 2px 5px;
+                border-radius: 50%;
+              ">3</span>
+            </div>
+
     </div>
+    {% else %}
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-custom" href="{% url 'accounts:sign_in' %}">تسجيل الدخول</a>
+        <a class="btn btn-primary-custom custom" href="{% url 'accounts:sign_up_beneficiary' %}">إنشاء حساب</a>
+      </div>
+    {% endif %}
 
   </div>
 </nav>
+
+<!-- سايد بار الإشعارات -->
+<div id="sidebarNotifications" style="
+  width: 0;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+  z-index: 9999;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+">
+  <div class="text-end px-3">
+    <a href="#" onclick="toggleSidebar()" class="text-danger fs-4">✖</a>
+  </div>
+  <h5 class="text-center mb-4">الإشعارات</h5>
+  <ul class="list-unstyled px-3">
+    <li class="mb-2">🔔 إشعار جديد 1</li>
+    <li class="mb-2">🔔 إشعار جديد 2</li>
+    <li class="mb-2">🔔 إشعار جديد 3</li>
+  </ul>
+</div>
 
 <main class="mt-4">
   {% if messages %}
     <div class="container mt-3">
       {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
-        </div>
+        {% if 'success' in message.tags %}
+          <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> {{ message }}
+        {% elif 'error' in message.tags %}
+          <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-x-circle-fill me-2"></i> {{ message }}
+        {% elif 'warning' in message.tags %}
+          <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ message }}
+        {% else %}
+          <div class="alert alert-info alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i> {{ message }}
+        {% endif %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+          </div>
       {% endfor %}
     </div>
   {% endif %}
-
   {% block content %}{% endblock %}
 </main>
 
+<!-- الفوتر -->
 <footer class="text-center py-4 mt-5">
   <div class="container">
-    <img src="{% static 'img/logo.png'%}" alt="شعار مزود" class="mb-3" width="80">
+    <img src="{% static 'img/logo.svg' %}" alt="مزود" class="mb-3" width="100">
     <div class="mb-2">
       <a href="https://facebook.com" class="text-dark me-2"><i class="fab fa-facebook-f"></i></a>
       <a href="https://linkedin.com" class="text-dark me-2"><i class="fab fa-linkedin-in"></i></a>
@@ -84,6 +150,19 @@
   </div>
 </footer>
 
+<!-- سكربتات -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+function toggleSidebar() {
+  var sidebar = document.getElementById("sidebarNotifications");
+  if (sidebar.style.width === "250px") {
+    sidebar.style.width = "0";
+  } else {
+    sidebar.style.width = "250px";
+  }
+}
+</script>
+
 </body>
 </html>
