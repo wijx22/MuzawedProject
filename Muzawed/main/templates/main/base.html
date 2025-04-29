@@ -15,7 +15,7 @@
   {% block ref %}{% endblock %}
 </head>
 <body>
-
+{% if not hide_header %}
 <nav class="navbar navbar-expand-lg py-3">
   <div class="container d-flex align-items-center justify-content-between">
 
@@ -88,12 +88,14 @@
     {% else %}
     <div class="d-flex gap-2">
       <a class="btn btn-outline-custom" href="{% url 'accounts:sign_in' %}">تسجيل الدخول</a>
-      <a class="btn btn-primary-custom" href="{% url 'accounts:sign_up_beneficiary' %}">إنشاء حساب</a>
+      <a class="btn btn-primary-custom custom" href="{% url 'accounts:sign_up_beneficiary' %}">إنشاء حساب</a>
     </div>
     {% endif %}
-
+    
   </div>
 </nav>
+
+{% endif %}
 
 <main class="mt-4">
   {% if messages %}
