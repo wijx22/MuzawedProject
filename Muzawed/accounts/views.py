@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from .models import ProfileBeneficiary, SupplierProfile
 from django.db import transaction
+from notification.models import Notification 
 
 
 
@@ -20,6 +21,11 @@ def sign_up_beneficiary(request: HttpRequest):
             #create profile after user save 
             profile = ProfileBeneficiary(user=new_user,name=new_user.get_full_name(),contact_info=request.POST['contact_info'], address=request.POST['address'])
             profile.save()
+            Notification.objects.create(
+                                    recipient=new_user,
+                                    notification_type='alert',
+                                    message='مرحبًا بك في مزود! 🎉 تم إنشاء حسابك كمستفيد بنجاح.'
+                                )
             
             messages.success(request,"مرحبًا بك تم تسجيلك بنجاح", "alert-success")
             return redirect("accounts:sign_in")
