@@ -160,16 +160,24 @@ a:hover {
     color: #212529; 
   }
   
-
   .dropdown-menu .dropdown-item:hover,
   .dropdown-menu .dropdown-item:focus {
     background-color: #f8f9fa; 
     color: #006C48; 
   }
-  
-  
+   
   .dropdown-menu .dropdown-item:active {
     background-color: #f8f9fa;
     color: #006C48;
   }
   
+  .form-control:focus {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: #264f3f;
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgba(38, 79, 63, .25); 
+}
+.index{
+    padding-right: 8rem;
+}
