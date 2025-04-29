@@ -86,7 +86,22 @@ def add_commercial_info_view(request):
 
 
 def update_commercial_info_view(request):
-    pass
+    supplier = Supplier.objects.filter(user=request.user).first()
+    if not supplier:
+        return redirect("supplier:create_supplier_details")
+
+    commercial_info = supplier.commercialinfo_set.first()
+    if not commercial_info:
+        return redirect('supplier:add_commercial_info')
+
+    form = CommercialInfoForm(request.POST or None, request.FILES or None, instance=commercial_info)
+
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'تم تحديث المعلومات التجارية بنجاح.')
+        return redirect('supplier:dashboard')  
+
+    return render(request, 'supplier/commercial_info_form.html', {'form': form})
 
 
 
