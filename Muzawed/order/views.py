@@ -6,3 +6,6 @@ from .models import Product
 def cart_view(request:HttpRequest):
     items =Product.objects.all()
     return render(request, "order/cart.html",{"items":items})
+
+def add_product_item_view(request:HttpRequest):
+    pass
