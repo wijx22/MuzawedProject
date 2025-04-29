@@ -1,6 +1,9 @@
 {% extends 'main/base.html' %}
 {% load static %}
 {% block title %}إضافة مورد جديد{% endblock %}
+{% block ref %}
+<link rel="stylesheet" href="{% static 'css/products_style.css' %}">
+{% endblock %}
 
 {% block content %}
     <style>
@@ -28,7 +31,7 @@
     <div class="container">
         <!-- Form Container -->
         <div class="form-container">
-            <h3 class="text-center mb-4">إضافة مورد جديد</h3>
+            <h3 class="text-center mb-4">انضم كمورد</h3>
             
             <form method="POST" action="{%url 'supplier:supply_details_view'%}" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -91,13 +94,13 @@
                 <!-- Fast Service Details -->
                 <div class="mb-3">
                     <label for="fastServiceDetails" class="form-label">تفاصيل الخدمة السريعة</label>
-                    <input type="number" class="form-control" id="fastServiceDetails" maxlength="255" name="fast_service_details">
+                    <input type="number" class="form-control" id="fastServiceDetails" maxlength="255" min="0" name="fast_service_details">
                 </div>
 
                 <!-- Late Payment Options -->
                 <div class="mb-3">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="latePaymentOptions" name="late_payment_options" value="0">
+                        <input class="form-check-input" type="checkbox" id="latePaymentOptions" name="late_payment_options">
                         <label class="form-check-label" for="latePaymentOptions">
                             خيارات الدفع المتأخر
                         </label>
@@ -107,7 +110,16 @@
                 <!-- Supply Days -->
                 <div class="mb-3">
                     <label for="supplyDays" class="form-label">أيام التوريد</label>
-                    <input type="text" class="form-control" id="supplyDays" placeholder="مثال: السبت إلى الخميس" name="supply_days" required>
+                    <select class="form-select" id="supplyDays" required name="supply_days">
+                        <option value="" selected disabled>اختر يوم</option>
+                        <option value="الاحد">الاحد</option>
+                        <option value="الاثنين">الاثنين</option>
+                        <option value="الثلاثاء">الثلاثاء</option>
+                        <option value="الاربعاء">الاربعاء</option>
+                        <option value="الخميس">الخميس</option>
+                        <option value="الجمعة">الجمعة</option>
+                        <option value="السبت">السبت</option>
+                    </select>
                     <div class="form-text">أيام الأسبوع التي يكون فيها المورد متاحًا للتوريد</div>
                 </div>
 
