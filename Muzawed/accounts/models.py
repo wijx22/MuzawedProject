@@ -7,7 +7,7 @@ class ProfileBeneficiary(models.Model):
         ACTIVE = 'active', 'Active'
         INACTIVE = 'inactive', 'Inactive'
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE ,related_name='customer')
     name = models.CharField(max_length=255)
     contact_info = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
@@ -23,7 +23,20 @@ class ProfileBeneficiary(models.Model):
 
 
 class SupplierProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    class RequestStatusChoises(models.TextChoices):
+       NO_REQUEST="No-request","لا يوجد طلب"
+       REJECTED= "Rejected", "مرفوص"
+       ACCEPTED= "Accepted", "مقبول"
+       PENDING= "Pending", "قيد المعالجة"
+    
+    status = models.CharField(
+        max_length=10,
+        choices=RequestStatusChoises.choices,
+        default=RequestStatusChoises.NO_REQUEST,
+    )
+    rejection_reason = models.TextField(blank=True, null=True)
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE ,related_name='supplier')
     name = models.CharField(max_length=255)
     contact_info = models.CharField(max_length=255)
     is_active = models.BooleanField(default=False)  
