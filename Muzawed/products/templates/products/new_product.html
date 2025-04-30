@@ -1,4 +1,4 @@
-{% extends 'main/base.html' %}
+{% extends 'main/supplier_base.html' %}
 {% load static %}
 
 {% block title %}إضافة منتج{% endblock %}
@@ -11,10 +11,13 @@
 <section class="d-flex justify-content-center align-items-center">
     <div class="container-fluid w-100">
         <div class="row justify-content-center">
-            <div class="col-10 col-lg-8 container-section p-3 p-md-5 text-white">
+            <div class="col-10 col-lg-8 container-section p-3 p-md-5 ">
+                <h3 class="text-center mb-4"> منتج جديد</h3>
+
                 <form method="post" action="{% url 'products:add_product_view' %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="row">
+                        
                         <div class="col-12 col-lg-6 mb-3">
                             <label class="form-label">اسم المنتج</label>
                             <input type="text" class="form-control" id="product_name" name="name" required>
@@ -39,16 +42,26 @@
                             <label class="form-label">الكمية في المخزن</label>
                             <input type="number" class="form-control" id="stock" name="stock" required min="0">
                         </div>
-                        <div class="col-12 col-md-6 mb-3">
+                        <div class="col-12 col-md-4  mb-3">
                             <label class="form-label">الكمية للحد الأدنى للتنبيه في المخزن</label>
                             <input type="number" class="form-control" id="min_stock_alert" name="min_stock_alert" value="0" min="0">
                         </div>
-                        <div class="col-12 col-md-6 mb-3">
+                        <div class="col-12 col-md-4  mb-3">
                             <label class="form-label">الوحدة</label>
                             <select class="form-select" id="unit" name="unit" required>
                                 <option value="" disabled selected>اختر الوحدة</option>
                                 {% for choice in unit %}
                                     <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-4  mb-3" >
+                            <label class="form-label">المدينة</label>
+                            <select class="form-select" id="city" name="city" required >
+                                <option value="" disabled selected>اختر المدينة</option>
+                                {% for city in covered_cities %}
+                                    <option value="{{city.id}}">{{ city.get_city_display }}
+                                    </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -107,6 +120,7 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        
                      
                         <button type="submit" id="submit" class="col-11 col-md-7 mt-3 btn btn-light mx-auto d-flex justify-content-center">
                             إضافة المنتج

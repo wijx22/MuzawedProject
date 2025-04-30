@@ -1,4 +1,4 @@
-{% extends 'main/base.html' %}
+{% extends 'main/supplier_base.html' %}
 {% load static %}
 {% block title %}تفاصيل المورد{% endblock %}
 {% block ref %}
@@ -8,10 +8,11 @@
 {% block content %}
 
 <div class="container">
+    
     <!-- Details Container -->
     <div class="details-container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3>تفاصيل المورد</h3>
+            <h5>معلومات التوريد</h5>
             <!-- <div>
                     <a href="#" class="btn action-btn"><i class="bi bi-pencil-square me-1"></i> تعديل</a>
                 </div> -->
@@ -58,6 +59,24 @@
                             <i class="bi bi-check-circle-fill text-danger"></i> غير متاح
                             {% endif %}
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Status Info Section -->
+        <div class="detail-section">
+            <h5 class="mb-3">معلومات الحالة</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="detail-label">حالة طلب التوريد</div>
+                    <div class="detail-value timestamp">
+                        {{request_status}}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="detail-label">ملحوظة اضافية</div>
+                    <div class="detail-value timestamp">
+                        {{supplier.rejection_reason|default_if_none:"لا يوجد"}}
                     </div>
                 </div>
             </div>
@@ -122,7 +141,7 @@
             <!-- Empty state for no cities -->
             <div id="noCitiesMessage" class="text-center py-4" style="display: none;">
                 <i class="bi bi-building text-muted" style="font-size: 2rem;"></i>
-                <p class="mt-2 text-muted">لا توجد فروع مضافة حالياً</p>
+                <p class="mt-2 text-muted">لا توجد مدن مضافة حالياً</p>
             </div>
         </div>
         <!-- System Info Section -->
@@ -145,34 +164,15 @@
                 </div>
             </div>
         </div>
-        <!-- Status Info Section -->
-        <div class="detail-section">
-            <h5 class="mb-3">معلومات الحالة</h5>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="detail-label">حالة المورد</div>
-                    <div class="detail-value timestamp">
-                        {{supplier.get_status_display}}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="detail-label">ملحوظة اضافية</div>
-                    <div class="detail-value timestamp">
-                        {{supplier.rejection_reason|default_if_none:"لا يوجد"}}
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Action Buttons -->
         <div class="d-flex justify-content-end mt-4">
-            <a href="#" class="btn btn-outline-secondary me-2">العودة للقائمة</a>
+            <a href="{%url 'main:index_view'%}" class="btn btn-outline-secondary me-2">العودة للقائمة</a>
             <!-- <a href="#" class="btn action-btn"><i class="bi bi-pencil-square me-1"></i> تعديل</a> -->
         </div>
 
     </div>
 </div>
-
 <!-- Add City Modal -->
 <div class="modal fade" id="addCityModal" tabindex="-1" aria-labelledby="addCityModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -181,23 +181,16 @@
                 <h5 class="modal-title" id="addCityModalLabel">إضافة مدينة جديدة</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
             </div>
-            <form  method="post" action="{% url 'supplier:add_city_view' %}">
+            <form method="post" action="{% url 'supplier:add_city_view' %}">
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="cities" class="form-label">المدينة</label>
                         <select class="form-select" id="cities" name="city" required>
                             <option value="" selected disabled>اختر المدينة</option>
-                            <option value="riyadh">الرياض</option>
-                            <option value="jeddah">جدة</option>
-                            <option value="mecca">مكة</option>
-                            <option value="medina">المدينة</option>
-                            <option value="dammam">الدمام</option>
-                            <option value="khobar">الخبر</option>
-                            <option value="tabuk">تبوك</option>
-                            <option value="abha">أبها</option>
-                            <option value="hail">حائل</option>
-                            <option value="najran">نجران</option>
+                            {% for value, display in available_city_choices %}
+                                <option value="{{ value }}">{{ display }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>

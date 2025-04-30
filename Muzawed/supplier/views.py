@@ -12,18 +12,21 @@ def supplier_details(request: HttpRequest):
     if request.user.is_authenticated:
         try:
             # Check if the user is a supplier
-            supplier = request.user.supplier
+            supplier:SupplierProfile = request.user.supplier
             commercial_info = supplier.commercial_info
             supply_details = supplier.supply_details
-            cities = City.objects.filter(suppliers=supplier)
+            covered_cities = supplier.cities_covered.all()  
+            request_status = supplier.get_status_display()  
 
-            # Get the IDs of cities already covered by the supplier
-            covered_city_ids = cities.values_list('id', flat=True)
+            # Get all available city choices
+            all_city_choices = City.CityChoices.choices
 
-            # Filter city choices to exclude those already covered
+            # Filter out covered cities
             available_city_choices = [
-                choice for choice in City.CityChoices if choice.value not in covered_city_ids
+                (value, display) for value, display in all_city_choices
+                if value not in covered_cities.values_list('city', flat=True)
             ]
+           
 
         except AttributeError:
             messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
@@ -32,14 +35,15 @@ def supplier_details(request: HttpRequest):
         except Exception as error:
             print("An error occurred:", error)
             messages.error(request, 'حدث خطأ اثناء محاولة عرض المعلومات ')
-            return redirect("main:supplier_view")
+            return redirect("main:index_view")
 
     return render(
         request,
         "supplier/supplier-details.html",
         {
+            "request_status":request_status,
             "supplier": supply_details,
-            "cities": cities,
+            "cities": covered_cities,
             "available_city_choices": available_city_choices,  
         },
     )
@@ -89,8 +93,8 @@ def delete_city_view(request: HttpRequest, city_id: int):
             city.suppliers.remove(supplier)
 
             # Optionally delete the city if no suppliers are left
-            # if not city.suppliers.exists():
-            #     city.delete()
+            if not city.suppliers.exists():
+                city.delete()
 
             messages.success(request, "تم حذف المدينة بنجاح!")
             return redirect("supplier:supplier_details")
@@ -200,7 +204,10 @@ def supply_details_view(request: HttpRequest):
                 supplier.save() 
                 return redirect("supplier:supplier_details")
 
-            return render(request, "supplier/create-supplier.html")
+            supply_sector_choices = SupplyDetails._meta.get_field('supply_sector').choices
+            delivery_service_choices = SupplyDetails._meta.get_field('delivery_service').choices
+
+            return render(request, "supplier/create-supplier.html",{"supply_sector_choices":supply_sector_choices,"delivery_service_choices":delivery_service_choices})
 
 
         except AttributeError:

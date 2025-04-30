@@ -2,43 +2,29 @@
 {% load static %}
 {% block title %}إضافة مورد جديد{% endblock %}
 {% block ref %}
-<link rel="stylesheet" href="{% static 'css/products_style.css' %}">
+<link rel="stylesheet" href="{% static 'css/supplier_style.css' %}">
 {% endblock %}
 
 {% block content %}
-    <style>
-        .form-container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 30px;
-            margin: 30px auto;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
-        }
-        .submit-btn {
-            background-color: #2c5545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 10px;
-            width: 100%;
-            font-weight: 500;
-        }
-        .form-label {
-            font-weight: 500;
-        }
-    </style>
 
     <div class="container">
         <!-- Form Container -->
         <div class="form-container">
-            <h3 class="text-center mb-4">انضم كمورد</h3>
+            <h3 class="text-center mb-4">معلومات التوريد</h3>
             
             <form method="POST" action="{%url 'supplier:supply_details_view'%}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <!-- Logo Upload -->
                 <div class="mb-3">
-                    <label for="supplierLogo" class="form-label">شعار المورد</label>
-                    <input class="form-control" type="file" id="supplierLogo" accept="image/*"  name="logo" required>
+                    <label for="supplierLogo" class="form-label">الشعار </label>
+                    <div class="file-upload" id="logoUpload">
+                        <input name="logo" type="file" class="d-none" id="supplierLogo" accept=".jpg,.jpeg,.png">
+                        <i class="bi bi-upload"></i>
+                        <div class="file-upload-text">اضغط لرفع صورة الشعار</div>
+                        <div class="file-name" id="logoUpload"></div>
+                    </div>
+                    <div class="form-text">صيغة JPG أو PNG</div>
+
                 </div>
 
                 <!-- Supply Sector -->
@@ -46,9 +32,9 @@
                     <label for="supplySector" class="form-label">قطاع التوريد</label>
                     <select class="form-select" id="supplySector" required name="supply_sector">
                         <option value="" selected disabled>اختر قطاع التوريد</option>
-                        <option value="retail">بيع بالتجزئة</option>
-                        <option value="wholesale">بالجملة</option>
-                        <option value="both">كلاهما</option>
+                        {% for value, display in supply_sector_choices %}
+                        <option value="{{ value }}">{{ display }}</option>
+                        {% endfor %}
                     </select>
                 </div>
 
@@ -57,9 +43,9 @@
                     <label for="deliveryService" class="form-label">خدمة التوصيل</label>
                     <select class="form-select" id="deliveryService" name="delivery_service" required>
                         <option value="" selected disabled>اختر خدمة التوصيل</option>
-                        <option value="fast">سريع</option>
-                        <option value="shipping">شحن</option>
-                        <option value="both">كلاهما</option>
+                        {% for value, display in delivery_service_choices %}
+                        <option value="{{ value }}">{{ display }}</option>
+                        {% endfor %}
                     </select>
                 </div>
 
@@ -94,7 +80,7 @@
                 <!-- Fast Service Details -->
                 <div class="mb-3">
                     <label for="fastServiceDetails" class="form-label">تفاصيل الخدمة السريعة</label>
-                    <input type="number" class="form-control" id="fastServiceDetails" maxlength="255" min="0" name="fast_service_details">
+                    <input type="number" class="form-control" id="fastServiceDetails" maxlength="24" min="0" name="fast_service_details">
                 </div>
 
                 <!-- Late Payment Options -->
@@ -109,7 +95,7 @@
 
                 <!-- Supply Days -->
                 <div class="mb-3">
-                    <label for="supplyDays" class="form-label">أيام التوريد</label>
+                    <label for="supplyDays" class="form-label">أيام العمل</label>
                     <p>لإختيار أكثر من عنصر، اضغط مع الاستمرار على زر <strong>Ctrl</strong> (أو <strong>Command</strong> في أجهزة Mac) أثناء النقر على العناصر.</p>
                     <select class="form-select" id="supplyDays" multiple required name="supply_days">
                         <option value="" selected disabled>اختر يوم</option>
