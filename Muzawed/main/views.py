@@ -35,10 +35,12 @@ def contact_view(request):
 
 def about_view(request):
     return render(request, 'main/about.html')
-
-def supplie_view(request):
-    if hasattr(request.user, 'supplierprofile'):
-        return render(request, 'main/supplier_index.html')
-    else:
-        return redirect('main:index_view')  
     
+def supplie_view(request):
+    supplier = getattr(request.user, 'supplier', None)
+
+    if request.user.is_authenticated and supplier:
+        return render(request, 'main/supplier_index.html')
+
+    messages.warning(request, "هذه الصفحة مخصصة للموردين فقط.")
+    return redirect('main:index_view')
