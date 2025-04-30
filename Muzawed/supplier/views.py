@@ -131,13 +131,12 @@ def supply_details_view(request: HttpRequest):
 
 
                 # Extract data from request
-                supply_days = request.POST.get('supply_days')
+                supply_days = ' - '.join(request.POST.getlist('supply_days'))
                 late_payment_options = request.POST.get('late_payment_options')
                 fast_service_details = request.POST.get('fast_service_details')
                 order_lead_time_days = request.POST.get('order_lead_time_days')
                 delivery_service = request.POST.get('delivery_service')
                 supply_sector = request.POST.get('supply_sector')
-
                 # Handle the image upload
                 logo = request.FILES.get('logo')
 
