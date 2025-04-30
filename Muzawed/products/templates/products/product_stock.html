@@ -97,15 +97,15 @@
 <script>
     $(document).ready(function() {
         $('#alert').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var productId = button.data('product-id'); // Extract product ID
-            var productName = button.data('product-name'); // Extract product name
+            var button = $(event.relatedTarget); 
+            var productId = button.data('product-id'); 
+            var productName = button.data('product-name'); 
             
             // Update the modal's content
             var modal = $(this);
             modal.find('#product-name').text(productName);
             modal.find('#product-id').val(productId);
-            modal.find('#delete-link').attr('href', '/products/remove_product/' + productId ); // Adjust the URL for deletion
+            modal.find('#delete-link').attr('href', '/products/remove_product/' + productId ); 
         });
     });
 </script>

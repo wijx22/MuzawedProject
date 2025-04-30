@@ -6,7 +6,7 @@ from django.contrib.auth.views import LoginView
 from .models import Contact
 
 def index_view(request):
-    print(hasattr(request.user, 'supplierprofile'))
+    # print(hasattr(request.user, 'supplierprofile'))
     if hasattr(request.user, 'supplierprofile'):
 
         return redirect("main:supplie_view")

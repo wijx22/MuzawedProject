@@ -10,16 +10,16 @@ class SupplyDetails(models.Model):
         choices=[
             ("retail", "بيع بالتجزئة"),
             ("wholesale", "بالجملة"),
-            ("both", "كلاهما"),
+            ("both", "بيع تجزئة وجملة"),
         ],
     )
     delivery_service = models.CharField(
         max_length=50,
-        choices=[("fast", "سريع"), ("shipping", "شحن"), ("both", "كلاهما")],
+        choices=[("fast", "سريع"), ("shipping", "شحن"), ("both", "توصيل سريع وشحن")],
     )
 
     order_lead_time_days = models.IntegerField(null=True, blank=True)
-    is_available = models.BooleanField(default=True)
+    is_available = models.BooleanField(default=False)
     unavailable_from = models.DateTimeField(null=True, blank=True)
     unavailable_to = models.DateTimeField(null=True, blank=True)
     fast_service_details = models.IntegerField(null=True, blank=True)
@@ -33,7 +33,7 @@ class SupplyDetails(models.Model):
         choices=[
             ("on_demand", "حسب الطلب"),
             ("scheduled", "مجدول"),
-            ("both", "كلاهما"),
+            ("both", "حسب الطلب ومجدول"),
         ],
         default="scheduled",
     )
@@ -49,7 +49,7 @@ class SupplyDetails(models.Model):
 
     def __str__(self):
         return (
-            f"{self.supplier.name} - supply details "
+            f" - supply details "
         )
 
 
@@ -66,23 +66,17 @@ class City(models.Model):
         ABHA = "abha", "أبها"
         HAIL = "hail", "حائل"
         NAJRAN = "najran", "نجران"
-    
-    name = models.CharField(
-        max_length=50,
-        choices=CityChoices.choices,
-        default=CityChoices.RIYADH,  
-    )
 
     # Many-to-many relationship for suppliers
     suppliers = models.ManyToManyField(SupplierProfile,related_name="cities_covered")
 
     def __str__(self):
-        return self.name
+        return self.city
 
     city = models.CharField(max_length=100, choices=CityChoices.choices)
 
     def __str__(self):
-        return f"{self.supplier.name} - {self.city}"
+        return f" - {self.city} - city supported"
 
 
 class CommercialInfo(models.Model):
@@ -121,17 +115,4 @@ class CommercialInfo(models.Model):
         return f"{self.supplier.user.username} - Commercial Info"
 
 
-
-
-class SupplyRequest(models.Model):
-    commercialInfo = models.ForeignKey(CommercialInfo, on_delete=models.CASCADE)
-    request_date = models.DateTimeField(auto_now_add=True)
-    reason = models.CharField(max_length=250)
-    STATUS_CHOICES = [
-        ('pending', 'قيد الانتظار'),
-        ('accepted', 'مقبولة'),
-        ('rejected', 'مرفوضة'),
-    ]
-    
-    status = models.CharField(max_length=255, choices=STATUS_CHOICES, default='pending')
 

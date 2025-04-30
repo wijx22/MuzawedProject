@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import City, SupplyDetails, SupplyRequest, CommercialInfo
+from .models import City, SupplyDetails, CommercialInfo
 
 
 # class SupplierForm(forms.ModelForm):
@@ -37,7 +37,3 @@ class CommercialInfoForm(forms.ModelForm):
         model = CommercialInfo
         exclude = ['supplier'] 
 
-class SupplyRequestForm(forms.ModelForm):
-    class Meta:
-        model = SupplyRequest
-        exclude = ['reason', 'status']  
