@@ -6,7 +6,7 @@
 
 <div class="container py-5">
 
-    <div class="row align-items-center">
+    <div class="row align-items-center index">
        
         <div class="col-md-7 text-center text-md-start mb-4 mb-md-0">
             <h2 class="fw-bold mb-3" style="color: #1F3F2E;">
@@ -15,10 +15,9 @@
             <p class="mb-4" style="color: #4F4F4F; font-size: 1.1rem;">
                 إذا كنت صاحب مشروع غذائي أو منتج منزلي، تقدر من خلال مزود تتواصل مع مزودين موثوقين وتوفر احتياجاتك بسهولة، بجودة عالية وسعر مناسب.
             </p>
-            <a href="{% url 'accounts:sign_in' %}" class="btn btn-primary-custom custom">ابدأ الآن</a>
+            <a href="{% url 'accounts:sign_up_beneficiary' %}" class="btn btn-primary-custom custom">ابدأ الآن</a>
         </div>
 
-        
         <div class="col-md-5 text-center">
             <img src="{% static 'img/man.svg'%}" width="250">
         </div>

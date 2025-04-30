@@ -149,7 +149,7 @@ def supply_details_view(request: HttpRequest):
                     delivery_service=delivery_service,
                     order_lead_time_days=order_lead_time_days,
                     fast_service_details=fast_service_details,
-                    late_payment_options=late_payment_options,
+                    late_payment_options=late_payment_options is not None,
                     supply_days=supply_days,
                 )
 

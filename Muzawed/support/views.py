@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from .models import Report, ReportReply
 from django.contrib import messages
+from notification.models import Notification                                        
 
 # Create your views here.
 def create_report_view(request):
@@ -17,6 +18,11 @@ def create_report_view(request):
             description=description,
             attachment=attachment 
         )
+        Notification.objects.create(
+                            recipient=request.user,
+                            notification_type='alert',
+                            message=f'تم استلام بلاغك بعنوان "{report.subject}". سنتواصل معك قريبًا.'
+                        )
 
         messages.success(request, 'تم إرسال الشكوى بنجاح.', 'alert-success')
         #return redirect('report_detail', pk=report.pk)
