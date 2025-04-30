@@ -1,37 +1,35 @@
-from django.shortcuts import render, redirect, get_object_or_404, reverse
-from .models import Report, ReportReply
 from django.contrib import messages
-from notification.models import Notification                                        
+from django.shortcuts import get_object_or_404, redirect, render, reverse
+from notification.models import Notification
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
-def create_report_view(request):
-    if request.method == 'POST':
-        category = request.POST.get('category')
-        subject = request.POST.get('subject')
-        description = request.POST.get('description')
-        attachment = request.FILES.get('attachment') 
-
-        report = Report.objects.create(
-            user=request.user,
-            category=category,
-            subject=subject,
-            description=description,
-            attachment=attachment 
-        )
-        Notification.objects.create(
-                            recipient=request.user,
-                            notification_type='alert',
-                            message=f'تم استلام بلاغك بعنوان "{report.subject}". سنتواصل معك قريبًا.'
-                        )
-
-        messages.success(request, 'تم إرسال الشكوى بنجاح.', 'alert-success')
-        #return redirect('report_detail', pk=report.pk)
-
-    return render(request, 'reports/create_report.html')
+from .forms import ReportForm
+from .models import Report, ReportReply
 
 
+@login_required
+def create_report(request):
+    if request.method == "POST":
+        form = ReportForm(request.POST, request.FILES)
+        if form.is_valid():
+            report = form.save(commit=False)
+            report.user = request.user
+            report.save()
+            
+            Notification.objects.create(
+                recipient=request.user,
+                notification_type="alert",
+                message=f'تم استلام بلاغك بعنوان "{report.subject}". سنتواصل معك قريبًا.',
+            )
 
-#def reply_to_report_view(request, report_id):
+            messages.success(request, "تم إرسال الشكوى بنجاح.", "alert-success")
+
+        return redirect("support:create_report")
+
+    return render(request, "reports/create_report.html")
+
+
+# def reply_to_report_view(request, report_id):
 #    report = Report.objects.get(id=report_id)
 #    if request.method == 'POST':
 #        reply_text = request.POST.get('reply_text')
@@ -41,11 +39,11 @@ def create_report_view(request):
 #            reply_text=reply_text
 #        )
 #        messages.success(request, 'تم إرسال الرد بنجاح.', 'alert-success')
-#        return redirect('report_detail', pk=report.pk)  
+#        return redirect('report_detail', pk=report.pk)
 #
 #    return render(request, 'reports/reply_to_report.html', {'report': report})
 # test2 is working
-#def report_list_view(request):
+# def report_list_view(request):
 #    # عرض جميع الشكاوى
 #    reports = Report.objects.all()
 #
@@ -53,7 +51,7 @@ def create_report_view(request):
 #        'reports': reports,
 #    })
 #
-#def reply_to_report_view(request, report_id):
+# def reply_to_report_view(request, report_id):
 #    # جلب التقرير بناءً على ID
 #    report = get_object_or_404(Report, id=report_id)
 #
