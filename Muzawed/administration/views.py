@@ -5,7 +5,8 @@ from main.models import Contact
 from support.models import Report, ReportReply
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
+from supplier.models import CommercialInfo, SupplyDetails
+from products.models import Product
 User = get_user_model()
 
 def dashboard(request):
@@ -180,3 +181,198 @@ def view_report_replies(request, report_id):
     report = get_object_or_404(Report, id=report_id)
     replies = ReportReply.objects.filter(report=report).order_by('-created_at')
     return render(request, 'administration/report_replies.html', {'report': report, 'replies': replies})
+
+
+#def supplier_requests_list(request):
+#    if request.user.is_staff:  
+#        suppliers = SupplierProfile.objects.filter(status=SupplierProfile.RequestStatusChoises.PENDING)
+#        return render(request, 'administration/supplier_requests.html', {'suppliers': suppliers})
+#    else:
+#        messages.error(request, "غير مصرح لك.")
+#        return redirect("main:index_view")
+
+
+
+#test3 with try and excepts
+
+def supplier_requests_list(request):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+    
+    try:
+        pending_suppliers = SupplierProfile.objects.all()
+        return render(request, 'administration/supplier_requests.html', {'suppliers': pending_suppliers})
+    except Exception as e:
+        messages.error(request, f"حدث خطأ أثناء جلب بيانات الموردين: {e}")
+        return redirect("main:index_view")
+
+
+def supplier_request_detail(request, supplier_id):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
+    try:
+        supplier = get_object_or_404(SupplierProfile, id=supplier_id)
+        commercial_info = CommercialInfo.objects.filter(supplier=supplier).first()
+        supply_details = SupplyDetails.objects.filter(supplier=supplier).first()
+
+        context = {
+            'supplier': supplier,
+            'commercial_info': commercial_info,
+            'supply_details': supply_details,
+        }
+
+        return render(request, 'administration/supplier_request_detail.html', context)
+    except Exception as e:
+        messages.error(request, f"حدث خطأ أثناء تحميل تفاصيل المورد: {e}")
+        return redirect("administration:supplier_requests_list")
+
+
+def approve_supplier_view(request, supplier_id):
+    if not request.user.is_staff:
+        messages.warning(request, "غير مصرح لك بالوصول")
+        return redirect("main:index_view")
+
+    try:
+        supplier = get_object_or_404(SupplierProfile, id=supplier_id)
+        supplier.status = SupplierProfile.RequestStatusChoises.ACCEPTED
+        supplier.is_active = True
+        supplier.save()
+
+        messages.success(request, "تم قبول المورد وتفعيل الحساب بنجاح.")
+        return redirect("administration:supplier_request_detail", supplier_id=supplier.id)
+    except Exception as e:
+        messages.error(request, f"حدث خطأ أثناء قبول المورد: {e}")
+        return redirect("administration:supplier_requests_list")
+
+
+def reject_supplier_view(request, supplier_id):
+    if not request.user.is_staff:
+        messages.warning(request, "غير مصرح لك بالوصول")
+        return redirect("main:index_view")
+
+    try:
+        supplier = get_object_or_404(SupplierProfile, id=supplier_id)
+        rejection_reason = request.POST.get('reason', 'تم الرفض من قبل الإدارة.')
+
+        supplier.status = SupplierProfile.RequestStatusChoises.REJECTED
+        supplier.rejection_reason = rejection_reason
+        supplier.is_active = False
+        supplier.save()
+
+        messages.success(request, "تم رفض المورد.")
+        return redirect("administration:supplier_request_detail", supplier_id=supplier.id)
+    except Exception as e:
+        messages.error(request, f"حدث خطأ أثناء رفض المورد: {e}")
+        return redirect("administration:supplier_requests_list")
+
+
+
+
+def supplier_products_view(request, supplier_id):
+    try:
+        supplier = get_object_or_404(User, id=supplier_id)
+        products = Product.objects.filter(supplier=supplier)
+        return render(request, 'administration/supplier_products.html', {
+            'supplier': supplier,
+            'products': products
+        })
+    except Exception as e:
+        messages.error(request, f"حدث خطأ أثناء جلب المنتجات: {e}")
+        return redirect("main:index_view")
+  
+
+
+
+#def supplier_requests_list(request):
+#    if request.user.is_staff:  
+#     #pending_suppliers = SupplierProfile.objects.filter(status=SupplierProfile.RequestStatusChoises.PENDING)
+#     pending_suppliers = SupplierProfile.objects.all()
+#
+#     return render(request, 'administration/supplier_requests.html', {'suppliers': pending_suppliers})
+#
+#    else:
+#        messages.error(request, "غير مصرح لك.")
+#        return redirect("main:index_view")
+#
+#
+#
+#def supplier_request_detail(request, supplier_id):
+#    supplier = get_object_or_404(SupplierProfile, id=supplier_id)
+#    commercial_info = CommercialInfo.objects.filter(supplier=supplier).first()
+#    supply_details = SupplyDetails.objects.filter(supplier=supplier).first()
+#
+#    context = {
+#        'supplier': supplier,
+#        'commercial_info': commercial_info,
+#        'supply_details': supply_details,
+#    }
+#
+#    return render(request, 'administration/supplier_request_detail.html', context)
+#
+#
+#
+#
+#
+#def approve_supplier_view(request, supplier_id):
+#    if not request.user.is_staff:
+#        messages.warning(request, "غير مصرح لك بالوصول")
+#        return redirect("main:index_view")
+#
+#    supplier = get_object_or_404(SupplierProfile, id=supplier_id)
+#
+#    supplier.status = SupplierProfile.RequestStatusChoises.ACCEPTED
+#    supplier.is_active = True
+#    supplier.save()
+#
+#    messages.success(request, "تم قبول المورد وتفعيل الحساب بنجاح.")
+#    return redirect("administration:supplier_request_detail", supplier_id=supplier.id)
+#
+#
+#def reject_supplier_view(request, supplier_id):
+#    if not request.user.is_staff:
+#        messages.warning(request, "غير مصرح لك بالوصول")
+#        return redirect("main:index_view")
+#    supplier = get_object_or_404(SupplierProfile, id=supplier_id)
+#
+#    rejection_reason = request.POST.get('reason', 'تم الرفض من قبل الإدارة.')
+#
+#    supplier.status = SupplierProfile.RequestStatusChoises.REJECTED
+#    supplier.rejection_reason = rejection_reason
+#    supplier.is_active = False
+#    supplier.save()
+#
+#    messages.success(request, "تم رفض المورد.")
+#    return redirect("administration:supplier_request_detail", supplier_id=supplier.id)
+#
+
+
+
+#def supplier_request_action(request, supplier_id):
+#    if not request.user.is_staff:
+#        messages.warning(request, "غير مصرح لك بالوصول")
+#        return redirect("main:index_view")
+#
+#    supplier = get_object_or_404(SupplierProfile, id=supplier_id)
+#
+#    if request.method == "POST":
+#        action = request.POST.get("action")
+#
+#        if action == "approve":
+#            supplier.status = SupplierProfile.RequestStatusChoises.ACCEPTED
+#            supplier.is_active = True
+#            messages.success(request, "تم قبول المورد.")
+#        elif action == "reject":
+#            reason = request.POST.get("reason", "تم الرفض من قبل الإدارة.")
+#            supplier.status = SupplierProfile.RequestStatusChoises.REJECTED
+#            supplier.rejection_reason = reason
+#            supplier.is_active = False
+#            messages.success(request, "تم رفض المورد.")
+#
+#        supplier.save()
+#
+#    return redirect("administration:supplier_request_detail", supplier_id=supplier.id)
+
+

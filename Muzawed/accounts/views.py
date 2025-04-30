@@ -7,7 +7,6 @@ from .models import ProfileBeneficiary, SupplierProfile
 from django.db import transaction
 
 
-
 # Create your views here.
 def sign_up_beneficiary(request: HttpRequest):
     if request.user.is_authenticated:

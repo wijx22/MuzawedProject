@@ -1,0 +1,40 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">طلبات الموردين</h2>
+
+  {% if suppliers %}
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>اسم المورد</th>
+            <th>حالة الطلب</th>
+            <th>الإجراء</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for supplier in suppliers %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ supplier.user.get_full_name }}</td>
+              <td>{{ supplier.get_status_display }}</td>
+              <td>
+                <a href="{% url 'administration:supplier_request_detail' supplier.id %}" class="btn btn-sm btn-primary">
+                  عرض التفاصيل
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-info text-center" role="alert">
+      لا توجد طلبات حالياً من الموردين.
+    </div>
+  {% endif %}
+</div>
+{%endblock%}

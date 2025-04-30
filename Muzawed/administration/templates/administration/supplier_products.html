@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">منتجات المورد: {{ supplier.username }}</h2>
+
+    {% if products %}
+        <table class="table table-bordered table-hover">
+            <thead class="table-success">
+                <tr>
+                    <th>الصورة</th>
+                    <th>اسم المنتج</th>
+                    <th>الوصف</th>
+                    <th>السعر</th>
+                    <th>الكمية</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" width="60" height="60" alt="صورة المنتج">
+                        {% else %}
+                            لا توجد صورة
+                        {% endif %}
+                    </td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.description|truncatechars:40 }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.stock }}</td>
+                    <td>
+                        <a href="{% url 'products:update_product_view' product.id %}" class="btn btn-sm btn-warning">تعديل</a>
+                        <a href="{% url 'products:remove_product_view' product.id %}" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من الحذف؟');">حذف</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>لا توجد منتجات لهذا المورد.</p>
+    {% endif %}
+</div>
+{% endblock %}

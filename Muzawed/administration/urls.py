@@ -11,6 +11,14 @@ urlpatterns = [
   path('reports/', views.report_list_view, name='report_list'),
   path('reply/<int:report_id>/', views.reply_to_report_view, name='reply_to_report_view'),
   path('reports/<int:report_id>/replies/', views.view_report_replies, name='view_report_replies'),
+  path('supplier_requests_view/', views.supplier_requests_list, name='supplier_requests_view'),
+  path('supplier/detail/<int:supplier_id>', views.supplier_request_detail, name='supplier_request_detail'),
+  path('suppliers/<int:supplier_id>/approve/', views.approve_supplier_view, name='approve_supplier'),
+  path('supplier/reject/<int:supplier_id>/', views.reject_supplier_view, name='reject_supplier'),
+  path('supplier/products/view/<int:supplier_id>/', views.supplier_products_view, name='supplier_products_view')
+
+
+
 
 
 
