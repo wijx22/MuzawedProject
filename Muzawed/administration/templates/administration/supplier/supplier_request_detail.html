@@ -1,6 +1,8 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
+
+
   <!--<h2>تفاصيل طلب المورد</h2>
 
   <div class="card">
@@ -184,20 +186,6 @@
     <button type="button" onclick="showRejectionForm()" class="btn btn-danger">رفض المورد</button>
   </div>
 
-  <form id="rejectionForm" method="post" action="{% url 'administration:update_supplier_status' supplier.id %}" style="display: none;">
-    {% csrf_token %}
-    <input type="hidden" name="action" value="reject">
-    <div class="card">
-      <div class="card-header bg-danger text-white">سبب الرفض</div>
-      <div class="card-body">
-        <div class="mb-3">
-          <label for="reason" class="form-label">يرجى توضيح سبب الرفض:</label>
-          <textarea name="rejection_reason" id="reason" class="form-control" rows="4" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-outline-danger">تأكيد الرفض</button>
-      </div>
-    </div>
-  </form>
 
 </div>
 
@@ -307,6 +295,11 @@
 
 </div>
 
+<script>
+  function showRejectionForm() {
+    document.getElementById("rejectionForm").style.display = "block";
+  }
+</script>
 
 {% endblock %}
 

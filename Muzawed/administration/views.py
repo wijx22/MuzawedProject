@@ -10,6 +10,7 @@ from products.models import Product
 from notification.models import Notification
 from django.db.models import Count
 from order.models import Order
+from django.http import HttpRequest, HttpResponse
 User = get_user_model()
 
 def dashboard(request):
@@ -97,15 +98,18 @@ def supplier_requests_list(request):
 
 
 def supplier_request_detail(request, supplier_id):
+
+
     if not request.user.is_staff:
         messages.error(request, "غير مصرح لك.")
         return redirect("main:index_view")
 
     try:
         supplier = get_object_or_404(SupplierProfile, id=supplier_id)
+        
         commercial_info = CommercialInfo.objects.filter(supplier=supplier).first()
         supply_details = SupplyDetails.objects.filter(supplier=supplier).first()
-
+        print(55555)
         context = {
             'supplier': supplier,
             'commercial_info': commercial_info,
@@ -113,10 +117,13 @@ def supplier_request_detail(request, supplier_id):
             'hide_header': True
         }
         
-
+        
         return render(request, 'administration/supplier/supplier_request_detail.html', context)
+
     except Exception as e:
         messages.error(request, f"حدث خطأ أثناء تحميل تفاصيل المورد: {e}")
+        
+        print(e, 77777)
         return redirect("administration:supplier_requests_view")
 
 
