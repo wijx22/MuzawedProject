@@ -1,7 +1,7 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from notification.models import Notification
-from django.contrib.auth.decorators import login_required
 
 from .forms import ReportForm
 from .models import Report, ReportReply
@@ -15,7 +15,7 @@ def create_report(request):
             report = form.save(commit=False)
             report.user = request.user
             report.save()
-            
+
             Notification.objects.create(
                 recipient=request.user,
                 notification_type="alert",
@@ -27,6 +27,25 @@ def create_report(request):
         return redirect("support:create_report")
 
     return render(request, "reports/create_report.html")
+
+
+def view_report_replies(request, report_id):
+    report = get_object_or_404(Report, id=report_id)
+
+    if not request.user.is_staff and report.user != request.user:
+        messages.error(request, "ليس لديك صلاحية لعرض هذه الشكوى.", "alert-danger")
+        return redirect("administration:report_list")
+
+    if request.user.is_staff:
+        replies = ReportReply.objects.filter(report=report).order_by("-created_at")
+    else:
+        replies = ReportReply.objects.filter(
+            report=report, is_admin_reply=True
+        ).order_by("-created_at")
+
+    return render(
+        request, "reports/report_replies.html", {"report": report, "replies": replies}
+    )
 
 
 # def reply_to_report_view(request, report_id):
