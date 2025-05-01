@@ -80,6 +80,63 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
+
+
+    // رسم الرسم البياني العمودي المكدس لحالات الطلبات
+    const barChartElement = document.getElementById('myChart');
+
+    if (barChartElement) {
+      const ctxBar = barChartElement.getContext('2d');
+  
+      const xValues = ["طلب 1", "طلب 2", "طلب 3", "طلب 4", "طلب 5"];
+      const processed = [20, 30, 10, 25, 15]; 
+      const pending = [10, 5, 15, 5, 10];     
+      const accepted = [25, 14, 19, 8, 5];    
+  
+      new Chart(ctxBar, {
+        type: "bar",
+        data: {
+          labels: xValues,
+          datasets: [
+            {
+              label: "معالجة",
+              backgroundColor: "blue",
+              data: processed
+            },
+            {
+              label: "مقيدة",
+              backgroundColor: "orange",
+              data: pending
+            },
+            {
+              label: "مقبولة",
+              backgroundColor: "green",
+              data: accepted
+            }
+          ]
+        },
+        options: {
+          responsive: false,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: "حالة طلبات التوريد"
+            }
+          },
+          scales: {
+            x: {
+              stacked: true
+            },
+            y: {
+              stacked: true,
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+  
 });
 
 

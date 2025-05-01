@@ -37,9 +37,9 @@ def about_view(request):
     
 def supplie_view(request):
     if hasattr(request.user, 'supplier'):
-    supplier = getattr(request.user, 'supplier', None)
+      supplier = getattr(request.user, 'supplier', None)
 
-        return render(request, 'main/supplier_index.html')
+      return render(request, 'main/supplier_index.html')
     else:
         return redirect('main:index_view')  
     

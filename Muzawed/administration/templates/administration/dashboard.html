@@ -12,7 +12,19 @@
 
 
 </head>
+<style>
+  .icon-spacing{
+    margin-right: 20px;
+    margin-left: 20px;
+  }
 
+    .section-space {
+      margin-bottom: 40px; /* أو حسب ما يناسبك */
+    }
+  
+
+  
+</style>
 <body>
 <!-- Header -->
 <div class="header">
@@ -36,7 +48,7 @@
     </ul>-->
     <ul>
       <li><a href="#"><i class="fas fa-home"></i> لوحة التحكم</a></li>
-      <li><a href="#"><i class="fas fa-comment-alt"></i> الشكاوى</a></li> 
+      <li><a href="{% url 'administration:report_list'%}"><i class="fas fa-comment-alt"></i> الشكاوى</a></li> 
       <li><a href="{% url 'administration:suppliers_list_view' %}"><i class="fas fa-truck"></i> الموردون</a></li>
       <li><a href="{% url 'administration:supplier_requests_view'%}"><i class="fa-solid fa-folder-plus"></i> طلبات توريد </a></li>
 
@@ -51,91 +63,186 @@
     </ul>
   
   </div>
+  
 
-  <!-- Main Content -->
   <div class="main">
-    <div class="stats">
-      <div class="card">
-        <h3>الموردين الجدد</h3>
-        <p>{{ new_suppliers_count }}</p>
-      </div>
-      <div class="card">
-        <h3>المستفيدين</h3>
-        <p>{{ beneficiaries_count }}</p>
-      </div>
-      <div class="card">
-        <h3>إجمالي المستخدمين</h3>
-        <p>{{ total_users }}</p>
-      </div>
+    <div class="stats " style="display: flex; gap: 20px; flex-wrap: wrap;">
+  
+      <div class="card " style="display: flex; align-items: center; min-width: 250px; padding: 10px;">
+        <div class="icon" style="color: #e67e22; margin-right: 20px;">
+          <i class="fa fa-users fa-2x icon-spacing"></i>
         </div>
-        <hr>
-    
-    <!--<div class="card">
-      <h3>توزيع المستخدمين</h3>
-      <div class="chart-container">
-        <canvas id="userChart"></canvas>
+        <div>
+          <h3>الموردين الجدد</h3>
+          <p>{{ new_suppliers_count }}</p>
+        </div>
       </div>
-    </div>-->
-
-    <div class="card">
-      <h3>توزيع المستخدمين</h3>
-      <div class="chart-container">
+  
+      <div class="card" style="display: flex; align-items: center; min-width: 250px; padding: 10px;">
+        <div class="icon" style="color: #e67e22; margin-right: 15px;">
+          <i class="fa fa-hand-holding-heart fa-2x icon-spacing"></i>
+        </div>
+        <div>
+          <h3>المستفيدين</h3>
+          <p>{{ beneficiaries_count }}</p>
+        </div>
+      </div>
+  
+      <div class="card" style="display: flex; align-items: center; min-width: 250px; padding: 10px;">
+        <div class="icon" style="color: #e67e22; margin-right: 15px;">
+          <i class="fa fa-users-cog fa-2x icon-spacing"></i>
+        </div>
+        <div>
+          <h3>إجمالي المستخدمين</h3>
+          <p>{{ total_users }}</p>
+        </div>
+      </div>
+    
+      <hr>
+  
+    <!-- 🟩 حاوية الرسومات -->
+    <div class="charts-row" style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 20px;">
+  
+      <!-- الرسم الأول -->
+      <div class="card" style="flex: 1; min-width: 250px; max-width: 300px; text-align: center;">
+        <h3>حالة الموردين</h3>
+        <canvas id="myChart" width="280" height="280" style="border:1px solid #ccc;"></canvas>
+      </div>
+  
+      <!-- الرسم الثاني -->
+      <div class="card" style="flex: 1; min-width: 250px; max-width: 300px; text-align: center;">
+        <h3>توزيع المستخدمين</h3>
         <canvas id="userChart"
           data-suppliers="{{ new_suppliers_count }}"
           data-beneficiaries="{{ beneficiaries_count }}"
-          data-total="{{ total_users }}">
+          data-total="{{ total_users }}"
+          width="280" height="280">
         </canvas>
       </div>
+  
+      <!-- الرسم الثالث -->
+      <div class="card" style="flex: 1; min-width: 250px; max-width: 300px; text-align: center;">
+        <h3>إحصائيات طلبات التوريد</h3>
+        <canvas id="supplyStatusChart"
+          data-accepted="{{ status_counts.مقبول|default:0 }}"
+          data-rejected="{{ status_counts.مرفوض|default:0 }}"
+          data-pending="{{ status_counts.قيد_المعالجة|default:0 }}"
+          width="280" height="280">
+        </canvas>
+      </div>
+  
     </div>
-
-<hr>
-
-        
-        <div class="card">
-          <h3>إحصائيات طلبات التوريد</h3>
-          <div class="chart-container">
-            <canvas id="supplyStatusChart"
-            data-accepted="{{ status_counts.مقبول|default:0 }}"
-            data-rejected="{{ status_counts.مرفوض|default:0 }}"
-            data-pending="{{ status_counts.قيد_المعالجة|default:0 }}">
-          </canvas>
-                </div>
-        </div>
-    
-    
   </div>
+  <hr>
+
+
+<div class="container mt-5">
+  <h2 class="d-flex justify-content-center align-items-center fw-bold mb-3" style="color: #4A3A20; text-align: center;">
+    طلبات الموردين الجديدة
+    <i class="fas fa-store me-3" style="font-size: 30px; color: #e67e2e;"></i>
+  </h2>
+  
+  {% if suppliers %}
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle" dir="rtl" style="width: 100%; max-width: 100%; table-layout: fixed;">
+        <thead>
+          <tr style="background-color: #4A3A20; color: white;">
+            <th style="width: 10%;">#</th>
+            <th style="width: 30%;">اسم المورد</th>
+            <th style="width: 30%;">حالة الطلب</th>
+            <th style="width: 30%;">الإجراء</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for supplier in suppliers %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ supplier.user.get_full_name }}</td>
+              <td>{{ supplier.get_status_display }}</td>
+              <td>
+                <a href="{% url 'administration:supplier_request_detail' supplier.id %}" class="btn btn-sm btn-primary-custom" style="color: #4A3A20;">
+                  عرض التفاصيل
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+  <div class="alert alert-info text-center d-flex justify-content-center align-items-center" role="alert" style="background-color: #e67e2e; color: white;">
+    <i class="fas fa-info-circle me-2" style="font-size: 20px;"></i>
+    <span class="mx-2">لا توجد طلبات قيد المعالجة من الموردين.</span>
+  </div>
+        {% endif %}
 </div>
 
 <hr>
-<!--<div class="card">
+
+<div class="card">
   <h3>إحصائيات الشكاوى</h3>
-  <table style="width:100%; border-collapse: collapse; text-align: center;">
-    <thead>
-      <tr>
-        <th style="border:1px solid #ccc; padding:8px;">الحالة</th>
-        <th style="border:1px solid #ccc; padding:8px;">العدد</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="border:1px solid #ccc; padding:8px;">مفتوحة</td>
-        <td style="border:1px solid #ccc; padding:8px;">{{ open_count }}</td>
-      </tr>
-      <tr>
-        <td style="border:1px solid #ccc; padding:8px;">مغلقة</td>
-        <td style="border:1px solid #ccc; padding:8px;">{{ closed_count }}</td>
-      </tr>
-      <tr>
-        <td style="border:1px solid #ccc; padding:8px;">قيد المعالجة</td>
-        <td style="border:1px solid #ccc; padding:8px;">{{ processing_count }}</td>
-      </tr>
-    </tbody>
+  <table class="styled-table">
+      <thead>
+          <tr>
+              <th>الحالة</th>
+              <th>العدد</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td>مفتوحة</td>
+              <td>{{ open_count|default:"لا توجد بيانات" }}</td>
+          </tr>
+          <tr>
+              <td>مغلقة</td>
+              <td>{{ closed_count|default:"لا توجد بيانات" }}</td>
+          </tr>
+          <tr>
+              <td>قيد المعالجة</td>
+              <td>{{ processing_count|default:"لا توجد بيانات" }}</td>
+          </tr>
+      </tbody>
   </table>
-</div>-->
+</div>
+
 
 
 
 <script src="{% static 'js/admin-dashboard.js' %}"></script>
+
+
+<!--<script>
+const xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
+const yValues = [55, 49, 44, 24, 15];
+const barColors = ["red", "green", "blue", "orange", "brown"];
+
+new Chart("myChart", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    responsive: false,              
+    maintainAspectRatio: false,    
+    plugins: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: "World Wine Production 2018"
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+});
+</script>-->
 
 
 </body>

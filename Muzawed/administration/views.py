@@ -13,47 +13,115 @@ from order.models import Order
 from django.http import HttpRequest, HttpResponse
 User = get_user_model()
 
+#def dashboard(request):
+#    new_suppliers = SupplierProfile.objects.filter(status='Pending')
+#
+#    new_suppliers_count = SupplierProfile.objects.count()
+#    beneficiaries_count = ProfileBeneficiary.objects.count()
+#    total_users = User.objects.count()
+#
+#
+#    status_counts = SupplierProfile.objects.values('status').annotate(count=Count('id'))
+#    status_data = {
+#        'مقبول': 0,
+#        'مرفوض': 0,
+#        'قيد المعالجة': 0,
+#        'لا طلب': 0
+#    }
+#
+#    for status in status_counts:
+#        if status['status'] == 'Accepted':
+#            status_data['مقبول'] = status['count']
+#        elif status['status'] == 'Rejected':
+#            status_data['مرفوض'] = status['count']
+#        elif status['status'] == 'Pending':
+#            status_data['قيد المعالجة'] = status['count']
+#        elif status['status'] == 'No-request':
+#            status_data['لا طلب'] = status['count']
+#
+#    print(status_data)
+#    
+#    #suppliers = SupplierProfile.objects.all()
+#    open_count = Report.objects.filter(status='open').count()
+#    closed_count = Report.objects.filter(status='closed').count()
+#    in_progress_count = Report.objects.filter(status='in_progress').count()
+#
+#
+#    context = {
+#
+#        'new_suppliers_count': new_suppliers_count,
+#        'beneficiaries_count': beneficiaries_count,
+#        'total_users': total_users,
+#        'status_counts': status_data, 
+#        'suppliers': new_suppliers,
+#        'open_count': open_count,
+#        'closed_count': closed_count,
+#        'in_progress_count': in_progress_count
+#
+#
+#
+#    }
+#
+#    return render(request, 'administration/dashboard.html', context)
+#
+
+
 def dashboard(request):
-    new_suppliers_count = SupplierProfile.objects.count()
-    beneficiaries_count = ProfileBeneficiary.objects.count()
-    total_users = User.objects.count()
+    try:
+        new_suppliers = SupplierProfile.objects.filter(status='Pending')
+        new_suppliers_count = SupplierProfile.objects.count()
+        beneficiaries_count = ProfileBeneficiary.objects.count()
+        total_users = User.objects.count()
 
+        status_counts = SupplierProfile.objects.values('status').annotate(count=Count('id'))
+        status_data = {
+            'مقبول': 0,
+            'مرفوض': 0,
+            'قيد المعالجة': 0,
+            'لا طلب': 0
+        }
 
-    status_counts = SupplierProfile.objects.values('status').annotate(count=Count('id'))
-    status_data = {
-        'مقبول': 0,
-        'مرفوض': 0,
-        'قيد المعالجة': 0,
-        'لا طلب': 0
-    }
+        for status in status_counts:
+            if status['status'] == 'Accepted':
+                status_data['مقبول'] = status['count']
+            elif status['status'] == 'Rejected':
+                status_data['مرفوض'] = status['count']
+            elif status['status'] == 'Pending':
+                status_data['قيد المعالجة'] = status['count']
+            elif status['status'] == 'No-request':
+                status_data['لا طلب'] = status['count']
 
-    for status in status_counts:
-        if status['status'] == 'Accepted':
-            status_data['مقبول'] = status['count']
-        elif status['status'] == 'Rejected':
-            status_data['مرفوض'] = status['count']
-        elif status['status'] == 'Pending':
-            status_data['قيد المعالجة'] = status['count']
-        elif status['status'] == 'No-request':
-            status_data['لا طلب'] = status['count']
+        open_count = Report.objects.filter(status='open').count()
+        closed_count = Report.objects.filter(status='closed').count()
+        in_progress_count = Report.objects.filter(status='in_progress').count()
 
-    print(status_data)
-    
+    except Exception as e:
+        print(f"Error in dashboard view: {e}")
+        messages.error(request, "حدث خطأ أثناء تحميل لوحة التحكم.")
+        new_suppliers = []
+        new_suppliers_count = 0
+        beneficiaries_count = 0
+        total_users = 0
+        status_data = {
+            'مقبول': 0,
+            'مرفوض': 0,
+            'قيد المعالجة': 0,
+            'لا طلب': 0
+        }
+        open_count = closed_count = in_progress_count = 0
 
     context = {
-
         'new_suppliers_count': new_suppliers_count,
         'beneficiaries_count': beneficiaries_count,
         'total_users': total_users,
         'status_counts': status_data, 
-
-
+        'suppliers': new_suppliers,
+        'open_count': open_count,
+        'closed_count': closed_count,
+        'in_progress_count': in_progress_count
     }
 
     return render(request, 'administration/dashboard.html', context)
-
-
-
 
 
 def suppliers_list_view(request):
@@ -78,7 +146,9 @@ def suppliers_list_view(request):
         return redirect('administration:suppliers_list_view')
 
     return render(request, 'administration/supplier/suppliers_list.html', {
-        'suppliers': suppliers
+        'suppliers': suppliers,
+        'hide_header': True
+
     })
 
 
@@ -117,13 +187,12 @@ def supplier_request_detail(request, supplier_id):
             'hide_header': True
         }
         
-        
+
         return render(request, 'administration/supplier/supplier_request_detail.html', context)
 
     except Exception as e:
         messages.error(request, f"حدث خطأ أثناء تحميل تفاصيل المورد: {e}")
         
-        print(e, 77777)
         return redirect("administration:supplier_requests_view")
 
 
@@ -187,7 +256,9 @@ def supplier_products_view(request, supplier_id):
 def beneficiary_list_view(request):
     beneficiaries = ProfileBeneficiary.objects.select_related('user').all()
     return render(request, 'administration/beneficiary/beneficiary_list.html', {
-        'beneficiaries': beneficiaries
+        'beneficiaries': beneficiaries,
+        'hide_header': True
+
     })
 
 
@@ -195,7 +266,9 @@ def beneficiary_list_view(request):
 def contact_messages_list_view(request):
     messages = Contact.objects.all().order_by('-created_at')
     return render(request, 'administration/contact/contact_list.html', {
-        'messages': messages
+        'messages': messages,
+        'hide_header': True
+
     })
 
 
@@ -210,8 +283,15 @@ def report_list_view(request):
     else:
         reports = Report.objects.filter(user=request.user)
 
+
+
+
+
     return render(request, 'administration/reports/report_list.html', {
         'reports': reports,
+        'hide_header': True
+
+
     })
 
 
@@ -230,37 +310,52 @@ def reply_to_report_view(request, report_id):
 
 
     if request.method == 'POST':
-        message = request.POST.get('message')
-        responder = request.user  
+        try:
+            message = request.POST.get('message')
+            responder = request.user  
+    
+            new_status = request.POST.get('status')
+            if new_status in ['in_progress', 'closed']:
+                report.status = new_status
+                report.save()
+    
+            report_reply = ReportReply(
+                report=report,
+                responder=responder,
+                message=message,
+                is_admin_reply=True  
+            )
+            Notification.objects.create(
+                recipient=report.user,
+                notification_type="reply",
+                message=f'تم الرد على بلاغك رقم {report.id}.'
+            )
+    
+            report_reply.save()
+    
+            messages.success(request, 'تم الرد على الشكوى بنجاح.', 'alert-success')
+            return redirect('administration:reply_to_report_view', report_id=report.id)
+        
 
-        new_status = request.POST.get('status')
-        if new_status in ['in_progress', 'closed']:
-            report.status = new_status
-            report.save()
+        except Exception as e:
+            print(f"Error while replying to report {report.id}: {e}")
+            messages.error(request, 'حدث خطأ أثناء إرسال الرد، حاول مرة أخرى.', 'alert-danger')
 
-        report_reply = ReportReply(
-            report=report,
-            responder=responder,
-            message=message,
-            is_admin_reply=True  
-        )
-        report_reply.save()
-
-        messages.success(request, 'تم الرد على الشكوى بنجاح.', 'alert-success')
-        return redirect('administration:reply_to_report_view', report_id=report.id)
 
     return render(request, 'administration/reports/reply_to_report.html', {
         'report': report,
         'replies': replies,
+        'hide_header': True
+
     })
 
 
 
 
-def view_report_replies(request, report_id):
-    report = get_object_or_404(Report, id=report_id)
-    replies = ReportReply.objects.filter(report=report).order_by('-created_at')
-    return render(request, 'administration/reports/report_replies.html', {'report': report, 'replies': replies})
+#def view_report_replies(request, report_id):
+#    report = get_object_or_404(Report, id=report_id)
+#    replies = ReportReply.objects.filter(report=report).order_by('-created_at')
+#    return render(request, 'administration/reports/report_replies.html', {'report': report, 'replies': replies})
 
 
 
