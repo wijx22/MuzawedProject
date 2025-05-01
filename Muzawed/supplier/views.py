@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import CitiesForm, SupplyRequestForm, CommercialInfoForm
+from .forms import CitiesForm, CommercialInfoForm
 from .models import City, SupplyDetails , CommercialInfo
 from accounts.models import SupplierProfile
 
@@ -12,73 +12,120 @@ def supplier_details(request: HttpRequest):
     if request.user.is_authenticated:
         try:
             # Check if the user is a supplier
-            supplier = request.user.supplier
-            commercial_info=supplier.commercial_info
-            supply_details=supplier.supply_details
-            cities=City.objects.filter(suppliers=supplier)           
+            supplier:SupplierProfile = request.user.supplier
+            commercial_info = supplier.commercial_info
+            supply_details = supplier.supply_details
+            covered_cities = supplier.cities_covered.all()  
+            request_status = supplier.get_status_display()  
+
+            # Get all available city choices
+            all_city_choices = City.CityChoices.choices
+
+            # Filter out covered cities
+            available_city_choices = [
+                (value, display) for value, display in all_city_choices
+                if value not in covered_cities.values_list('city', flat=True)
+            ]
+           
+
         except AttributeError:
             messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
             return redirect("main:index_view")
 
         except Exception as error:
             print("An error occurred:", error)
-            messages.error(request, 'حدث خطأ اثناء محاولة اضافة المعلومات التجارية يرجى المحاولة مرة اخرى ')
-            return redirect("main:supplie_view")  
+            messages.error(request, 'حدث خطأ اثناء محاولة عرض المعلومات ')
+            return redirect("main:index_view")
 
     return render(
         request,
         "supplier/supplier-details.html",
-        {"supplier": supplier, "branches": cities},
+        {
+            "request_status":request_status,
+            "supplier": supply_details,
+            "cities": covered_cities,
+            "available_city_choices": available_city_choices,  
+        },
     )
+@login_required
+
+def add_city_view(request: HttpRequest):
+    if request.user.is_authenticated:
+        try:
+            # Check if the user is a supplier
+            supplier = request.user.supplier
+            
+            if request.method == "POST":
+                form = CitiesForm(request.POST)
+                if form.is_valid():
+                    city:City = form.save(commit=False)  
+                    city.save()  
+                    city.suppliers.add(supplier) 
+                    messages.success(request, "تم إضافة المدينة بنجاح!")
+                    return redirect("supplier:supplier_details")
+                else:
+                    messages.error(request, "يرجى التحقق من بيانات المدينة.")
+
+
+        except AttributeError:
+            messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
+            return redirect("main:index_view")
+
+        except Exception as error:
+            print("An error occurred:", error)
+            messages.error(request, 'حدث خطأ اثناء محاولة عرض المعلومات')
+
+    return redirect("main:index_view") 
+
 
 
 @login_required
-def branch_create(request:HttpRequest):
-    supplier = get_object_or_404(SupplyDetails, user=request.user)
-    if request.method == "POST":
-        form = CitiesForm(request.POST)
-        if form.is_valid():
-            branch = form.save(commit=False)
-            branch.supplier = supplier
-            branch.save()
-            messages.success(request, "تم إنشاء الفرع بنجاح!")
-            return redirect("supplier:supplier_details")
-    else:
-        messages.error(request, "غير قادر على إنشاء الفرع!")
-        return redirect("supplier:supplier_details")
+def delete_city_view(request: HttpRequest, city_id: int):
+    if request.user.is_authenticated:
+        try:
+            # Check if the user is a supplier
+            supplier:SupplierProfile = request.user.supplier
 
+            # Get the city to be deleted
+            city = get_object_or_404(City, id=city_id, suppliers=supplier)
 
-@login_required
-def branch_delete(request):
-    supplier = get_object_or_404(SupplyDetails, user=request.user)
-    if request.method == "POST":
-        branch_id = request.POST.get("branch_id")
-        if branch_id:
-            branch = get_object_or_404(City, id=branch_id, supplier=supplier)
-            branch.delete()
-            messages.success(request, "تم حذف الفرع بنجاح!")
+            # Remove the supplier from the city's suppliers
+            city.suppliers.remove(supplier)
+
+            # Optionally delete the city if no suppliers are left
+            if not city.suppliers.exists():
+                city.delete()
+
+            messages.success(request, "تم حذف المدينة بنجاح!")
             return redirect("supplier:supplier_details")
 
-    messages.success(request, "غير قادر على حذف الفرع!")
-    return redirect("supplier:supplier_details")
+        except AttributeError:
+            messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
+            return redirect("main:index_view")
 
-def update_commercial_info_view(request):
-    supplier = Supplier.objects.filter(user=request.user).first()
-    if not supplier:
-        return redirect("supplier:create_supplier_details")
+        except Exception as error:
+            print("An error occurred:", error)
+            messages.error(request, 'حدث خطأ اثناء محاولة حذف المدينة')
 
-    commercial_info = supplier.commercialinfo_set.first()
-    if not commercial_info:
-        return redirect('supplier:add_commercial_info')
+    return redirect("main:index_view")
 
-    form = CommercialInfoForm(request.POST or None, request.FILES or None, instance=commercial_info)
+# def update_commercial_info_view(request):
+#     supplier = Supplier.objects.filter(user=request.user).first()
+#     if not supplier:
+#         return redirect("supplier:create_supplier_details")
 
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        messages.success(request, 'تم تحديث المعلومات التجارية بنجاح.')
-        return redirect('supplier:dashboard')  
+#     commercial_info = supplier.commercialinfo_set.first()
+#     if not commercial_info:
+#         return redirect('supplier:add_commercial_info')
 
-    return render(request, 'supplier/commercial_info_form.html', {'form': form})
+#     form = CommercialInfoForm(request.POST or None, request.FILES or None, instance=commercial_info)
+
+#     if request.method == 'POST' and form.is_valid():
+#         form.save()
+#         messages.success(request, 'تم تحديث المعلومات التجارية بنجاح.')
+#         return redirect('supplier:dashboard')  
+
+#     return render(request, 'supplier/commercial_info_form.html', {'form': form})
 
 
 #done
@@ -89,8 +136,6 @@ def commercial_data_view(request: HttpRequest):
             supplier = request.user.supplier
             form = CommercialInfoForm(request.POST or None, request.FILES or None)
             commercial_info=CommercialInfo.objects.filter(supplier=supplier).first()
-            print("innn")
-            print(commercial_info)
             if request.method == 'POST':
                 if commercial_info:
                     
@@ -122,8 +167,6 @@ def supply_details_view(request: HttpRequest):
             # Check if the user is a supplier
             supplier = request.user.supplier
             supply_details=SupplyDetails.objects.filter(supplier=supplier).first()
-            print(type(supply_details))
-            print("in details")
             if request.method == 'POST':
                 if supply_details:
                     
@@ -161,7 +204,10 @@ def supply_details_view(request: HttpRequest):
                 supplier.save() 
                 return redirect("supplier:supplier_details")
 
-            return render(request, "supplier/create-supplier.html")
+            supply_sector_choices = SupplyDetails._meta.get_field('supply_sector').choices
+            delivery_service_choices = SupplyDetails._meta.get_field('delivery_service').choices
+
+            return render(request, "supplier/create-supplier.html",{"supply_sector_choices":supply_sector_choices,"delivery_service_choices":delivery_service_choices})
 
 
         except AttributeError:

@@ -1,3 +1,4 @@
+
 .brown-title{
     color: #4A3A20;    
 }
@@ -15,6 +16,28 @@
 
 .btn:hover {
     background-color: #204a3a;
+}
+.file-upload {
+  border: 1px dashed #ced4da;
+  border-radius: 4px;
+  padding: 10px;
+  text-align: center;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.file-upload:hover {
+  background-color: #e9ecef;
+}
+.file-upload i {
+  font-size: 20px;
+  color: #6c757d;
+}
+.file-upload-text {
+  color: #6c757d;
+}
+.file-name {
+  font-size: 0.875rem;
 }
 label{
     color: #264f3f;
@@ -120,14 +143,16 @@ td i{
 }
 
 .city-card{
-    background-color: #4A3A20;
+    background-color: #4a3a20;
     border-radius: 10px;
     color: #fff;
     height: 30px;
-    width: 100px;
     text-align: center;
     text-decoration: none;
     vertical-align: middle;
+}
+.city-card.active{
+  background-color: #e67e22;
 }
 .counter {
     width: 100px;
