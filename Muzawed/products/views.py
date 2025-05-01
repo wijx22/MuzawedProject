@@ -6,6 +6,7 @@ from .models import Product
 from django.http import Http404, HttpRequest,HttpResponse
 from notification.models import Notification
 
+                       
 def add_product_view(request):
     if request.method == 'POST':
         # Extract data from request

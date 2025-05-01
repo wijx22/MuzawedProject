@@ -11,11 +11,3 @@ def mark_notification_as_read(request, notification_id):
     notification.save()
     return redirect(request.GET.get('next', '/'))
 
-
-def all_notifications_view(request):
-    if not request.user.is_authenticated:
-        return redirect('accounts:sign_in')
-    
-    notifications = Notification.objects.filter(recipient=request.user).order_by('-created_at')
-    return render(request, 'notification/all_notifications.html', {'notifications': notifications})
-
