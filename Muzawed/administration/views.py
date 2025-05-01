@@ -53,70 +53,6 @@ def dashboard(request):
 
 
 
-#def suppliers_list_view(request):
-#    suppliers = SupplierProfile.objects.select_related('user').all()
-#
-#    if request.method == 'POST':
-#        supplier_id = request.POST.get('supplier_id')
-#        
-#        # التفعيل / التعطيل
-#        if 'toggle_activation' in request.POST:
-#            try:
-#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
-#                supplier_profile.is_active = not supplier_profile.is_active
-#                supplier_profile.save()
-#                messages.success(request, f"تم {'تفعيل' if supplier_profile.is_active else 'تعطيل'} حساب المورد بنجاح.")
-#            except SupplierProfile.DoesNotExist:
-#                messages.error(request, "المورد غير موجود.")
-#
-#        # الحذف
-#        elif 'delete_supplier' in request.POST:
-#            try:
-#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
-#                supplier_profile.delete()
-#                messages.success(request, "تم حذف المورد بنجاح.")
-#            except SupplierProfile.DoesNotExist:
-#                messages.error(request, "المورد غير موجود.")
-#        
-#        return redirect('administration:suppliers_list_view')
-#
-#    return render(request, 'administration/suppliers_list.html', {
-#        'suppliers': suppliers
-#    })
-
-#هذا مع تفعيل و تعطيل حساب المورد بحيث الادمن بنفسة يفعل ويعطل
-#def suppliers_list_view(request):
-#    suppliers = SupplierProfile.objects.select_related('user').all()
-#
-#    if request.method == 'POST':
-#        supplier_id = request.POST.get('supplier_id')
-#        
-#        if 'toggle_activation' in request.POST:
-#            try:
-#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
-#                supplier_profile.is_active = not supplier_profile.is_active
-#                supplier_profile.save()
-#                messages.success(request, f"تم {'تفعيل' if supplier_profile.is_active else 'تعطيل'} حساب المورد بنجاح.")
-#            except SupplierProfile.DoesNotExist:
-#                messages.error(request, "المورد غير موجود.")
-#
-#        elif 'delete_supplier' in request.POST:
-#            try:
-#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
-#                
-#                supplier_profile.user.delete() 
-#                supplier_profile.delete()  
-#
-#                messages.success(request, "تم حذف المورد بنجاح.")
-#            except SupplierProfile.DoesNotExist:
-#                messages.error(request, "المورد غير موجود.")
-#        
-#        return redirect('administration:suppliers_list_view')
-#
-#    return render(request, 'administration/supplier/suppliers_list.html', {
-#        'suppliers': suppliers
-#    })
-
 
 
 def suppliers_list_view(request):
@@ -176,11 +112,12 @@ def supplier_request_detail(request, supplier_id):
             'supply_details': supply_details,
             'hide_header': True
         }
+        
 
         return render(request, 'administration/supplier/supplier_request_detail.html', context)
     except Exception as e:
         messages.error(request, f"حدث خطأ أثناء تحميل تفاصيل المورد: {e}")
-        return redirect("administration:supplier_requests")
+        return redirect("administration:supplier_requests_view")
 
 
 def approve_supplier_view(request, supplier_id):
@@ -223,30 +160,6 @@ def reject_supplier_view(request, supplier_id):
 
 
 
-#def supplier_request_action(request, supplier_id):
-#    if not request.user.is_staff:
-#        messages.warning(request, "غير مصرح لك بالوصول")
-#        return redirect("main:index_view")
-#
-#    supplier = get_object_or_404(SupplierProfile, id=supplier_id)
-#
-#    if request.method == "POST":
-#        action = request.POST.get("action")
-#
-#        if action == "approve":
-#            supplier.status = SupplierProfile.RequestStatusChoises.ACCEPTED
-#            supplier.is_active = True
-#            messages.success(request, "تم قبول المورد.")
-#        elif action == "reject":
-#            reason = request.POST.get("reason", "تم الرفض من قبل الإدارة.")
-#            supplier.status = SupplierProfile.RequestStatusChoises.REJECTED
-#            supplier.rejection_reason = reason
-#            supplier.is_active = False
-#            messages.success(request, "تم رفض المورد.")
-#
-#        supplier.save()
-#
-#    return redirect("administration:supplier_request_detail", supplier_id=supplier.id)
 
 
 def supplier_products_view(request, supplier_id):
@@ -343,6 +256,61 @@ def view_report_replies(request, report_id):
     return render(request, 'administration/reports/report_replies.html', {'report': report, 'replies': replies})
 
 
+
+
+
+
+  
+
+
+
+
+
+
+
+def order_requests_list(request):
+    if not request.user.is_staff:
+        messages.error(request, "غير مسموح لك بالوصول إلى هذه الصفحة.")
+        return redirect("main:index_view")
+    
+    try:
+        # استعلام الطلبات المفتوحة
+        open_orders = Order.objects.filter(status="open")
+        
+        # استعلام الطلبات المغلقة
+        closed_orders = Order.objects.filter(status="closed")
+
+        return render(request, 'administration/order_requests.html', {
+            'open_orders': open_orders,
+            'closed_orders': closed_orders,
+            'hide_header': True
+        })
+
+    except Exception as e:
+        messages.error(request, f"حدث خطأ أثناء جلب بيانات الطلبات: {e}")
+        return redirect("main:index_view")
+    
+
+    messages.success(request, "تم تحديث حالة المورد وإرسال الإشعار.")
+    return redirect("administration:supplier_requests_list")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #def supplier_requests_list(request):
 #    if request.user.is_staff:  
 #        suppliers = SupplierProfile.objects.filter(status=SupplierProfile.RequestStatusChoises.PENDING)
@@ -351,12 +319,69 @@ def view_report_replies(request, report_id):
 #        messages.error(request, "غير مصرح لك.")
 #        return redirect("main:index_view")
 
+#def suppliers_list_view(request):
+#    suppliers = SupplierProfile.objects.select_related('user').all()
+#
+#    if request.method == 'POST':
+#        supplier_id = request.POST.get('supplier_id')
+#        
+#        # التفعيل / التعطيل
+#        if 'toggle_activation' in request.POST:
+#            try:
+#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
+#                supplier_profile.is_active = not supplier_profile.is_active
+#                supplier_profile.save()
+#                messages.success(request, f"تم {'تفعيل' if supplier_profile.is_active else 'تعطيل'} حساب المورد بنجاح.")
+#            except SupplierProfile.DoesNotExist:
+#                messages.error(request, "المورد غير موجود.")
+#
+#        # الحذف
+#        elif 'delete_supplier' in request.POST:
+#            try:
+#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
+#                supplier_profile.delete()
+#                messages.success(request, "تم حذف المورد بنجاح.")
+#            except SupplierProfile.DoesNotExist:
+#                messages.error(request, "المورد غير موجود.")
+#        
+#        return redirect('administration:suppliers_list_view')
+#
+#    return render(request, 'administration/suppliers_list.html', {
+#        'suppliers': suppliers
+#    })
 
-
-
-  
-
-
+#هذا مع تفعيل و تعطيل حساب المورد بحيث الادمن بنفسة يفعل ويعطل
+#def suppliers_list_view(request):
+#    suppliers = SupplierProfile.objects.select_related('user').all()
+#
+#    if request.method == 'POST':
+#        supplier_id = request.POST.get('supplier_id')
+#        
+#        if 'toggle_activation' in request.POST:
+#            try:
+#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
+#                supplier_profile.is_active = not supplier_profile.is_active
+#                supplier_profile.save()
+#                messages.success(request, f"تم {'تفعيل' if supplier_profile.is_active else 'تعطيل'} حساب المورد بنجاح.")
+#            except SupplierProfile.DoesNotExist:
+#                messages.error(request, "المورد غير موجود.")
+#
+#        elif 'delete_supplier' in request.POST:
+#            try:
+#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
+#                
+#                supplier_profile.user.delete() 
+#                supplier_profile.delete()  
+#
+#                messages.success(request, "تم حذف المورد بنجاح.")
+#            except SupplierProfile.DoesNotExist:
+#                messages.error(request, "المورد غير موجود.")
+#        
+#        return redirect('administration:suppliers_list_view')
+#
+#    return render(request, 'administration/supplier/suppliers_list.html', {
+#        'suppliers': suppliers
+#    })
 
 #def supplier_requests_list(request):
 #    if request.user.is_staff:  
@@ -449,65 +474,70 @@ def view_report_replies(request, report_id):
 
 
 
+#def update_supplier_status(request, supplier_id):
+#    if not request.user.is_staff:
+#        messages.error(request, "غير مصرح لك.")
+#        return redirect("main:index_view")
+#
+#    supplier = get_object_or_404(SupplierProfile, id=supplier_id)
+#    action = request.POST.get("action")
+#    reason = request.POST.get("rejection_reason", "").strip()
+#
+#    if action == "accept":
+#        supplier.status = "Accepted"
+#        supplier.rejection_reason = ""
+#    elif action == "reject":
+#        supplier.status = "Rejected"
+#        supplier.rejection_reason = reason or "لم يتم توضيح السبب."
+#    else:
+#        messages.error(request, "عملية غير صالحة.")
+#        return redirect("administration:supplier_request_detail", supplier_id=supplier_id)
+#
+#    supplier.save()
+#
+#    
+#    message = f"تم {'قبول' if supplier.status == 'Accepted' else 'رفض'} طلبك."
+#    if supplier.status == "Rejected":
+#        message += f" السبب: {supplier.rejection_reason}"
+#    # حفظ التغييرات في قاعدة البيانات
+#    supplier.save()
+#
+#    # إنشاء الإشعار للمورد
+#    if action == "accept":
+#        notif_msg = "تم قبول طلب التوريد الخاص بك. يمكنك الآن الدخول إلى لوحة المورد."
+#    else:
+#        notif_msg = f"تم رفض طلب التوريد الخاص بك. السبب: {supplier.rejection_reason}"
+#
+#    Notification.objects.create(
+#        recipient=supplier.user,
+#        notification_type="alert",
+#        message=message
+#    )
+#
+#    messages.success(request, "تم تحديث حالة المورد وإرسال الإشعار.")
+#    return redirect("administration:supplier_requests_list")
 
-# فيو ارسال اشعارات للسبلاير في حالة رفض مع ذكر سبب رفض
-def update_supplier_status(request, supplier_id):
-    if not request.user.is_staff:
-        messages.error(request, "غير مصرح لك.")
-        return redirect("main:index_view")
-
-    supplier = get_object_or_404(SupplierProfile, id=supplier_id)
-    action = request.POST.get("action")
-    reason = request.POST.get("rejection_reason", "").strip()
-
-    if action == "accept":
-        supplier.status = "Accepted"
-        supplier.rejection_reason = ""
-    elif action == "reject":
-        supplier.status = "Rejected"
-        supplier.rejection_reason = reason or "لم يتم توضيح السبب."
-    else:
-        messages.error(request, "عملية غير صالحة.")
-        return redirect("administration:supplier_request_detail", supplier_id=supplier_id)
-
-    supplier.save()
-
-    
-    message = f"تم {'قبول' if supplier.status == 'Accepted' else 'رفض'} طلبك."
-    if supplier.status == "Rejected":
-        message += f" السبب: {supplier.rejection_reason}"
-
-    Notification.objects.create(
-        recipient=supplier.user,
-        notification_type="alert",
-        message=message
-    )
-
-    messages.success(request, "تم تحديث حالة المورد وإرسال الإشعار.")
-    return redirect("administration:supplier_requests_list")
-
-
-
-
-
-def order_requests_list(request):
-    if not request.user.is_staff:
-        messages.error(request, "غير مسموح لك بالوصول إلى هذه الصفحة.")
-        return redirect("main:index_view")
-    
-    try:
-        # استعلام الطلبات المفتوحة
-        open_orders = Order.objects.filter(status="open")
-        
-        # استعلام الطلبات المغلقة
-        closed_orders = Order.objects.filter(status="closed")
-
-        return render(request, 'administration/order_requests.html', {
-            'open_orders': open_orders,
-            'closed_orders': closed_orders,
-            'hide_header': True
-        })
-
-    except Exception as e:
-        messages.error(request, f"حدث خطأ أثناء جلب بيانات الطلبات: {e}")
-        return redirect("main:index_view")
+#def supplier_request_action(request, supplier_id):
+#    if not request.user.is_staff:
+#        messages.warning(request, "غير مصرح لك بالوصول")
+#        return redirect("main:index_view")
+#
+#    supplier = get_object_or_404(SupplierProfile, id=supplier_id)
+#
+#    if request.method == "POST":
+#        action = request.POST.get("action")
+#
+#        if action == "approve":
+#            supplier.status = SupplierProfile.RequestStatusChoises.ACCEPTED
+#            supplier.is_active = True
+#            messages.success(request, "تم قبول المورد.")
+#        elif action == "reject":
+#            reason = request.POST.get("reason", "تم الرفض من قبل الإدارة.")
+#            supplier.status = SupplierProfile.RequestStatusChoises.REJECTED
+#            supplier.rejection_reason = reason
+#            supplier.is_active = False
+#            messages.success(request, "تم رفض المورد.")
+#
+#        supplier.save()
+#
+#    return redirect("administration:supplier_request_detail", supplier_id=supplier.id)

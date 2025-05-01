@@ -4,6 +4,9 @@ from . import views
 app_name = 'administration'
 
 urlpatterns = [
+  path('supplier/requests/', views.supplier_requests_list, name='supplier_requests_list'),
+
+
   path('admin/', views.dashboard, name='dashboard'),
   path('suppliers/', views.suppliers_list_view, name='suppliers_list_view'),
   path('beneficiary/', views.beneficiary_list_view, name='beneficiary_list_view'),
@@ -16,8 +19,8 @@ urlpatterns = [
   path('suppliers/<int:supplier_id>/approve/', views.approve_supplier_view, name='approve_supplier'),
   path('supplier/reject/<int:supplier_id>/', views.reject_supplier_view, name='reject_supplier'),
   path('supplier/products/view/<int:supplier_id>/', views.supplier_products_view, name='supplier_products_view'),
-  #path('supplier/action/', views.supplier_request_action, name='supplier_request_action')
-  path('order/list/', views.order_requests_list, name='order_requests_list')
+  #path('order/list/', views.order_requests_list, name='order_requests_list')
+  #path('supplier/<int:supplier_id>/update_status/', views.update_supplier_status, name='update_supplier_status'),
 
 
 
