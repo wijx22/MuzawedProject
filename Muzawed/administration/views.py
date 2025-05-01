@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from supplier.models import CommercialInfo, SupplyDetails
 from products.models import Product
+from notification.models import Notification
+from django.views.decorators.http import require_POST
 User = get_user_model()
 
 def dashboard(request):
@@ -223,6 +225,7 @@ def supplier_request_detail(request, supplier_id):
             'commercial_info': commercial_info,
             'supply_details': supply_details,
         }
+        
 
         return render(request, 'administration/supplier_request_detail.html', context)
     except Exception as e:
@@ -376,3 +379,41 @@ def supplier_products_view(request, supplier_id):
 #    return redirect("administration:supplier_request_detail", supplier_id=supplier.id)
 
 
+
+@require_POST
+def update_supplier_status(request, supplier_id):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
+    supplier = get_object_or_404(SupplierProfile, id=supplier_id)
+    action = request.POST.get("action")
+    reason = request.POST.get("rejection_reason", "").strip()
+
+    if action == "accept":
+        supplier.status = "Accepted"
+        supplier.rejection_reason = ""
+    elif action == "reject":
+        supplier.status = "Rejected"
+        supplier.rejection_reason = reason or "لم يتم توضيح السبب."
+    else:
+        messages.error(request, "عملية غير صالحة.")
+        return redirect("administration:supplier_request_detail", supplier_id=supplier_id)
+
+    # حفظ التغييرات في قاعدة البيانات
+    supplier.save()
+
+    # إنشاء الإشعار للمورد
+    if action == "accept":
+        notif_msg = "تم قبول طلب التوريد الخاص بك. يمكنك الآن الدخول إلى لوحة المورد."
+    else:
+        notif_msg = f"تم رفض طلب التوريد الخاص بك. السبب: {supplier.rejection_reason}"
+
+    Notification.objects.create(
+        recipient=supplier.user,
+        notification_type="alert",
+        message=notif_msg
+    )
+
+    messages.success(request, "تم تحديث حالة المورد وإرسال الإشعار.")
+    return redirect("administration:supplier_requests_list")

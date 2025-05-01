@@ -4,6 +4,9 @@ from . import views
 app_name = 'administration'
 
 urlpatterns = [
+  path('supplier/requests/', views.supplier_requests_list, name='supplier_requests_list'),
+
+
   path('admin/', views.dashboard, name='dashboard'),
   path('suppliers/', views.suppliers_list_view, name='suppliers_list_view'),
   path('beneficiary/', views.beneficiary_list_view, name='beneficiary_list_view'),
