@@ -1,6 +1,8 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
+
+
   <!--<h2>تفاصيل طلب المورد</h2>
 
   <div class="card">
@@ -101,10 +103,11 @@
     function showRejectionForm() {
         document.getElementById('rejectionForm').style.display = 'block';
     }
-</script>-->
+</script>-
 
 
 <div class="container mt-4">
+
   <h2 class="mb-4 text-center">تفاصيل طلب المورد</h2>
 
   <div class="card mb-4">
@@ -174,7 +177,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <a href="{% url 'administration:supplier_requests_view' %}" class="btn btn-outline-secondary">رجوع إلى قائمة الطلبات</a>
 
-    <form method="post" action="{% url 'administration:update_supplier_status' supplier.id %}" class="d-inline-block">
+    <form method="post" class="d-inline-block">
       {% csrf_token %}
       <input type="hidden" name="action" value="accept">
       <button type="submit" class="btn btn-success">قبول الطلب</button>
@@ -183,26 +186,118 @@
     <button type="button" onclick="showRejectionForm()" class="btn btn-danger">رفض المورد</button>
   </div>
 
-  <form id="rejectionForm" method="post" action="{% url 'administration:update_supplier_status' supplier.id %}" style="display: none;">
-    {% csrf_token %}
-    <input type="hidden" name="action" value="reject">
-    <div class="card">
-      <div class="card-header bg-danger text-white">سبب الرفض</div>
-      <div class="card-body">
-        <div class="mb-3">
-          <label for="reason" class="form-label">يرجى توضيح سبب الرفض:</label>
-          <textarea name="rejection_reason" id="reason" class="form-control" rows="4" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-outline-danger">تأكيد الرفض</button>
-      </div>
-    </div>
-  </form>
+
 </div>
 
 <script>
   function showRejectionForm() {
     document.getElementById('rejectionForm').style.display = 'block';
     window.scrollTo({ top: document.getElementById('rejectionForm').offsetTop, behavior: 'smooth' });
+  }
+</script>-->
+
+
+
+
+
+<div class="container mt-4">
+
+  <h2 class="mb-4 text-center">تفاصيل طلب المورد</h2>
+
+  <div class="card mb-4">
+    <div class="card-header text-white" style="background-color: #1F3F2E;">معلومات الحساب</div>
+    <div class="card-body">
+      <p><strong>الاسم:</strong> {{ supplier.user.get_full_name }}</p>
+      <p><strong>البريد الإلكتروني:</strong> {{ supplier.user.email }}</p>
+      <p><strong>رقم الجوال:</strong> {{ supplier.phone }}</p>
+      <p><strong>الحالة:</strong> {{ supplier.get_status_display }}</p>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header text-white" style="background-color: #1F3F2E;">المعلومات التجارية</div>
+    <div class="card-body">
+      {% if commercial_info %}
+        <p><strong>اسم المتجر:</strong> {{ commercial_info.store_name }}</p>
+        <p><strong>وصف المتجر:</strong> {{ commercial_info.store_description }}</p>
+        <p><strong>اسم الحساب البنكي:</strong> {{ commercial_info.bank_account_name }}</p>
+        <p><strong>رقم الحساب:</strong> {{ commercial_info.bank_account_number }}</p>
+        <p><strong>اسم البنك:</strong> {{ commercial_info.bank_name }}</p>
+        <p><strong>IBAN:</strong> {{ commercial_info.iban }}</p>
+        <p><strong>SWIFT:</strong> {{ commercial_info.swift_code }}</p>
+        <p><strong>اسم جهة الاتصال:</strong> {{ commercial_info.commercial_contact_name }}</p>
+        <p><strong>رقم الجوال:</strong> {{ commercial_info.commercial_contact_phone }}</p>
+        <p><strong>الإيميل:</strong> {{ commercial_info.commercial_contact_email }}</p>
+        <p><strong>السجل التجاري:</strong>
+          {% if commercial_info.registration_document %}
+            <a href="{{ commercial_info.registration_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary">عرض</a>
+          {% else %} لا يوجد {% endif %}
+        </p>
+        <p><strong>رخصة:</strong>
+          {% if commercial_info.license_document %}
+            <a href="{{ commercial_info.license_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary">عرض</a>
+          {% else %} لا يوجد {% endif %}
+        </p>
+        <p><strong>شهادة ضريبية:</strong>
+          {% if commercial_info.tax_certificate %}
+            <a href="{{ commercial_info.tax_certificate.url }}" target="_blank" class="btn btn-sm btn-outline-primary">عرض</a>
+          {% else %} لا يوجد {% endif %}
+        </p>
+      {% else %}
+        <p>لا توجد معلومات تجارية.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header text-white" style="background-color: #1F3F2E;">معلومات التوريد</div>
+    <div class="card-body">
+      {% if supply_details %}
+        <p><strong>أيام التوريد:</strong> {{ supply_details.supply_days }}</p>
+        <p><strong>الخدمة السريعة:</strong> {{ supply_details.fast_service_details }}</p>
+        <p><strong>خدمة التوصيل:</strong> {{ supply_details.delivery_service }}</p>
+        <p><strong>مدة تجهيز الطلب:</strong> {{ supply_details.order_lead_time_days }} أيام</p>
+        <p><strong>خيارات الدفع المتأخر:</strong> {{ supply_details.late_payment_options }}</p>
+        <p><strong>القطاع:</strong> {{ supply_details.supply_sector }}</p>
+        {% if supply_details.logo %}
+          <p><strong>شعار المورد:</strong><br><img src="{{ supply_details.logo.url }}" class="img-thumbnail" width="150"></p>
+        {% endif %}
+      {% else %}
+        <p>لا توجد معلومات توريد.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <a href="{% url 'administration:supplier_requests_view' %}" class="btn btn-outline-secondary">رجوع إلى قائمة الطلبات</a>
+
+    <form method="post" action="{% url 'administration:approve_supplier' supplier.id %}" class="d-inline-block">
+      {% csrf_token %}
+      <button type="submit" class="btn text-white" style="background-color: #1F3F2E;">قبول الطلب</button>
+    </form>
+
+    <button type="button" onclick="showRejectionForm()" class="btn btn-danger">رفض المورد</button>
+  </div>
+
+  <form id="rejectionForm" method="post" action="{% url 'administration:reject_supplier' supplier.id %}" style="display: none;">
+    {% csrf_token %}
+    <div class="card">
+      <div class="card-header bg-danger text-white">سبب الرفض</div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label for="reason" class="form-label">يرجى توضيح سبب الرفض:</label>
+          <textarea name="reason" id="reason" class="form-control" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-outline-danger">تأكيد الرفض</button>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+<script>
+  function showRejectionForm() {
+    document.getElementById("rejectionForm").style.display = "block";
   }
 </script>
 

@@ -7,8 +7,8 @@
     background-color: #204a3a !important;
     color: #000;
   }
-  
 </style>
+
 <div class="container mt-4">
   <div class="card shadow-sm">
     <div class="card-header bg-dark-green text-white d-flex justify-content-between align-items-center">
@@ -24,7 +24,8 @@
               <th scope="col">اسم المستخدم</th>
               <th scope="col">البريد الإلكتروني</th>
               <th scope="col">معلومات التواصل</th>
-              <th scope="col">الإجراءات</th>
+              <th scope="col">الحالة</th> <!-- عمود الحالة -->
+              <th scope="col">الحذف</th>  <!-- عمود الحذف -->
             </tr>
           </thead>
           <tbody>
@@ -34,33 +35,30 @@
               <td>{{ s.user.username }}</td>
               <td><a href="mailto:{{ s.user.email }}">{{ s.user.email }}</a></td>
               <td>{{ s.contact_info }}</td>
-              <td>
-                <!-- تفعيل / تعطيل الحساب -->
-                <form method="POST" style="display:inline;">
-                  {% csrf_token %}
-                  <button type="submit" name="toggle_activation" class="btn btn-link">
-                    {% if s.is_active %}
-                      <span class="icon">❌ تعطيل</span>
-                    {% else %}
-                      <span class="icon">✅ تفعيل</span>
-                    {% endif %}
-                    <input type="hidden" name="supplier_id" value="{{ s.id }}">
-                  </button>
-                </form>
 
-                <!-- حذف الحساب -->
-                <form method="POST" style="display:inline;" onsubmit="return confirm('هل أنت متأكد من حذف المورد؟');">
+              <!-- عمود الحالة -->
+              <td class="text-center align-middle">
+                {% if s.is_active %}
+                  <span class="text-success">✅ مفعل</span>
+                {% else %}
+                  <span class="text-danger">❌ غير مفعل</span>
+                {% endif %}
+              </td>
+
+              <!-- عمود الحذف -->
+              <td class="text-center align-middle">
+                <form method="POST" onsubmit="return confirm('هل أنت متأكد من حذف المورد؟');">
                   {% csrf_token %}
+                  <input type="hidden" name="supplier_id" value="{{ s.id }}">
                   <button type="submit" name="delete_supplier" class="btn btn-danger btn-sm">
                     حذف
                   </button>
-                  <input type="hidden" name="supplier_id" value="{{ s.id }}">
                 </form>
               </td>
             </tr>
             {% empty %}
             <tr>
-              <td colspan="5" class="text-center py-3">لا توجد ملفات موردين.</td>
+              <td colspan="6" class="text-center py-3">لا توجد ملفات موردين.</td>
             </tr>
             {% endfor %}
           </tbody>

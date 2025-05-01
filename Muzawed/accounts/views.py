@@ -70,8 +70,6 @@ def beneficiary_profile_view(request: HttpRequest, user_name):
             messages.error(request, "لا يحق لك مشاهدة هذا الملف الشخصي.")
             return redirect('accounts:sign_in')
         
-        #if SupplierProfile.objects.filter(user=user).exists():
-        #    messages.warning(request, "هذا المستخدم هو المورد وليس المستفيد", "alert-warning")
         
         profile = ProfileBeneficiary.objects.filter(user=user).first()
         if not profile:
@@ -139,6 +137,11 @@ def sign_up_supplier(request: HttpRequest):
             new_user.save()
             profile = SupplierProfile(user=new_user,name=new_user.get_full_name(),contact_info=request.POST['contact_info'])
             profile.save()
+            Notification.objects.create(
+               recipient=new_user,
+               notification_type='alert',
+               message='مرحبًا بك في مزود! 🎉 تم إنشاء حسابك كمورد بنجاح.'
+               )
 
             
             messages.success(request, "تم تسجيل المورد بنجاح")
@@ -185,27 +188,6 @@ def supplier_profile_view(request: HttpRequest, user_name):
         return render(request, '404.html')
 
 
-#def supplier_profile_view(request: HttpRequest, user_name):
-#  
-#    try:
-#        user = User.objects.get(username=user_name)
-#        if request.user != user or not SupplierProfile.objects.filter(user=user).exists():
-#            messages.error(request, "لا يحق لك مشاهدة هذا الملف الشخصي.", "alert-danger")
-#            return redirect('accounts:sign_in')
-#
-#        profile = SupplierProfile.objects.filter(user=user).first()
-#        if not profile:
-#            profile = SupplierProfile.objects.create(user=user)
-#
-#        return render(request, 'accounts/supplier/supplier_profile.html', {
-#            'user': user,
-#            'profile': profile
-#        })
-#
-#    except Exception as e:
-#        print(e)
-#        return render(request, '404.html')
-#
 
 
 def update_supplier_profile(request: HttpRequest):
@@ -226,6 +208,11 @@ def update_supplier_profile(request: HttpRequest):
             
             profile.contact_info = request.POST.get('contact_info', profile.contact_info)
             profile.save()
+            Notification.objects.create(
+               recipient=request.user,
+               notification_type='alert',
+               message='تم تحديث ملفك الشخصي بنجاح.'
+            )
 
             messages.success(request, 'تم تحديث الملف الشخصي بنجاح')
 
@@ -247,48 +234,3 @@ def log_out(request: HttpRequest):
 
 
 
-#def update_beneficiary_profile(request: HttpRequest):
-#    if not request.user.is_authenticated :
-#        messages.warning(request, 'Only registered users can update profile', 'alert-warning')
-#        return redirect('accounts:sign_in')
-#    
-#    try:
-#        with transaction.atomic():
-#            user: User = request.user
-#
-#            user.first_name = request.POST.get('first_name', user.first_name)
-#            user.last_name = request.POST.get('last_name', user.last_name)
-#            user.email = request.POST.get('email', user.email)
-#            user.save()
-#
-#            profile, created = ProfileBeneficiary.objects.get_or_create(user=user)
-#            
-#            profile.contact_info = request.POST.get('contact_info', profile.contact_info)
-#            profile.address = request.POST.get('address', profile.address)
-#            profile.save()
-#
-#            messages.success(request, 'Profile updated successfully', 'alert-success')
-#
-#    except Exception as e:
-#        messages.error(request, "Couldn't update profile", "alert-danger")
-#        print(e)
-#    
-#    return render(request, 'accounts/beneficiary/update_beneficiary_profile.html')
-
-
-
-#def beneficiary_profile_view(request: HttpRequest, user_name):
-#    try:
-#        user = User.objects.get(username=user_name)
-#        profile = ProfileBeneficiary.objects.filter(user=user).first()
-#        if not profile:
-#            profile = ProfileBeneficiary.objects.create(user=user)
-#
-#        return render(request, 'accounts/beneficiary/beneficiary_profile.html', {
-#            'user': user,
-#            'profile': profile
-#        })
-#
-#    except Exception as e:
-#        print(e)
-#        return render(request, '404.html')

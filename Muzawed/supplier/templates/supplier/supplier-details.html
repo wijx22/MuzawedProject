@@ -1,351 +1,266 @@
-{% extends 'main/base.html' %}
+{% extends 'main/supplier_base.html' %}
 {% load static %}
 {% block title %}تفاصيل المورد{% endblock %}
+{% block ref %}
+<link rel="stylesheet" href="{% static 'css/supplier_style.css' %}">
 
+{% endblock %}
 {% block content %}
-    <style>
-        .details-container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 30px;
-            margin: 30px auto;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
-        }
-        .action-btn {
-            background-color: #2c5545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 8px 16px;
-            font-weight: 500;
-            margin-left: 10px;
-        }
-        .delete-btn {
-            background-color: #dc3545;
-        }
-        .detail-label {
-            font-weight: 600;
-            color: #495057;
-        }
-        .detail-value {
-            color: #212529;
-        }
-        .supplier-logo {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            padding: 5px;
-            background-color: #f8f9fa;
-        }
-        .detail-section {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #e9ecef;
-        }
-        .detail-section:last-child {
-            border-bottom: none;
-        }
-        .badge {
-            font-size: 0.9rem;
-            padding: 6px 10px;
-        }
-        .timestamp {
-            font-size: 0.85rem;
-            color: #6c757d;
-        }
-        .branch-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
-        .branch-actions {
-            width: 100px;
-        }
-        .modal-header, .modal-footer {
-            border-color: #e9ecef;
-        }
-        .modal-title {
-            color: #2c5545;
-            font-weight: 600;
-        }
-        .btn-add-branch {
-            background-color: #2c5545;
-            color: white;
-        }
-    </style>
 
-    <div class="container">
-        <!-- Details Container -->
-        <div class="details-container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3>تفاصيل المورد</h3>
-                <!-- <div>
+<div class="container">
+    
+    <!-- Details Container -->
+    <div class="details-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5>معلومات التوريد</h5>
+            <!-- <div>
                     <a href="#" class="btn action-btn"><i class="bi bi-pencil-square me-1"></i> تعديل</a>
                 </div> -->
-            </div>
-            
-            <!-- Basic Info Section -->
-            <div class="detail-section row">
-                <div class="col-md-3 text-center mb-3">
-                    <img src="{{supplier.logo_url}}" alt="شعار المورد" class="supplier-logo mb-2">
-                    <div class="mt-2">
-                        {% if supplier.is_available %}
-                        <span class="badge bg-success">متاح حالياً</span>
-                        {% else %}
-                        <span class="badge bg-danger">غير متاح حالياً</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-9">
-                    <div class="row mb-2">
-                        <div class="col-md-4">
-                            <div class="detail-label">قطاع التوريد</div>
-                            <div class="detail-value">{{supplier.get_supply_sector_display}}</div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="detail-label">خدمة التوصيل</div>
-                            <div class="detail-value">{{supplier.get_delivery_service_display}}</div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="detail-label">مدة تنفيذ الطلب</div>
-                            <div class="detail-value">{{supplier.order_lead_time_days}} ايام</div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="detail-label">أيام التوريد</div>
-                            <div class="detail-value">{{supplier.supply_days}}</div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="detail-label">خيارات الدفع المتأخر</div>
-                            <div class="detail-value">
-                                {% if supplier.late_payment_options %}
-                                <i class="bi bi-check-circle-fill text-success"></i> متاح
-                                {% else %}
-                                <i class="bi bi-check-circle-fill text-danger"></i> غير متاح
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Additional Details Section -->
-            <div class="detail-section">
-                <h5 class="mb-3">تفاصيل إضافية</h5>
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <div class="detail-label">تفاصيل الخدمة السريعة</div>
-                        <div class="detail-value">{{supplier.fast_service_details}}</div>
-                    </div>
-                </div>
-                
-                <div class="row" id="unavailablePeriod">
-                    <div class="col-md-6">
-                        <div class="detail-label">غير متاح من</div>
-                        <div class="detail-value">{{supplier.unavailable_from|default_if_none:"-"}}</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="detail-label">غير متاح إلى</div>
-                        <div class="detail-value">{{supplier.unavailable_to|default_if_none:"-"}}</div>
-                    </div>
-                </div>
-            </div>
-            <!-- Branches Section -->
-            <div class="detail-section">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0">الفروع</h5>
-                    <button class="btn btn-add-branch btn-sm" data-bs-toggle="modal" data-bs-target="#addBranchModal">
-                        <i class="bi bi-plus-circle me-1"></i> إضافة فرع
-                    </button>
-                </div>
-                
-                <div class="table-responsive">
-                    <table class="table table-bordered branch-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>المدينة</th>
-                                <th class="branch-actions">الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="branchesTableBody">
-                            {% for branch in branches %}
-                            <tr data-branch-id="{{branch.id}}">
-                                <td>{{forloop.counter}}</td>
-                                <td>{{branch.get_city_display}}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-danger delete-branch" data-id="1">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Empty state for no branches -->
-                <div id="noBranchesMessage" class="text-center py-4" style="display: none;">
-                    <i class="bi bi-building text-muted" style="font-size: 2rem;"></i>
-                    <p class="mt-2 text-muted">لا توجد فروع مضافة حالياً</p>
-                </div>
-            </div>
-            <!-- System Info Section -->
-            <div class="detail-section">
-                <h5 class="mb-3">معلومات النظام</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="detail-label">تاريخ الإنشاء</div>
-                        <div class="detail-value timestamp">
-                            <i class="bi bi-calendar-check me-1"></i>
-                            {{supplier.created_at}}
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="detail-label">آخر تحديث</div>
-                        <div class="detail-value timestamp">
-                            <i class="bi bi-clock-history me-1"></i>
-                            {{supplier.updated_at}}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Status Info Section -->
-            <div class="detail-section">
-                <h5 class="mb-3">معلومات الحالة</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="detail-label">حالة المورد</div>
-                        <div class="detail-value timestamp">
-                            {{supplier.get_status_display}}
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="detail-label">ملحوظة اضافية</div>
-                        <div class="detail-value timestamp">
-                            {{supplier.rejection_reason|default_if_none:"لا يوجد"}}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="d-flex justify-content-end mt-4">
-                <a href="#" class="btn btn-outline-secondary me-2">العودة للقائمة</a>
-                <!-- <a href="#" class="btn action-btn"><i class="bi bi-pencil-square me-1"></i> تعديل</a> -->
-            </div>
-            
         </div>
-    </div>
 
-    <!-- Add Branch Modal -->
-    <div class="modal fade" id="addBranchModal" tabindex="-1" aria-labelledby="addBranchModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addBranchModalLabel">إضافة فرع جديد</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+        <!-- Basic Info Section -->
+        <div class="detail-section row">
+            <div class="col-md-3 text-center mb-3">
+                <img src="{{supplier.logo_url}}" alt="شعار المورد" class="supplier-logo mb-2">
+                <div class="mt-2">
+                    {% if supplier.is_available %}
+                    <span class="badge bg-success">متاح حالياً</span>
+                    {% else %}
+                    <span class="badge bg-danger">غير متاح حالياً</span>
+                    {% endif %}
                 </div>
-                <form id="addBranchForm" method="post" action="{% url 'supplier:branch_create' %}">
-                    {% csrf_token %}
-                    <div class="modal-body">
-                        <div class="mb-3">
-                                <label for="branchCity" class="form-label">المدينة</label>
-                                <select class="form-select" id="branchCity" name="city" required>
-                                    <option value="" selected disabled>اختر المدينة</option>
-                                    <option value="riyadh">الرياض</option>
-                                    <option value="jeddah">جدة</option>
-                                    <option value="mecca">مكة</option>
-                                    <option value="medina">المدينة</option>
-                                    <option value="dammam">الدمام</option>
-                                    <option value="khobar">الخبر</option>
-                                    <option value="tabuk">تبوك</option>
-                                    <option value="abha">أبها</option>
-                                    <option value="hail">حائل</option>
-                                    <option value="najran">نجران</option>
-                                </select>
-                            </div>
+            </div>
+            <div class="col-md-9">
+                <div class="row mb-2">
+                    <div class="col-md-4">
+                        <div class="detail-label">قطاع التوريد</div>
+                        <div class="detail-value">{{supplier.get_supply_sector_display}}</div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
-                        <button type="submit" class="btn btn-add-branch" id="saveBranchBtn">حفظ</button>
+                    <div class="col-md-4">
+                        <div class="detail-label">خدمة التوصيل</div>
+                        <div class="detail-value">{{supplier.get_delivery_service_display}}</div>
                     </div>
-                </form>
+                    <div class="col-md-4">
+                        <div class="detail-label">مدة تنفيذ الطلب</div>
+                        <div class="detail-value">{{supplier.order_lead_time_days}} ايام</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="detail-label">أيام العمل</div>
+                        <div class="detail-value">{{supplier.supply_days}}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="detail-label"> الدفع الآجل</div>
+                        <div class="detail-value">
+                            {% if supplier.late_payment_options %}
+                            <i class="bi bi-check-circle-fill text-success"></i> متاح
+                            {% else %}
+                            <i class="bi bi-check-circle-fill text-danger"></i> غير متاح
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-
-    <!-- Confirmation Modal for Delete -->
-    <div class="modal fade" id="deleteBranchModal" tabindex="-1" aria-labelledby="deleteBranchModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteBranchModalLabel">تأكيد الحذف</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+        <!-- Status Info Section -->
+        <div class="detail-section">
+            <h5 class="mb-3">معلومات الحالة</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="detail-label">حالة طلب التوريد</div>
+                    <div class="detail-value timestamp">
+                        {{request_status}}
+                    </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="detail-label">ملحوظة اضافية</div>
+                    <div class="detail-value timestamp">
+                        {{supplier.rejection_reason|default_if_none:"لا يوجد"}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Details Section -->
+        <div class="detail-section">
+            <h5 class="mb-3">تفاصيل إضافية</h5>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="detail-label">تفاصيل الخدمة السريعة</div>
+                    <div class="detail-value">{{supplier.fast_service_details}}</div>
+                </div>
+            </div>
+
+            <div class="row" id="unavailablePeriod">
+                <div class="col-md-6">
+                    <div class="detail-label">غير متاح من</div>
+                    <div class="detail-value">{{supplier.unavailable_from|default_if_none:"-"}}</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="detail-label">غير متاح إلى</div>
+                    <div class="detail-value">{{supplier.unavailable_to|default_if_none:"-"}}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Cities Section -->
+        <div class="detail-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">المدن</h5>
+                <button class="btn btn-add-city btn-sm" data-bs-toggle="modal" data-bs-target="#addCityModal">
+                    <i class="bi bi-plus-circle me-1"></i> إضافة مدينة
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered city-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>المدينة</th>
+                            <th class="city-actions">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="citiesTableBody">
+                        {% for city in cities %}
+                        <tr data-city-id="{{city.id}}">
+                            <td>{{forloop.counter}}</td>
+                            <td>{{city.get_city_display}}</td>
+                            <td>
+                                <a data-bs-toggle="modal" data-bs-target="#alert" data-city-id="{{ city.id }}"
+                                    data-city-name="{{ city.get_city_display }}"><i class="bi bi-trash3-fill"></i></a>
+
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty state for no cities -->
+            <div id="noCitiesMessage" class="text-center py-4" style="display: none;">
+                <i class="bi bi-building text-muted" style="font-size: 2rem;"></i>
+                <p class="mt-2 text-muted">لا توجد مدن مضافة حالياً</p>
+            </div>
+        </div>
+        <!-- System Info Section -->
+        <div class="detail-section">
+            <h5 class="mb-3">معلومات النظام</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="detail-label">تاريخ الإنشاء</div>
+                    <div class="detail-value timestamp">
+                        <i class="bi bi-calendar-check me-1"></i>
+                        {{supplier.created_at}}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="detail-label">آخر تحديث</div>
+                    <div class="detail-value timestamp">
+                        <i class="bi bi-clock-history me-1"></i>
+                        {{supplier.updated_at}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-end mt-4">
+            <a href="{%url 'main:index_view'%}" class="btn btn-outline-secondary me-2">العودة للقائمة</a>
+            <!-- <a href="#" class="btn action-btn"><i class="bi bi-pencil-square me-1"></i> تعديل</a> -->
+        </div>
+
+    </div>
+</div>
+<!-- Add City Modal -->
+<div class="modal fade" id="addCityModal" tabindex="-1" aria-labelledby="addCityModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCityModalLabel">إضافة مدينة جديدة</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <form method="post" action="{% url 'supplier:add_city_view' %}">
+                {% csrf_token %}
                 <div class="modal-body">
-                    هل أنت متأكد من حذف هذا الفرع؟
+                    <div class="mb-3">
+                        <label for="cities" class="form-label">المدينة</label>
+                        <select class="form-select" id="cities" name="city" required>
+                            <option value="" selected disabled>اختر المدينة</option>
+                            {% for value, display in available_city_choices %}
+                                <option value="{{ value }}">{{ display }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
-                    <form method="post" action="{% url 'supplier:branch_delete' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="branch_id">
-                        <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">حذف</button>
-                    </form>
+                    <button type="submit" class="btn btn-add-city" id="saveCityBtn">حفظ</button>
                 </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Alert Modal -->
+<div class="modal fade" id="alert" tabindex="-1" aria-labelledby="alertLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="alertLabel">تأكيد الحذف</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                هل أنت متأكد من حذف مدينة : <strong id="city-name"></strong>؟
+                <input type="hidden" id="city-id" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                <a href="#" id="delete-link" class="btn btn-danger">حذف</a>
             </div>
         </div>
     </div>
-    
-    <script>
-        // Wait for DOM to be fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize variables
-            let branchToDelete = null;
-            
-            // Get DOM elements
-            const branchesTableBody = document.getElementById('branchesTableBody');
-            const noBranchesMessage = document.getElementById('noBranchesMessage');
-            const deleteBranchModal = new bootstrap.Modal(document.getElementById('deleteBranchModal'));
-            
-            // Check if there are branches and show/hide empty state
-            function checkBranches() {
-                if (branchesTableBody.children.length === 0) {
-                    noBranchesMessage.style.display = 'block';
-                } else {
-                    noBranchesMessage.style.display = 'none';
-                }
-            }
-            
-            // Delete branch (using event delegation)
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('delete-branch') || 
-                    (e.target.parentElement && e.target.parentElement.classList.contains('delete-branch'))) {
-                    
-                    // Get the button element
-                    const deleteBtn = e.target.classList.contains('delete-branch') ? 
-                                      e.target : e.target.parentElement;
-                    
-                    // Get branch ID
-                    branchToDelete = deleteBtn.closest('tr').getAttribute("data-branch-id");
-                    const branchField = document.querySelector('input[name="branch_id"]');
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#alert').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var cityId = button.data('city-id');
+            var cityName = button.data('city-name');
 
-                    // Update its value
-                    if (branchField) {
-                        branchField.value = branchToDelete;
-                    }
-                    console.log('branchToDelete:',branchToDelete);
-                    // Show confirmation modal
-                    deleteBranchModal.show();
-                }
-            });
-            
-            
-            // Initial check
-            checkBranches();
+            // Update the modal's content
+            var modal = $(this);
+            modal.find('#city-name').text(cityName);
+            modal.find('#city-id').val(cityId);
+            modal.find('#delete-link').attr('href', '/supplier/delete_city/' + cityId);
         });
-    </script>
+    });
+</script>
+
+<script>
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize variables
+
+        // Get DOM elements
+        const citiesTableBody = document.getElementById('citiesTableBody');
+        const noCitiesMessage = document.getElementById('noCitiesMessage');
+
+        // Check if there are cities and show/hide empty state
+        function checkCities() {
+            if (citiesTableBody.children.length === 0) {
+                noCitiesMessage.style.display = 'block';
+            } else {
+                noCitiesMessage.style.display = 'none';
+            }
+        }
+
+
+
+        // Initial check
+        checkCities();
+    });
+</script>
 {% endblock %}

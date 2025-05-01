@@ -6,12 +6,12 @@ from django.contrib.auth.views import LoginView
 from .models import Contact
 
 def index_view(request):
-    print(hasattr(request.user, 'supplierprofile'))
-    if hasattr(request.user, 'supplierprofile'):
+    if hasattr(request.user, 'supplier'):
 
-        return redirect("main:supplie_view")
+        return render(request, 'main/supplier_index.html')
+    else:
+        return render(request, 'main/index.html')
 
-    return render(request, 'main/index.html')
 
 def contact_view(request):
     if request.method == 'POST':
@@ -35,3 +35,8 @@ def contact_view(request):
 
 def about_view(request):
     return render(request, 'main/about.html')
+
+
+
+
+

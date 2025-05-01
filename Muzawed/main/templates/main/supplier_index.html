@@ -10,16 +10,30 @@
   </div>
 
   <div class="row justify-content-center g-4">
+  
+
+    <div class="col-md-6">
+      <div class="card h-100 text-center shadow-sm border-0 p-4">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <span class="material-symbols-outlined mb-3">inventory_2</span>
+          <h5 class="card-title mb-2"> انشاء طلب توريد</h5>
+          <a href="{%url 'supplier:supply_details_view'%}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+        </div>
+      </div>
+    </div>
 
     <div class="col-md-6">
         <div class="card h-100 text-center shadow-sm border-0 p-4">
           <div class="card-body d-flex flex-column justify-content-center align-items-center">
             <span class="material-symbols-outlined mb-3">inventory_2</span>
             <h5 class="card-title mb-2"> إدارة المخزون</h5>
-            <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+            <a href="{%url 'products:stock_view'%}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
           </div>
         </div>
       </div>
+
+
+
 
       <div class="col-md-6">
         <div class="card h-100 text-center shadow-sm border-0 p-4">
