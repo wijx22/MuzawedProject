@@ -1,13 +1,20 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
-  <h2 class="mb-4">طلبات الموردين</h2>
+<link href="{% static 'css/admin-dashboard.css' %}" rel="stylesheet">
 
+<div class="container mt-5">
+  <h2 class="d-flex justify-content-center align-items-center fw-bold mb-3" style="color: #1F3F2E;">
+    طلبات الموردين
+    <i class="fas fa-store me-3" style="font-size: 30px;"></i>
+
+  </h2>
+  
   {% if suppliers %}
     <div class="table-responsive">
       <table class="table table-bordered table-striped align-middle text-center">
-        <thead class="table-dark">
+        <thead>
           <tr>
             <th>#</th>
             <th>اسم المورد</th>
@@ -22,7 +29,7 @@
               <td>{{ supplier.user.get_full_name }}</td>
               <td>{{ supplier.get_status_display }}</td>
               <td>
-                <a href="{% url 'administration:supplier_request_detail' supplier.id %}" class="btn btn-sm btn-primary">
+                <a href="{% url 'administration:supplier_request_detail' supplier.id %}" class="btn btn-sm btn-primary-custom">
                   عرض التفاصيل
                 </a>
               </td>

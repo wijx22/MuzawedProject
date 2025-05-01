@@ -15,8 +15,9 @@ urlpatterns = [
   path('supplier/detail/<int:supplier_id>', views.supplier_request_detail, name='supplier_request_detail'),
   path('suppliers/<int:supplier_id>/approve/', views.approve_supplier_view, name='approve_supplier'),
   path('supplier/reject/<int:supplier_id>/', views.reject_supplier_view, name='reject_supplier'),
-  path('supplier/products/view/<int:supplier_id>/', views.supplier_products_view, name='supplier_products_view')
-
+  path('supplier/products/view/<int:supplier_id>/', views.supplier_products_view, name='supplier_products_view'),
+  #path('supplier/action/', views.supplier_request_action, name='supplier_request_action')
+  path('order/list/', views.order_requests_list, name='order_requests_list')
 
 
 

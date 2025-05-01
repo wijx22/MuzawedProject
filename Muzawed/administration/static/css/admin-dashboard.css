@@ -155,6 +155,27 @@ body {
   position: relative;
 }
 
+.charts-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.chart-card {
+  flex: 1 1 48%;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+  .chart-card {
+    flex: 1 1 100%;
+  }
+}
 
 .bg-dark-green {
   background-color: #0a371d !important;
@@ -169,4 +190,9 @@ body {
     font-size: 0.9rem;
     padding: 0.5rem;
   }
+}
+
+.table thead th {
+  background-color: #1F3F2E !important;
+  color: white !important;
 }

@@ -37,8 +37,10 @@ def about_view(request):
     return render(request, 'main/about.html')
 
 def supplie_view(request):
-    if hasattr(request.user, 'supplierprofile'):
+    supplier = getattr(request.user, 'supplier', None)
+
+    if request.user.is_authenticated and supplier:
         return render(request, 'main/supplier_index.html')
-    else:
-        return redirect('main:index_view')  
-    
+
+    messages.warning(request, "هذه الصفحة مخصصة للموردين فقط.")
+    return redirect('main:index_view')    
