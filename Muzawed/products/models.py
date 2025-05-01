@@ -75,7 +75,7 @@ class Product(models.Model):
     unit = models.CharField(max_length=20, choices=Unit.choices)
     category = models.CharField(max_length=20, choices=ProductCategory.choices)
     subcategory = models.CharField(max_length=20, choices=[]) 
-    # branch = models.ForeignKey(Branch, related_name="products", on_delete=models.CASCADE,blank=True)
+    City = models.ForeignKey(City, related_name="products", on_delete=models.CASCADE,blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -25,7 +25,7 @@ class ProfileBeneficiary(models.Model):
 class SupplierProfile(models.Model):
     class RequestStatusChoises(models.TextChoices):
        NO_REQUEST="No-request","لا يوجد طلب"
-       REJECTED= "Rejected", "مرفوص"
+       REJECTED= "Rejected", "مرفوض"
        ACCEPTED= "Accepted", "مقبول"
        PENDING= "Pending", "قيد المعالجة"
     

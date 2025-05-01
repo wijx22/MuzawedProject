@@ -6,10 +6,9 @@ from django.contrib.auth.views import LoginView
 from .models import Contact
 
 def index_view(request):
-    print(hasattr(request.user, 'supplierprofile'))
-    if hasattr(request.user, 'supplierprofile'):
+    if hasattr(request.user, 'supplier'):
 
-        return redirect("main:supplie_view")
+        return render(request, 'main/supplier_index.html')
 
     return render(request, 'main/index.html')
 
@@ -35,9 +34,11 @@ def contact_view(request):
 
 def about_view(request):
     return render(request, 'main/about.html')
-
+    
 def supplie_view(request):
-    if hasattr(request.user, 'supplierprofile'):
+    if hasattr(request.user, 'supplier'):
+    supplier = getattr(request.user, 'supplier', None)
+
         return render(request, 'main/supplier_index.html')
     else:
         return redirect('main:index_view')  
