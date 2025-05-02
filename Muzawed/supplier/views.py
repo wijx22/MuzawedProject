@@ -2,12 +2,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.db import transaction
 from .forms import CitiesForm, CommercialInfoForm
 from .models import City, SupplyDetails , CommercialInfo
 from accounts.models import SupplierProfile
 
-@login_required
 def supplier_details(request: HttpRequest):
     if request.user.is_authenticated:
         try:
@@ -16,7 +15,6 @@ def supplier_details(request: HttpRequest):
             commercial_info = supplier.commercial_info
             supply_details = supplier.supply_details
             covered_cities = supplier.cities_covered.all()  
-            request_status = supplier.get_status_display()  
 
             # Get all available city choices
             all_city_choices = City.CityChoices.choices
@@ -41,14 +39,13 @@ def supplier_details(request: HttpRequest):
         request,
         "supplier/supplier-details.html",
         {
-            "request_status":request_status,
+            "request":supplier,
             "supplier": supply_details,
             "cities": covered_cities,
             "available_city_choices": available_city_choices,  
         },
     )
 @login_required
-
 def add_city_view(request: HttpRequest):
     if request.user.is_authenticated:
         try:
@@ -128,7 +125,7 @@ def delete_city_view(request: HttpRequest, city_id: int):
 #     return render(request, 'supplier/commercial_info_form.html', {'form': form})
 
 
-#done
+
 def commercial_data_view(request: HttpRequest):
     if request.user.is_authenticated:
         try:
@@ -217,39 +214,91 @@ def supply_details_view(request: HttpRequest):
         except Exception as error:
             print("An error occurred:", error)
             messages.error(request, 'حدث خطأ اثناء محاولة اضافة معلومات التوريد يرجى المحاولة مرة اخرى ')
-            return redirect("main:supplie_view")
+            return redirect("main:ndex_view")
 
     return redirect("accounts:sign_in")          
 
 
-
-
-def create_supply_request(request: HttpRequest):
-    #4 option 
-    #1 no request back end + front
-    # pending handeled in front end 
-    #3 rejected back end + front
-    #4 accepted handled in front end
-
+def supply_request_view(request: HttpRequest):
     if request.user.is_authenticated:
         try:
-            supplier=request.user.supplier
-            
-            commercial_info=supplier.commercial_info
-            supply_details=supplier.supply_details
-            
-            print(commercial_info)
-            print(supply_details)
+            supplier:SupplierProfile = request.user.supplier
 
+            if supplier.status ==SupplierProfile.RequestStatusChoises.REJECTED or supplier.status ==SupplierProfile.RequestStatusChoises.NO_REQUEST:
+
+                commercial_info = CommercialInfo.objects.filter(supplier=supplier).first()
+                supply_details = SupplyDetails.objects.filter(supplier=supplier).first()
+
+                if request.method == 'POST':
+                    with transaction.atomic():  
+                        # Handle commercial info form
+                        commercial_form = CommercialInfoForm(request.POST or None, request.FILES or None, instance=commercial_info)
+
+                        if commercial_form.is_valid():
+                            if commercial_info:
+                                commercial_info.delete()
+                            commercial_info = commercial_form.save(commit=False)
+                            commercial_info.supplier = supplier
+                            commercial_info.save()
+
+                        # Handle supply details form
+                        supply_days = ' - '.join(request.POST.getlist('supply_days'))
+                        late_payment_options = request.POST.get('late_payment_options')
+                        fast_service_details = request.POST.get('fast_service_details')
+                        order_lead_time_days = request.POST.get('order_lead_time_days')
+                        delivery_service = request.POST.get('delivery_service')
+                        supply_sector = request.POST.get('supply_sector')
+                        logo = request.FILES.get('logo')
+                        if not fast_service_details:
+                            fast_service_details = None  
+
+                        if not order_lead_time_days:
+                            order_lead_time_days = None 
+                        if supply_details:
+                            supply_details.delete()
+
+                        # Create and save the new SupplyDetails instance
+                        supply_details = SupplyDetails(
+                            supplier=supplier,
+                            logo=logo,
+                            supply_sector=supply_sector,
+                            delivery_service=delivery_service,
+                            order_lead_time_days=order_lead_time_days,
+                            fast_service_details=fast_service_details,
+                            late_payment_options=late_payment_options is not None,
+                            supply_days=supply_days,
+                        )
+                        supply_details.save()
+
+                        # Update supplier status
+                        supplier.status = SupplierProfile.RequestStatusChoises.PENDING
+                        supplier.save()
+
+                        messages.success(request, 'تم بنجاح إضافة المعلومات التجارية ومعلومات التوريد.')
+                        return redirect("supplier:supplier_details")
+
+                # Supply sector choices 
+                supply_sector_choices = SupplyDetails._meta.get_field('supply_sector').choices
+                delivery_service_choices = SupplyDetails._meta.get_field('delivery_service').choices
+                commercial_form = CommercialInfoForm(instance=commercial_info) 
+
+                return render(request, "supplier/supply_request.html", {
+                    'commercial_form': commercial_form,
+                    'supply_sector_choices': supply_sector_choices,
+                    'delivery_service_choices': delivery_service_choices,
+                })
+            else:
+                messages.warning(request, 'عذرًا لديك طلب توريد ساري ')
+                return redirect("main:index_view")
 
 
         except AttributeError:
-            return redirect('supplier:commercial_data_view')
+            messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
+            return redirect("main:index_view")
 
         except Exception as error:
             print("An error occurred:", error)
-            messages.error(request, 'حدث خطأ اثناء محاولة اضافة معلومات التوريد يرجى المحاولة مرة اخرى ')
-            return redirect("main:supplie_view")
-        return redirect("main:supplie_view")
+            messages.error(request, 'حدث خطأ اثناء معالجة البيانات.')
+            return redirect("main:index_view")
 
-    
+    return redirect("accounts:sign_in")

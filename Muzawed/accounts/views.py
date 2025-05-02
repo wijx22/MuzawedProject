@@ -227,7 +227,7 @@ def log_out(request: HttpRequest):
 
     logout(request)
     messages.success(request, "تم تسجيل الخروج بنجاح")
-    return redirect(request.GET.get("next", ""))
+    return redirect("main:index_view")
 
 
 
