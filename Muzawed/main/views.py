@@ -9,8 +9,9 @@ def index_view(request):
     if hasattr(request.user, 'supplier'):
 
         return render(request, 'main/supplier_index.html')
+    else:
+        return render(request, 'main/index.html')
 
-    return render(request, 'main/index.html')
 
 def contact_view(request):
     if request.method == 'POST':
