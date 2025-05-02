@@ -35,8 +35,3 @@ def contact_view(request):
 
 def about_view(request):
     return render(request, 'main/about.html')
-
-
-
-
-

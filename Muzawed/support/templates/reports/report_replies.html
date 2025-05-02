@@ -1,0 +1,29 @@
+<div>
+    <h2>الردود على الشكوى: {{ report.subject }}</h2>
+    
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>نوع الرد</th>
+                <th>الرسالة</th>
+                <th>تاريخ الإرسال</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reply in replies %}
+            <tr>
+                <td>
+                    {% if reply.is_admin_reply %}
+                        رد الأدمن
+                    {% else %}
+                        رد المستخدم
+                    {% endif %}
+                </td>
+                <td>{{ reply.message }}</td>
+                <td>{{ reply.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+</div>
