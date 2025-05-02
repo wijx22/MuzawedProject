@@ -9,6 +9,7 @@ from .models import Product
 from django.http import Http404, HttpRequest,HttpResponse
 from notification.models import Notification
 
+                       
 def add_product_view(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
@@ -46,11 +47,11 @@ def add_product_view(request):
                 product.City = City.objects.get(id=city_id) 
             # Save the product to the database
             product.save()
-            # Notification.objects.create(
-            #                         recipient=request.user,
-            #                         notification_type='alert',
-            #                         message=f'تم إضافة المنتج "{product.name}" إلى متجرك.'
-            #                     )
+            Notification.objects.create(
+                                    recipient=request.user,
+                                     notification_type='alert',
+                                     message=f'تم إضافة المنتج "{product.name}" إلى متجرك.'
+                             )
 
             # Show success message
             messages.success(request, 'تم إضافة المنتج بنجاح')
@@ -94,11 +95,11 @@ def remove_product_view(request:HttpRequest , product_id):
     try:
         product = get_object_or_404(Product, pk=product_id)
         product.delete()
-        # Notification.objects.create(
-        #                         recipient=request.user,
-        #                         notification_type='alert',
-        #                         message=f'تم حذف المنتج "{product.name}" من قائمتك.'
-        #                     )
+        Notification.objects.create(
+                                 recipient=request.user,
+                                 notification_type='alert',
+                                 message=f'تم حذف المنتج "{product.name}" من قائمتك.'
+                             )
 
         return redirect("products:stock_view")
     except Http404 as e:
