@@ -12,26 +12,30 @@
 
 
 </head>
-<style>
-  .icon-spacing{
-    margin-right: 20px;
-    margin-left: 20px;
-  }
-
-    .section-space {
-      margin-bottom: 40px; /* أو حسب ما يناسبك */
-    }
-  
-
-  
-</style>
 <body>
-<!-- Header -->
+<!-- Header
 <div class="header">
   
   <span>مرحبًا، Admin</span>
   <button class="menu-btn" onclick="toggleSidebar()">☰</button>
 </div>
+<div class="header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background-color: #264F3F;">
+  <div style="display: flex; align-items: center; gap: 8px;">
+    <i class="fa fa-user" aria-hidden="true"></i>
+    <span>مرحبًا، الأدمن</span>
+  </div>
+  <button class="menu-btn" onclick="toggleSidebar()" style="font-size: 18px;">☰</button>
+</div>-->
+
+<div class="header">
+  <div class="admin-info">
+    <i class="fa fa-user" aria-hidden="true"></i>
+    <span>مرحبًا، الأدمن</span>
+  </div>
+  <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+</div>
+
+
 
 <!-- Dashboard -->
 <div class="dashboard">
@@ -211,38 +215,10 @@
 <script src="{% static 'js/admin-dashboard.js' %}"></script>
 
 
-<!--<script>
-const xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
-const yValues = [55, 49, 44, 24, 15];
-const barColors = ["red", "green", "blue", "orange", "brown"];
-
-new Chart("myChart", {
-  type: "bar",
-  data: {
-    labels: xValues,
-    datasets: [{
-      backgroundColor: barColors,
-      data: yValues
-    }]
-  },
-  options: {
-    responsive: false,              
-    maintainAspectRatio: false,    
-    plugins: {
-      legend: { display: false },
-      title: {
-        display: true,
-        text: "World Wine Production 2018"
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: true
-      }
-    }
-  }
-});
-</script>-->
+<footer style="background-color: #f0f0f0; text-align: center; padding: 15px; margin-top: 30px; font-size: 14px;">
+  <i class="fa fa-shield-alt" aria-hidden="true" style="margin-left: 5px;"></i>
+  © 2025 - لوحة تحكم الأدمن
+</footer>
 
 
 </body>

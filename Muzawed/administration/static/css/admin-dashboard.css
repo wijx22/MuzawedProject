@@ -19,6 +19,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
 }
 
 .menu-btn {
@@ -29,6 +30,7 @@ body {
   cursor: pointer;
   display: none;
 }
+
 
 .dashboard {
   display: flex;
@@ -118,7 +120,7 @@ body {
   .menu-btn {
     display: block;
   }
-
+  
   .sidebar {
     position: fixed;
     top: 60px;
@@ -230,3 +232,14 @@ body {
     padding: 10px;
   }
 }
+
+.icon-spacing{
+  margin-right: 20px;
+  margin-left: 20px;
+}
+
+.section-space {
+    margin-bottom: 40px; 
+  }
+
+
