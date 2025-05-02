@@ -140,6 +140,9 @@
 }
 .file-name {
     margin-top: 10px;
+    white-space: nowrap;     
+    overflow: hidden;            
+    text-overflow: ellipsis;  
     font-size: 0.875rem;
 }
 .form-select:focus {
