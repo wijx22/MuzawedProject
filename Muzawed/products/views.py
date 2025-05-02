@@ -47,11 +47,11 @@ def add_product_view(request):
                 product.City = City.objects.get(id=city_id) 
             # Save the product to the database
             product.save()
-            # Notification.objects.create(
-            #                         recipient=request.user,
-            #                         notification_type='alert',
-            #                         message=f'تم إضافة المنتج "{product.name}" إلى متجرك.'
-            #                     )
+            Notification.objects.create(
+                                    recipient=request.user,
+                                     notification_type='alert',
+                                     message=f'تم إضافة المنتج "{product.name}" إلى متجرك.'
+                             )
 
             # Show success message
             messages.success(request, 'تم إضافة المنتج بنجاح')

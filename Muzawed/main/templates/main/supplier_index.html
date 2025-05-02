@@ -10,59 +10,63 @@
   </div>
 
   <div class="row justify-content-center g-4">
-  
 
+    <!-- يظهر دائماً -->
     <div class="col-md-6">
       <div class="card h-100 text-center shadow-sm border-0 p-4">
         <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <span class="material-symbols-outlined mb-3">inventory_2</span>
-          <h5 class="card-title mb-2"> انشاء طلب توريد</h5>
-          <a href="{%url 'supplier:supply_details_view'%}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+          <span class="material-symbols-outlined mb-3" style="font-size: 40px;">note_add</span>
+          <h5 class="card-title mb-2">إنشاء طلب توريد</h5>
+          <a href="{% url 'supplier:commercial_data_view' %}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
         </div>
       </div>
     </div>
 
-    <div class="col-md-6">
+      <!-- إدارة المخزون -->
+      <div class="col-md-6">
         <div class="card h-100 text-center shadow-sm border-0 p-4">
           <div class="card-body d-flex flex-column justify-content-center align-items-center">
-            <span class="material-symbols-outlined mb-3">inventory_2</span>
-            <h5 class="card-title mb-2"> إدارة المخزون</h5>
-            <a href="{%url 'products:stock_view'%}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+            <span class="material-symbols-outlined mb-3" style="font-size: 40px;">inventory</span>
+            <h5 class="card-title mb-2">إدارة المخزون</h5>
+            <a href="{% url 'products:stock_view' %}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
           </div>
         </div>
       </div>
 
-
-
-
+      <!-- إدارة الطلبات -->
       <div class="col-md-6">
         <div class="card h-100 text-center shadow-sm border-0 p-4">
           <div class="card-body d-flex flex-column justify-content-center align-items-center">
-            <span class="material-symbols-outlined mb-3" >local_shipping</span>
-            <h5 class="card-title mb-2"> إداره الطلبات </h5>
+            <span class="material-symbols-outlined mb-3" style="font-size: 40px;">local_shipping</span>
+            <h5 class="card-title mb-2">إدارة الطلبات</h5>
             <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
           </div>
         </div>
       </div>
 
-     <div class="col-md-6">
-      <div class="card h-100 text-center shadow-sm border-0 p-4">
-        <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <span class="material-symbols-outlined mb-3">inventory_2</span>
-          <h5 class="card-title mb-2">لوحة التقارير</h5>
-          <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+      <!-- لوحة التقارير -->
+      <div class="col-md-6">
+        <div class="card h-100 text-center shadow-sm border-0 p-4">
+          <div class="card-body d-flex flex-column justify-content-center align-items-center">
+            <span class="material-symbols-outlined mb-3" style="font-size: 40px;">analytics</span>
+            <h5 class="card-title mb-2">لوحة التقارير</h5>
+            <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+          </div>
         </div>
       </div>
-     </div>
 
-     <div class="col-md-6">
-      <div class="card h-100 text-center shadow-sm border-0 p-4">
-        <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <span class="material-symbols-outlined mb-3" >history</span>
-          <h5 class="card-title mb-2">سجل الطلبات</h5>
-          <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+      <!-- سجل الطلبات -->
+      <div class="col-md-6">
+        <div class="card h-100 text-center shadow-sm border-0 p-4">
+          <div class="card-body d-flex flex-column justify-content-center align-items-center">
+            <span class="material-symbols-outlined mb-3" style="font-size: 40px;">history</span>
+            <h5 class="card-title mb-2">سجل الطلبات</h5>
+            <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+          </div>
         </div>
       </div>
-     </div>
+
+  </div>
 </div>
+
 {% endblock %}
