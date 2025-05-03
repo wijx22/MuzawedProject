@@ -42,7 +42,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="detail-label">مدة تنفيذ الطلب</div>
-                        <div class="detail-value">{{supplier.order_lead_time_days}} ايام</div>
+                        <div class="detail-value">{{supplier.order_lead_time_days|default_if_none:"-"}}</div>
                     </div>
                 </div>
                 <div class="row">
@@ -70,13 +70,13 @@
                 <div class="col-md-6">
                     <div class="detail-label">حالة طلب التوريد</div>
                     <div class="detail-value timestamp">
-                        {{request_status}}
+                        {{request.get_status_display}}
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="detail-label">ملحوظة اضافية</div>
                     <div class="detail-value timestamp">
-                        {{supplier.rejection_reason|default_if_none:"لا يوجد"}}
+                        {{request.rejection_reason|default_if_none:"لا يوجد"}}
                     </div>
                 </div>
             </div>
@@ -88,7 +88,7 @@
             <div class="row mb-3">
                 <div class="col-md-12">
                     <div class="detail-label">تفاصيل الخدمة السريعة</div>
-                    <div class="detail-value">{{supplier.fast_service_details}}</div>
+                    <div class="detail-value">{{supplier.fast_service_details|default_if_none:"-"}}</div>
                 </div>
             </div>
 

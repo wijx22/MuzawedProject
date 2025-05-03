@@ -9,8 +9,9 @@ def index_view(request):
     if hasattr(request.user, 'supplier'):
 
         return render(request, 'main/supplier_index.html')
+    else:
+        return render(request, 'main/index.html')
 
-    return render(request, 'main/index.html')
 
 def contact_view(request):
     if request.method == 'POST':
@@ -34,12 +35,4 @@ def contact_view(request):
 
 def about_view(request):
     return render(request, 'main/about.html')
-    
-def supplie_view(request):
-    if hasattr(request.user, 'supplier'):
-      supplier = getattr(request.user, 'supplier', None)
-
-      return render(request, 'main/supplier_index.html')
-    else:
-        return redirect('main:index_view')  
     
