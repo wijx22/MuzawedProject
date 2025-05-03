@@ -104,7 +104,6 @@
     
       <hr>
   
-    <!-- 🟩 حاوية الرسومات -->
     <div class="charts-row" style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 20px;">
   
       <!-- الرسم الأول -->
@@ -203,7 +202,7 @@
           </tr>
           <tr>
               <td>قيد المعالجة</td>
-              <td>{{ processing_count|default:"لا توجد بيانات" }}</td>
+              <td>{{ in_progress_count|default:"لا توجد بيانات" }}</td>
           </tr>
       </tbody>
   </table>

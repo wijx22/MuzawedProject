@@ -29,6 +29,15 @@
         <h3 class="mb-4 text-center text-dark">
             رد على شكوى: 
         </h3>
+        <!-- عرض الملف المرفق إن وُجد -->
+        {% if report.attachment %}
+        <div class="p-3 rounded" style="background-color: #e9f1ee;">
+            <strong style="color: #0b4f35;">الملف المرفق:</strong><br>
+            <a href="{{ report.attachment.url }}" target="_blank" class="btn btn-outline-light btn-sm mt-2" style="background-color: #0b4f35;">
+                عرض / تحميل الملف
+            </a>
+        </div>
+                {% endif %}
 
         <form method="POST">
             {% csrf_token %}
@@ -55,8 +64,10 @@
             </div>
 
             <div class="text-center">
-                <button type="submit" class="btn btn-success px-4">إرسال الرد</button>
-            </div>
+                <button type="submit" class="btn btn-success px-4" style="background-color: #0b4f35; border-color: #0b4f35;">
+                    إرسال الرد
+                </button>
+                            </div>
         </form>
     </div>
 </div>
