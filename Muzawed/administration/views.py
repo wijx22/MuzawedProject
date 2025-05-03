@@ -94,7 +94,8 @@ def dashboard(request):
         open_count = Report.objects.filter(status='open').count()
         closed_count = Report.objects.filter(status='closed').count()
         in_progress_count = Report.objects.filter(status='in_progress').count()
-
+        print(f'in_progress is: {in_progress_count}')
+        
     except Exception as e:
         print(f"Error in dashboard view: {e}")
         messages.error(request, "حدث خطأ أثناء تحميل لوحة التحكم.")
@@ -124,6 +125,7 @@ def dashboard(request):
     return render(request, 'administration/dashboard.html', context)
 
 
+
 def suppliers_list_view(request):
     suppliers = SupplierProfile.objects.select_related('user').all()
 
@@ -136,6 +138,8 @@ def suppliers_list_view(request):
 
                 supplier_profile.user.delete()
                 supplier_profile.delete()
+
+
 
                 messages.success(request, "تم حذف المورد بنجاح.")
         except SupplierProfile.DoesNotExist:
@@ -152,6 +156,43 @@ def suppliers_list_view(request):
     })
 
 
+#def suppliers_list_view(request):
+#    suppliers = SupplierProfile.objects.select_related('user').all()
+#
+#    if request.method == 'POST':
+#        supplier_id = request.POST.get('supplier_id')
+#
+#        try:
+#            if 'delete_supplier' in request.POST:
+#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
+#                supplier_profile.user.delete()
+#                supplier_profile.delete()
+#                messages.success(request, "تم حذف المورد بنجاح.")
+#
+#            elif 'activate_supplier' in request.POST:
+#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
+#                supplier_profile.user.is_active = True
+#                supplier_profile.user.save()
+#                messages.success(request, "تم تفعيل المورد.")
+#
+#            elif 'deactivate_supplier' in request.POST:
+#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
+#                supplier_profile.user.is_active = False
+#                supplier_profile.user.save()
+#                messages.success(request, "تم تعطيل المورد.")
+#
+#        except SupplierProfile.DoesNotExist:
+#            messages.error(request, "المورد غير موجود.")
+#        except Exception as e:
+#            messages.error(request, f"حدث خطأ: {str(e)}")
+#
+#        return redirect('administration:suppliers_list_view')
+#
+#    return render(request, 'administration/supplier/suppliers_list.html', {
+#        'suppliers': suppliers,
+#        'hide_header': True
+#    })
+#
 
 def supplier_requests_list(request):
     if not request.user.is_staff:

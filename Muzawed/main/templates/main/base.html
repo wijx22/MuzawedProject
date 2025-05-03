@@ -40,30 +40,41 @@
     {% if request.user.is_authenticated %}
     <div class="d-flex align-items-center gap-3">
 
-      <div class="dropdown">
-        <a class="p-0" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="{% static 'img/profle.png' %}" class="rounded-circle" width="40" height="40" alt="صورة المستخدم">
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end text-center" aria-labelledby="userDropdown">
-          <li class="dropdown-item fw-bold">{{ request.user.username }}</li>
-          {% if request.user.supplierprofile %}
-            <li><a class="dropdown-item" href="{% url 'accounts:supplier_profile_view' request.user.username %}">الملف الشخصي</a></li>
-          {% else %}
-            <li><a class="dropdown-item" href="{% url 'accounts:beneficiary_profile_view' request.user.username %}">الملف الشخصي</a></li>
-          {% endif %}
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item text-danger" href="{% url 'accounts:log_out' %}?next={{ request.path }}">تسجيل الخروج</a></li>
-        </ul>
-      </div>
+<!-- أيقونة البروفايل -->
+  <div class="dropdown">
+    <a class="p-0" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-person-circle" style="font-size: 30px; color: #1F3F2E;"></i>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end text-center" aria-labelledby="userDropdown">
+      <li class="dropdown-item fw-bold">{{ request.user.username }}</li>
+      {% if request.user.supplierprofile %}
+        <li><a class="dropdown-item" href="{% url 'accounts:supplier_profile_view' request.user.username %}">الملف الشخصي</a></li>
+      {% else %}
+        <li><a class="dropdown-item" href="{% url 'accounts:beneficiary_profile_view' request.user.username %}">الملف الشخصي</a></li>
+      {% endif %}
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item text-danger" href="{% url 'accounts:log_out' %}?next={{ request.path }}">تسجيل الخروج</a></li>
+    </ul>
+  </div>
 
-      <div style="position: relative; cursor: pointer;" onclick="toggleSidebar()">
-        <span class="material-symbols-outlined" style="font-size: 30px;">notifications</span>
-        {% if notifications %}
-        <span style="position: absolute; top: -5px; right: -5px; background: red; color: white; font-size: 10px; padding: 2px 5px; border-radius: 50%;">
-          {{ notifications|length }}
-        </span>
-        {% endif %}
-      </div>
+  <!-- أيقونة الإشعارات -->
+  <div style="position: relative; cursor: pointer;" onclick="toggleSidebar()">
+    <i class="bi bi-bell" style="font-size: 30px; color: #1F3F2E;"></i>
+    {% if notifications %}
+    <span style="
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: red;
+      color: white;
+      font-size: 10px;
+      padding: 2px 5px;
+      border-radius: 50%;">
+      {{ notifications|length }}
+    </span>
+    {% endif %}
+  </div>
+
 
       <div id="sidebarNotifications" style="width: 0; height: 100%; position: fixed; top: 0; left: 0; background-color: #fff; overflow-x: hidden; transition: 0.5s; padding-top: 60px; z-index: 9999; box-shadow: 2px 0 5px rgba(0,0,0,0.2);">
         <div class="text-end px-3">

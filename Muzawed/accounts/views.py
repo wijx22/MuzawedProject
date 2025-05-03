@@ -49,6 +49,7 @@ def sign_in(request:HttpRequest):
             login(request, user)
             messages.success(request,"مرحبًا بك من جديد", "alert-success" )
             return redirect(request.GET.get("next", "/"))
+
         else:
             messages.error(request, "اسم المستخدم أو كلمة المرور غير صالحة")
 
@@ -58,6 +59,31 @@ def sign_in(request:HttpRequest):
 
     return render(request, "accounts/signin.html")
 
+
+
+#def sign_in(request):
+#    if request.method == 'POST':
+#        username = request.POST.get('username')
+#        password = request.POST.get('password')
+#
+#        try:
+#            user = User.objects.get(username=username)
+#        except User.DoesNotExist:
+#            messages.error(request, "اسم المستخدم أو كلمة المرور غير صحيحة.")
+#            return redirect('accounts:sign_in')
+#
+#        if not check_password(password, user.password):
+#            messages.error(request, "اسم المستخدم أو كلمة المرور غير صحيحة.")
+#            return redirect('accounts:sign_in')
+# 
+#        #Check activation status
+#        if not user.is_active:
+#            messages.error(request, "حسابك مقيد وذلك بسبب سياسة التوريد . يرجى التواصل مع الإدارة.")
+#            return redirect('accounts:sign_in')
+#
+#        login(request, user)
+#        return redirect("main:index_view")
+#    return render(request, 'accounts/signin.html')
 
 
 
@@ -137,6 +163,7 @@ def sign_up_supplier(request: HttpRequest):
             new_user.save()
             profile = SupplierProfile(user=new_user,name=new_user.get_full_name(),contact_info=request.POST['contact_info'])
             profile.save()
+
             Notification.objects.create(
                recipient=new_user,
                notification_type='alert',
@@ -169,10 +196,10 @@ def supplier_profile_view(request: HttpRequest, user_name):
 
         profile, created = SupplierProfile.objects.get_or_create(user=user)
 
-        if not profile.is_active:
-            messages.error(request, "حسابك قيد المراجعة من قبل الإدارة. سيتم تفعيله قريبًا.")
-            return redirect('main:index_view') 
-
+        #if not profile.is_active:
+        #    messages.error(request, "حسابك قيد المراجعة من قبل الإدارة. سيتم تفعيله قريبًا.")
+        #    return redirect('main:index_view') 
+#
 
         return render(request, 'accounts/supplier/supplier_profile.html', {
             'user': user,
@@ -222,6 +249,65 @@ def update_supplier_profile(request: HttpRequest):
     
     return render(request, 'accounts/supplier/update_profile.html')
 
+
+
+#def delete_supplier_account(request: HttpRequest):
+#    if not request.user.is_authenticated:
+#        messages.error(request, "يجب أن تكون مسجلاً للدخول لحذف حسابك.")
+#        return redirect('accounts:sign_in')
+#    
+#    if not SupplierProfile.objects.filter(user=request.user).exists():
+#        messages.error(request, "حساب المورد غير موجود.")
+#        return redirect('main:index_view')
+#
+#    try:
+#        user = request.user
+#        profile = SupplierProfile.objects.get(user=user)
+#        
+#        # حذف الملف الشخصي للمورد
+#        profile.delete()
+#        
+#        # حذف المستخدم من قاعدة البيانات
+#        user.delete()
+#
+#        messages.success(request, "تم حذف حسابك بنجاح.")
+#        return redirect("main:index_view")  # توجيه المستخدم إلى الصفحة الرئيسية أو صفحة أخرى
+#
+#    except Exception as e:
+#        messages.error(request, "حدث خطأ أثناء محاولة حذف الحساب. حاول مرة أخرى.")
+#        print(e)
+#        return redirect('accounts:supplier_profile_view', user_name=request.user.username)
+#
+
+def delete_supplier_account(request: HttpRequest):
+    if not request.user.is_authenticated:
+        messages.error(request, "يجب أن تكون مسجلاً للدخول لحذف حسابك.")
+        return redirect('accounts:sign_in')
+
+    if not SupplierProfile.objects.filter(user=request.user).exists():
+        messages.error(request, "حساب المورد غير موجود.")
+        return redirect('main:index_view')
+
+    try:
+        user = request.user
+        profile = SupplierProfile.objects.get(user=user)
+
+        # تسجيل الخروج قبل حذف الحساب
+        logout(request)
+
+        # حذف الملف الشخصي للمورد
+        profile.delete()
+
+        # حذف المستخدم من قاعدة البيانات
+        user.delete()
+
+        messages.success(request, "تم حذف حسابك بنجاح.")
+        return redirect("main:index_view")
+
+    except Exception as e:
+        print(e)
+        messages.error(request, "حدث خطأ أثناء محاولة حذف الحساب. حاول مرة أخرى.")
+        return redirect('accounts:supplier_profile_view', user_name=request.user.username)
 
 def log_out(request: HttpRequest):
 
