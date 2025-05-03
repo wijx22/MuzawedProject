@@ -179,6 +179,23 @@ def stock_view(request:HttpRequest):
             else:
                 # If no city is selected, return all products for cities covered by the supplier
                 products = Product.objects.filter(City__suppliers=supplier)
+                
+            for product in products:
+                if product.stock < product.min_stock_alert:
+                    existing = Notification.objects.filter(
+                        recipient=request.user,
+                        message__icontains=product.name,
+                        is_read=False,
+                        notification_type='alert'
+                    ).exists()
+
+                    if not existing:
+                        Notification.objects.create(
+                            recipient=request.user,
+                            notification_type='alert',
+                            message=f"انخفاض المخزون: المنتج '{product.name}' أقل من الحد المحدد."
+                        )
+
 
            
 

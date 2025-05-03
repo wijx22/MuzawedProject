@@ -2,88 +2,190 @@
 {% block title %}الرئيسية | المورد{% endblock %}
 
 {% block content %}
+<div class="container py-4">
+  <div class="row align-items-start justify-content-between mb-5 text-end"> 
 
-<div class="container py-5">
-  <div class="text-center mb-5">
-    <h2 class="fw-bold" style="color: #1F3F2E;">أهلاً بك، {{ request.user.username }} 👋</h2>
-    <p class="text-muted">اختر الإجراء الذي ترغب بالقيام به</p>
-    <p>    {{request.user.supplier.status}}
-    </p>
-  </div>
-
-  <div class="row justify-content-center g-4">
-    {%if request.user.supplier.is_active%}
-    <div class="col-md-6">
-      <div class="card h-100 text-center shadow-sm border-0 p-4">
-        <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <span class="material-symbols-outlined mb-3">inventory_2</span>
-          <h5 class="card-title mb-2"> إدارة المخزون</h5>
-          <a href="{%url 'products:stock_view'%}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-        </div>
+    <!-- الترحيب والمعلومات -->
+    <div class="col-lg-6 col-12 mb-3 mb-lg-0 text-start">
+      <h2 class="fw-bold mb-0 ms-2" style="color: #1F3F2E;">
+        <i class="bi bi-patch-check"></i> أهلاً بك، {{ request.user.supplier.name }} 👋
+      </h2>
+      
+      {% if request.user.supplier.status != "Accepted" %}
+      <div class="d-flex align-items-center mb-3">
+        <p class="text-muted mb-0 ms-2">حالة طلب التوريد:</p>
+        {% if request.user.supplier.status == "No-request" %}
+          <span>لا يوجد طلب</span>
+        {% elif request.user.supplier.status == "Rejected" %}
+          <span>مرفوض</span>
+          <i class="bi bi-exclamation-circle-fill text-danger ms-2" style="cursor: pointer;" onclick="showRejectionReason()"></i>
+        {% elif request.user.supplier.status == "Pending" %}
+          <span>قيد المعالجة</span>
+          <i class="bi bi-hourglass-split text-warning ms-2"></i>
+        {% endif %}
       </div>
+      {% endif %}
     </div>
 
-    <div class="col-md-6">
-      <div class="card h-100 text-center shadow-sm border-0 p-4">
-        <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <span class="material-symbols-outlined mb-3">local_shipping</span>
-          <h5 class="card-title mb-2"> إداره الطلبات </h5>
-          <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-        </div>
+    <!-- حالة المتجر -->
+    {% if request.user.supplier.status == "Accepted" %}
+    <div class="col-lg-6 col-12 text-start">
+      <div class="d-flex justify-content-between mb-3">
+        <p class="fw-bold mb-1">حالة المتجر:</p>
+        <p class="mb-1">
+          {% if request.user.supplier.is_active %}
+            <span class="text-success">متاح للخدمة</span>
+          {% else %}
+            <span class="text-danger">خارج الخدمة</span>
+          {% endif %}
+        </p>
       </div>
-    </div>
 
-    <div class="col-md-6">
-      <div class="card h-100 text-center shadow-sm border-0 p-4">
-        <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <span class="material-symbols-outlined mb-3">inventory_2</span>
-          <h5 class="card-title mb-2">لوحة التقارير</h5>
-          <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-        </div>
-      </div>
-    </div>
+      <p 
+        class="text-decoration-underline mb-0"
+        style="cursor: pointer; display: inline-block;"
+        data-bs-toggle="modal"
+        data-bs-target="#toggleStatusModal"
+      >
+        تغيير الحالة
+      </p>
 
-    <div class="col-md-6">
-      <div class="card h-100 text-center shadow-sm border-0 p-4">
-        <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <span class="material-symbols-outlined mb-3">history</span>
-          <h5 class="card-title mb-2">سجل الطلبات</h5>
-          <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-        </div>
-      </div>
-    </div>
-    {%else%}
-
-    {% if request.user.supplier.status == "Rejected" or request.user.supplier.status == "No-request" %}
-    <div class="col-md-6">
-      <div class="card h-100 text-center shadow-sm border-0 p-4">
-        <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <span class="material-symbols-outlined mb-3">history</span>
-          <h5 class="card-title mb-2">انشاء طلب توريد</h5>
-          <a href="{%url 'supplier:supply_request_view'%}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-        </div>
-      </div>
+      <hr class="my-2">
     </div>
     {% endif %}
-    <div class="col-md-6">
-      <div class="card h-100 text-center shadow-sm border-0 p-4">
-        <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <span class="material-symbols-outlined mb-3">history</span>
-          <h5 class="card-title mb-2">الموردين</h5>
-          <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card h-100 text-center shadow-sm border-0 p-4">
-        <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <span class="material-symbols-outlined mb-3">history</span>
-          <h5 class="card-title mb-2">الدعم الفني</h5>
-          <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-        </div>
-      </div>
-    </div>
-
-    {%endif%}
   </div>
-  {% endblock %}
+
+  <!-- الكروت -->
+  <div class="row justify-content-center g-4">
+    {% if request.user.supplier.is_active %}
+      <div class="col-12 col-md-6">
+        <div class="card h-100 text-center shadow-sm border-0 p-4">
+          <div class="card-body d-flex flex-column justify-content-center align-items-center">
+            <i class="fa-solid fa-boxes-stacked fa-2x mb-3 text-success"></i>
+            <h5 class="card-title mb-2">إدارة المخزون</h5>
+            <a href="{% url 'products:stock_view' %}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="card h-100 text-center shadow-sm border-0 p-4">
+          <div class="card-body d-flex flex-column justify-content-center align-items-center">
+            <i class="fa-solid fa-truck-fast fa-2x mb-3 text-success"></i>
+            <h5 class="card-title mb-2">إدارة الطلبات</h5>
+            <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="card h-100 text-center shadow-sm border-0 p-4">
+          <div class="card-body d-flex flex-column justify-content-center align-items-center">
+            <i class="fa-solid fa-chart-line fa-2x mb-3 text-success"></i>
+            <h5 class="card-title mb-2">لوحة التقارير</h5>
+            <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="card h-100 text-center shadow-sm border-0 p-4">
+          <div class="card-body d-flex flex-column justify-content-center align-items-center">
+            <i class="fa-solid fa-clock-rotate-left fa-2x mb-3 text-success"></i>
+            <h5 class="card-title mb-2">سجل الطلبات</h5>
+            <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+          </div>
+        </div>
+      </div>
+    {% else %}
+
+      {% if request.user.supplier.status == "Rejected" or request.user.supplier.status == "No-request" %}
+        <div class="col-12 col-md-6">
+          <div class="card h-100 text-center shadow-sm border-0 p-4">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+              <i class="fa-solid fa-clipboard-list fa-2x mb-3 text-warning"></i>
+              <h5 class="card-title mb-2">إنشاء طلب توريد</h5>
+              <a href="{% url 'supplier:supply_request_view' %}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="col-12 col-md-6">
+        <div class="card h-100 text-center shadow-sm border-0 p-4">
+          <div class="card-body d-flex flex-column justify-content-center align-items-center">
+            <i class="fa-solid fa-users fa-2x mb-3 text-success"></i>
+            <h5 class="card-title mb-2">الموردين</h5>
+            <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="card h-100 text-center shadow-sm border-0 p-4">
+          <div class="card-body d-flex flex-column justify-content-center align-items-center">
+            <i class="fa-solid fa-headset fa-2x mb-3 text-success"></i>
+            <h5 class="card-title mb-2">الدعم الفني</h5>
+            <a href="{% url 'main:contact_view' %}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ✅ Modal تغيير الحالة -->
+<div class="modal fade" id="toggleStatusModal" tabindex="-1" aria-labelledby="toggleStatusLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-end">
+      <div class="modal-header">
+        <h5 class="modal-title" id="toggleStatusLabel">تأكيد تغيير حالة المتجر</h5>
+        <button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+      </div>
+
+      <div class="mb-3 px-3 d-flex align-items-center">
+        <input class="form-check-input me-2" type="checkbox" id="isAvailable" name="is_available">
+        <label class="form-check-label mb-0" for="isAvailable">متاح حالياً</label>
+      </div>
+
+      <div class="row mb-3 px-3" id="availablePeriod" style="display: none;">
+        <div class="col-md-6">
+            <label for="availableFrom" class="form-label">متاح من</label>
+            <input type="datetime-local" class="form-control" id="availableFrom" name="available_from">
+        </div>
+        <div class="col-md-6">
+            <label for="availableTo" class="form-label">متاح إلى</label>
+            <input type="datetime-local" class="form-control" id="availableTo" name="available_to">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <form method="post" action="#">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary-custom">نعم، تغيير الحالة</button>
+        </form>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showRejectionReason() {
+  alert("تم رفض طلبك بسبب عدم استيفاء المستندات المطلوبة. يرجى تحديث بياناتك وإعادة الطلب.");
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const checkbox = document.getElementById("isAvailable");
+  const period = document.getElementById("availablePeriod");
+
+  checkbox.addEventListener("change", function () {
+    if (checkbox.checked) {
+      period.style.display = "flex";
+    } else {
+      period.style.display = "none";
+    }
+  });
+});
+</script>
+{% endblock %}
