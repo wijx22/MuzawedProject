@@ -1,0 +1,136 @@
+{% extends 'main/supplier_base.html' %}
+{% load static %}
+{% block title %}طلب توريد{% endblock %}
+{% block ref %}
+<link rel="stylesheet" href="{% static 'css/products_style.css' %}">
+{% endblock %}
+
+
+
+{% block content %}
+<section class="d-flex flex-column justify-content-center align-items-center">
+
+    <div class="container-fluid ">
+
+        <!-- Details Container -->
+        <div class="row justify-content-center align-items-center">
+
+            <!-- Cities Section -->
+            <div class="col-10">
+                <div class="board">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="mb-3">المدن التي يغطيها التوريد</h3>
+                        <button class="btn btn-primary-custom  btn-sm" data-bs-toggle="modal" data-bs-target="#addCityModal">
+                            <i class="bi bi-plus-circle me-1"></i> إضافة مدينة
+                        </button>
+                    </div>
+                    {%if cities%}
+
+                    <div class="">
+                        <table width="100%">
+                            <thead>
+                                <tr>
+                                    <td>#</td>
+                                    <td>المدينة</td>
+                                    <td class="city-actions" style="text-align: center;">الإجراءات</td>
+                                </tr>
+                            </thead>
+                            <tbody id="citiesTableBody">
+                                {% for city in cities %}
+                                <tr data-city-id="{{city.id}}">
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{city.get_city_display}}</td>
+                                    <td  style="text-align: center;">
+                                        <a data-bs-toggle="modal" data-bs-target="#alert" data-city-id="{{ city.id }}"
+                                            data-city-name="{{ city.get_city_display }}"><i
+                                                class="bi bi-trash3-fill"></i></a>
+
+
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {%else%}
+                    <!-- Empty state for no cities -->
+                    <div id="noCitiesMessage" class="text-center py-4">
+                        <i class="bi bi-building text-muted" style="font-size: 2rem;"></i>
+                        <p class="mt-2 text-muted">لا توجد مدن مضافة حالياً</p>
+                    </div>
+                    {%endif%}
+                </div>
+            </div>
+
+        </div>
+</section>
+<!-- Add City Modal -->
+<div class="modal fade" id="addCityModal" tabindex="-1" aria-labelledby="addCityModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCityModalLabel">إضافة مدينة جديدة</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <form method="post" action="{% url 'supplier:add_city_view' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="cities" class="form-label">المدينة</label>
+                        <select class="form-select" id="cities" name="city" required>
+                            <option value="" selected disabled>اختر المدينة</option>
+                            {% for value, display in available_city_choices %}
+                            <option value="{{ value }}">{{ display }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-add-city" id="saveCityBtn">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Alert Modal -->
+<div class="modal fade" id="alert" tabindex="-1" aria-labelledby="alertLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="alertLabel">تأكيد الحذف</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                هل أنت متأكد من حذف مدينة : <strong id="city-name"></strong>؟
+                <input type="hidden" id="city-id" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                <a href="#" id="delete-link" class="btn btn-danger">حذف</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#alert').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var cityId = button.data('city-id');
+            var cityName = button.data('city-name');
+
+            // Update the modal's content
+            var modal = $(this);
+            modal.find('#city-name').text(cityName);
+            modal.find('#city-id').val(cityId);
+            modal.find('#delete-link').attr('href', '/supplier/delete_city/' + cityId);
+        });
+    });
+</script>
+
+
+{% endblock %}
