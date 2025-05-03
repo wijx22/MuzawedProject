@@ -5,7 +5,6 @@
 {% block ref %}
 <link rel="stylesheet" href="{% static 'css/products_style.css' %}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
 {% endblock %}
 
 {% block content %}
@@ -15,36 +14,36 @@
     <div class="container-fluid">
         {%if covered_cities%}
            <div class="row justify-content-start ms-4 gap-2">
-            
-            <a href="{{request.path}}" class="city-card active col-2">جميع المدن</a>
+            {% if covered_cities|length != 1 %}
+                <a href="{{ request.path }}" class="city-card {% if not request.GET.city_id %} active{% endif %} col-auto ms-2">جميع المدن</a>
+           
+            {% endif %}
+        
             {% for city in covered_cities %}
-            <a href="?city_id={{ city.id }}" class="city-card col-2">
-                {{ city.get_city_display }}
-            </a>
-        {% endfor %}
+                <a href="?city_id={{ city.id }}" class="city-card {% if request.GET.city_id == city.id|stringformat:'s' %} active{% endif %} col-auto">
+                    {{ city.get_city_display }}
+                </a>
+       
+            {% endfor %}
         
           
 
 
            </div>
-           {%endif%}
         <div class="row justify-content-center align-items-center">     
             <div class="col-10 board ">
                 <div class=" board-header d-flex flex-row justify-content-between align-items-center">
                     <h2 class="brown-title">إدارة المنتجات</h2>
-                    <div>
-                        
-                        <a href="{% url 'products:add_product_view' %}" class="text-decoration-none nav-link" ><i class="bi bi-plus-circle-fill"></i> إضافة منتج جديد</a>
+        
+                    <div>                     
+                        <a href="{% url 'products:add_product_view' %}" class="text-decoration-none btn btn-primary-custom" > <i class="bi bi-plus-circle me-1"></i> إضافة منتج جديد</a>
                     </div>
-    
-    
-    
                 </div>
                 {%if products%}
                 <table width="100%">
                     <thead>
                         <tr>
-                            <td>#</td>
+                            <td>تنبيه</td>
                             <td>المنتج</td>
                             <td>السعر</td>
                             <td>الحد الأدنى للطلب</td>
@@ -59,7 +58,13 @@
                     <tbody>
                         {% for product in products %}
                         <tr>
-                            <td>{{product.id}}</td>
+                            <td>  
+                                {% if product.stock == product.min_stock_alert %}
+                                <i class="bi bi-circle-fill" style="color: rgb(183, 0, 0); font-size: 1em;"></i>
+                                {% else %}
+                                <i class="bi bi-circle-fill" style="color: green; font-size: 1em;"></i>
+                                {% endif %}
+                            </td>
                             <td>{{ product.name }}</td>
                             <td>{{ product.price }}</td>
                             <td>{{ product.min_order_quantity }}</td>
@@ -75,9 +80,26 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                {%else%}
+                <div class="text-center py-4">
+                    <span class="material-symbols-outlined" style="font-size: 4rem;">
+                        storefront
+                        </span>
+                    <p class="mt-2 text-muted">لا توجد منتجات</p>
+        
+                </div>
                 {%endif%}
             </div>
         </div>
+        {%else%}
+        <div id="noCitiesMessage" class="text-center py-4">
+            <i class="bi bi-building text-muted" style="font-size: 2rem;"></i>
+            <p class="mt-2 text-muted">لا توجد مدن مضافة لاضافة المنتجات اليها</p>
+            <a href="{% url 'supplier:cities_view' %}" class="text-decoration-none btn btn-primary-custom"> انتقل للمدن</a>
+
+        </div>
+        {%endif%}
+
     </div>
 
 </section>

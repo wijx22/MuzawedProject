@@ -143,9 +143,10 @@ td i{
 }
 
 .city-card{
-    background-color: #4a3a20;
+    background-color: transparent;
+    border: #4A3A20 solid 2px;
     border-radius: 10px;
-    color: #fff;
+    color: #4A3A20;
     height: 30px;
     text-align: center;
     text-decoration: none;
@@ -153,6 +154,10 @@ td i{
 }
 .city-card.active{
   background-color: #e67e22;
+  border: #e67e22 solid 2px;
+
+  color: #fff;
+
 }
 .counter {
     width: 100px;

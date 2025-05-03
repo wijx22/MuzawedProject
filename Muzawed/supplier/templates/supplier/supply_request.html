@@ -1,4 +1,4 @@
-{% extends 'main/base.html' %}
+{% extends 'main/supplier_base.html' %}
 {% load static %}
 {% block title %}طلب توريد{% endblock %}
 {% block ref %}
@@ -183,17 +183,14 @@
                     <label for="supplyDays" class="form-label">أيام العمل</label>
                     <select class="form-select" id="supplyDays" multiple required name="supply_days">
                         <option value="" selected disabled>اختر يوم</option>
-                        <option value="الاحد">الاحد</option>
-                        <option value="الاثنين">الاثنين</option>
-                        <option value="الثلاثاء">الثلاثاء</option>
-                        <option value="الاربعاء">الاربعاء</option>
-                        <option value="الخميس">الخميس</option>
-                        <option value="الجمعة">الجمعة</option>
-                        <option value="السبت">السبت</option>
+                        {% for day in days %}
+                            <option value="{{ day.pk }}">
+                                {{ day.get_name_display }}
+                            </option>
+                        {% endfor %}
                     </select>
                     <div class="form-text">أيام الأسبوع التي يكون فيها المورد متاحًا للتوريد</div>
                 </div>
-            </div>
 
             <button type="submit" class="submit-btn mt-4" style="display:none;" id="submitRequestForm">ارسال
                 الطلب</button>

@@ -9,7 +9,7 @@
 <!-- Form Container -->
 <div class="container">
     <div class="form-container">
-        <h3 class="text-center mb-4">إضافة المعلومات التجارية</h3>
+        <h3 class="text-center mb-4">تحديث المعلومات </h3>
         
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
@@ -17,12 +17,12 @@
             
             <div class="mb-3">
                 <label for="storeName" class="form-label">اسم المتجر</label>
-                <input type="text" name="store_name" class="form-control" id="storeName" required>
+                <input type="text" name="store_name" class="form-control" id="storeName" value="{{commercial_info.store_name}}" required>
             </div>
 
             <div class="mb-3">
                 <label for="storeDescription" class="form-label">وصف المتجر</label>
-                <textarea name="store_description" class="form-control" id="storeDescription" rows="3" placeholder="وصف موجز لنشاط المتجر والمنتجات التي يقدمها" required></textarea>
+                <textarea name="store_description" class="form-control" id="storeDescription" rows="3" placeholder="وصف موجز لنشاط المتجر والمنتجات التي يقدمها" required>{{commercial_info.store_description}}</textarea>
             </div>
 
             <h5 class="section-title">الوثائق والمستندات</h5>
@@ -34,7 +34,9 @@
                         <input name="registration_document" type="file" class="d-none" id="registrationDoc" accept=".pdf,.jpg,.jpeg,.png">
                         <i class="bi bi-upload"></i>
                         <div class="file-upload-text">اضغط لرفع الملف</div>
-                        <div class="file-name" id="registrationDocName"></div>
+                        <div class="file-name" id="registrationDocName">   {% if commercial_info.registration_document %}
+                            {{ commercial_info.registration_document.name }}
+                        {% endif %}</div>
                     </div>
                     <div class="form-text">صيغة PDF أو JPG أو PNG</div>
                 </div>
@@ -45,7 +47,9 @@
                         <input type="file" name="license_document" class="d-none" id="licenseDoc" accept=".pdf,.jpg,.jpeg,.png">
                         <i class="bi bi-upload"></i>
                         <div class="file-upload-text">اضغط لرفع الملف</div>
-                        <div class="file-name" id="licenseDocName"></div>
+                        <div class="file-name" id="licenseDocName">{% if commercial_info.license_document %}
+                            {{commercial_info.license_document.name }}
+                        {% endif %}</div>
                     </div>
                     <div class="form-text">صيغة PDF أو JPG أو PNG</div>
                 </div>
@@ -56,7 +60,9 @@
                         <input type="file" name="tax_certificate" class="d-none" id="taxCertificate" accept=".pdf,.jpg,.jpeg,.png">
                         <i class="bi bi-upload"></i>
                         <div class="file-upload-text">اضغط لرفع الملف</div>
-                        <div class="file-name" id="taxCertificateName"></div>
+                        <div class="file-name" id="taxCertificateName">{% if commercial_info.tax_certificate %}
+                            {{commercial_info.tax_certificate.name }}
+                        {% endif %}</div>
                     </div>
                     <div class="form-text">صيغة PDF أو JPG أو PNG</div>
                 </div>
@@ -67,57 +73,56 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="bankAccountName" class="form-label">اسم الحساب البنكي</label>
-                    <input type="text" name="bank_account_name" class="form-control" id="bankAccountName" required>
+                    <input type="text" name="bank_account_name" class="form-control" id="bankAccountName" value="{{commercial_info.bank_account_name}}" required>
                 </div>
                 
                 <div class="col-md-6">
                     <label for="bankName" class="form-label">اسم البنك</label>
-                    <input type="text" name="bank_name" class="form-control" id="bankName" required>
+                    <input type="text" name="bank_name" class="form-control" id="bankName" value="{{commercial_info.bank_name}}" required>
                 </div>
             </div>
             
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="bankAccountNumber" class="form-label">رقم الحساب البنكي</label>
-                    <input type="text" name="bank_account_number" class="form-control" id="bankAccountNumber" required>
+                    <input type="text" name="bank_account_number" class="form-control" id="bankAccountNumber" value="{{commercial_info.bank_account_number}}"
+                    pattern="^\d{10,12}$" title="رقم الحساب البنكي يجب أن يكون بين 10 و 12 رقم."  required>
                 </div>
                 
                 <div class="col-md-6">
                     <label for="iban" class="form-label">رقم الآيبان</label>
-                    <input type="text" name="iban" class="form-control" id="iban" placeholder="مثال: SA44 2000 0001 2345 6789 1234" required>
+                    <input type="text" name="iban" class="form-control" id="iban" placeholder="مثال: SA44 2000 0001 2345 6789 1234" value="{{commercial_info.iban}}" 
+                    pattern="^SA\d{2}(\s?\d{4}){5}$" title="رقم الآيبان يجب أن يبدأ بـ 'SA' متبوعًا برقمين وأربعة مجموعات من 4 أرقام" required>
                 </div>
             </div>
             
             <div class="mb-3">
                 <label for="swiftCode" class="form-label">رمز السويفت</label>
-                <input type="text" name="swift_code" class="form-control" id="swiftCode" placeholder="مثال: NBOKSAJE">
+                <input type="text" name="swift_code" class="form-control" id="swiftCode" placeholder="مثال: NBOKSAJE" value="{{commercial_info.swift_code}}"
+                pattern="^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$" title="رمز السويفت يجب أن يكون 8 أو 11 حرفًا." required>
             </div>
 
             <h5 class="section-title">معلومات جهة الاتصال التجارية</h5>
             
             <div class="mb-3">
                 <label for="contactName" class="form-label">اسم جهة الاتصال التجارية</label>
-                <input type="text" name="commercial_contact_name" class="form-control" id="contactName" required>
+                <input type="text" name="commercial_contact_name" class="form-control" id="contactName" value="{{commercial_info.commercial_contact_name}}" required>
             </div>
             
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="contactPhone" class="form-label">هاتف جهة الاتصال التجارية</label>
-                    <input type="tel" name="commercial_contact_phone" class="form-control" id="contactPhone" placeholder="مثال: 0512345678" required>
+                    <input type="tel" name="commercial_contact_phone" class="form-control" id="contactPhone" placeholder="مثال: 0512345678"  value="{{commercial_info.commercial_contact_phone}}" required>
                 </div>
                 
                 <div class="col-md-6">
                     <label for="contactEmail" class="form-label">البريد الإلكتروني لجهة الاتصال التجارية</label>
-                    <input type="email" name="commercial_contact_email" class="form-control" id="contactEmail" required>
+                    <input type="email" name="commercial_contact_email" class="form-control" id="contactEmail" value="{{commercial_info.commercial_contact_email}}" required>
                 </div>
             </div>
 
             <button type="submit" class="submit-btn mt-4">
-                {% if form.instance.pk %}
                     تحديث
-                {% else %}
-                    إضافة
-                {% endif %}
             </button>
         </form>
     </div>

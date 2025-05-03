@@ -8,7 +8,9 @@ urlpatterns = [
     path("supplier-details/", views.supplier_details, name="supplier_details"),
     path("add_city/", views.add_city_view, name="add_city_view"),
     path('delete_city/<int:city_id>/', views.delete_city_view, name='delete_city_view'),
+    path('cities/', views.cities_view, name='cities_view'),
     path("create/request/", views.supply_request_view,  name='supply_request_view'),
-    path('supply_details/', views.supply_details_view, name='supply_details_view'),
-    path('commercial_data/', views.commercial_data_view, name='commercial_data_view')
+    path('update/supply_details/', views.update_supply_details_view, name='update_supply_details_view'),
+    path('update/commercial_data/', views.update_commercial_data_view, name='update_commercial_data_view'),
+    path('store_info/', views.store_info_view, name='store_info_view')
 ]

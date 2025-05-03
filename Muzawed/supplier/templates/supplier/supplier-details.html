@@ -8,14 +8,12 @@
 {% block content %}
 
 <div class="container">
-    
+
     <!-- Details Container -->
     <div class="details-container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h5>معلومات التوريد</h5>
-            <!-- <div>
-                    <a href="#" class="btn action-btn"><i class="bi bi-pencil-square me-1"></i> تعديل</a>
-                </div> -->
+
         </div>
 
         <!-- Basic Info Section -->
@@ -30,35 +28,35 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="col-md-9">
+            <div class="col-md-7">
                 <div class="row mb-2">
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <div class="detail-label">قطاع التوريد</div>
                         <div class="detail-value">{{supplier.get_supply_sector_display}}</div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="detail-label">خدمة التوصيل</div>
-                        <div class="detail-value">{{supplier.get_delivery_service_display}}</div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="detail-label">مدة تنفيذ الطلب</div>
-                        <div class="detail-value">{{supplier.order_lead_time_days|default_if_none:"-"}}</div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="detail-label">أيام العمل</div>
-                        <div class="detail-value">{{supplier.supply_days}}</div>
-                    </div>
-                    <div class="col-md-4">
+
+                    <div class="col-md-6 ">
                         <div class="detail-label"> الدفع الآجل</div>
                         <div class="detail-value">
                             {% if supplier.late_payment_options %}
                             <i class="bi bi-check-circle-fill text-success"></i> متاح
                             {% else %}
-                            <i class="bi bi-check-circle-fill text-danger"></i> غير متاح
+                            <i class="bi bi-x-circle-fill text-danger"></i> غير متاح
                             {% endif %}
                         </div>
+                    </div>
+                    <div class="col-md-6 mt-md-3">
+                        <div class="detail-label">أيام العمل</div>
+                        {% if supplier.supply_days.all %}
+                        <ul>
+                            {% for day in supplier.supply_days.all %}
+                            <li>{{ day.get_name_display }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p>لا توجد أيام محددة</p>
+                        {% endif %}
+                        <!-- <div class="detail-value">{{supplier.supply_days}}</div> -->
                     </div>
                 </div>
             </div>
@@ -85,65 +83,26 @@
         <!-- Additional Details Section -->
         <div class="detail-section">
             <h5 class="mb-3">تفاصيل إضافية</h5>
+
+
             <div class="row mb-3">
-                <div class="col-md-12">
-                    <div class="detail-label">تفاصيل الخدمة السريعة</div>
-                    <div class="detail-value">{{supplier.fast_service_details|default_if_none:"-"}}</div>
+                <div class="col-md-3">
+                    <div class="detail-label">خدمة التوصيل</div>
+                    <div class="detail-value">{{supplier.get_delivery_service_display}}</div>
                 </div>
-            </div>
-
-            <div class="row" id="unavailablePeriod">
-                <div class="col-md-6">
-                    <div class="detail-label">غير متاح من</div>
-                    <div class="detail-value">{{supplier.unavailable_from|default_if_none:"-"}}</div>
+                <div class="col-md-4">
+                    <div class="detail-label"> مدة تنفيذ الطلب للشحن (بالايام) </div>
+                    <div class="detail-value">
+                        {{supplier.order_lead_time_days|default_if_none:"-"}}</div>
                 </div>
-                <div class="col-md-6">
-                    <div class="detail-label">غير متاح إلى</div>
-                    <div class="detail-value">{{supplier.unavailable_to|default_if_none:"-"}}</div>
+                <div class="col-md-4">
+                    <div class="detail-label">مدة تنفيذ الطلب للتوصيل (بالساعات) </div>
+                    <div class="detail-value">
+                        {{supplier.fast_service_details|default_if_none:"-"}}</div>
                 </div>
             </div>
         </div>
-        <!-- Cities Section -->
-        <div class="detail-section">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="mb-0">المدن</h5>
-                <button class="btn btn-add-city btn-sm" data-bs-toggle="modal" data-bs-target="#addCityModal">
-                    <i class="bi bi-plus-circle me-1"></i> إضافة مدينة
-                </button>
-            </div>
 
-            <div class="table-responsive">
-                <table class="table table-bordered city-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>المدينة</th>
-                            <th class="city-actions">الإجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="citiesTableBody">
-                        {% for city in cities %}
-                        <tr data-city-id="{{city.id}}">
-                            <td>{{forloop.counter}}</td>
-                            <td>{{city.get_city_display}}</td>
-                            <td>
-                                <a data-bs-toggle="modal" data-bs-target="#alert" data-city-id="{{ city.id }}"
-                                    data-city-name="{{ city.get_city_display }}"><i class="bi bi-trash3-fill"></i></a>
-
-
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Empty state for no cities -->
-            <div id="noCitiesMessage" class="text-center py-4" style="display: none;">
-                <i class="bi bi-building text-muted" style="font-size: 2rem;"></i>
-                <p class="mt-2 text-muted">لا توجد مدن مضافة حالياً</p>
-            </div>
-        </div>
         <!-- System Info Section -->
         <div class="detail-section">
             <h5 class="mb-3">معلومات النظام</h5>
@@ -173,94 +132,8 @@
 
     </div>
 </div>
-<!-- Add City Modal -->
-<div class="modal fade" id="addCityModal" tabindex="-1" aria-labelledby="addCityModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addCityModalLabel">إضافة مدينة جديدة</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
-            </div>
-            <form method="post" action="{% url 'supplier:add_city_view' %}">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="cities" class="form-label">المدينة</label>
-                        <select class="form-select" id="cities" name="city" required>
-                            <option value="" selected disabled>اختر المدينة</option>
-                            {% for value, display in available_city_choices %}
-                                <option value="{{ value }}">{{ display }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
-                    <button type="submit" class="btn btn-add-city" id="saveCityBtn">حفظ</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
-<!-- Delete Alert Modal -->
-<div class="modal fade" id="alert" tabindex="-1" aria-labelledby="alertLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="alertLabel">تأكيد الحذف</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                هل أنت متأكد من حذف مدينة : <strong id="city-name"></strong>؟
-                <input type="hidden" id="city-id" />
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
-                <a href="#" id="delete-link" class="btn btn-danger">حذف</a>
-            </div>
-        </div>
-    </div>
-</div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $('#alert').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var cityId = button.data('city-id');
-            var cityName = button.data('city-name');
 
-            // Update the modal's content
-            var modal = $(this);
-            modal.find('#city-name').text(cityName);
-            modal.find('#city-id').val(cityId);
-            modal.find('#delete-link').attr('href', '/supplier/delete_city/' + cityId);
-        });
-    });
-</script>
-
-<script>
-    // Wait for DOM to be fully loaded
-    document.addEventListener('DOMContentLoaded', function () {
-        // Initialize variables
-
-        // Get DOM elements
-        const citiesTableBody = document.getElementById('citiesTableBody');
-        const noCitiesMessage = document.getElementById('noCitiesMessage');
-
-        // Check if there are cities and show/hide empty state
-        function checkCities() {
-            if (citiesTableBody.children.length === 0) {
-                noCitiesMessage.style.display = 'block';
-            } else {
-                noCitiesMessage.style.display = 'none';
-            }
-        }
-
-
-
-        // Initial check
-        checkCities();
-    });
-</script>
 {% endblock %}

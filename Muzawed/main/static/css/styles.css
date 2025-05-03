@@ -65,7 +65,7 @@ html, body {
 .btn-primary-custom {
     background-color: #1F3F2E;
     color: white;
-    border-radius: 999px;
+    border-radius: 9px;
     padding: 8px 24px;
     font-weight: 500;
     transition: 0.3s ease;
@@ -73,12 +73,14 @@ html, body {
 
 .btn-primary-custom:hover {
     background-color: #264F3F;
+    color: white;
+
 }
 
 .btn-outline-custom {
     border: 1px solid #1F3F2E;
     color: #1F3F2E;
-    border-radius: 999px;
+    border-radius: 9px;
     padding: 8px 24px;
     font-weight: 500;
     transition: 0.3s ease;
@@ -139,9 +141,9 @@ a {
   transition: color 0.3s ease;
 }
 
-a:hover {
+/* a:hover {
   color: #6AA894; 
-}
+} */
 
 .custom {
     color: #FFFFFF; 
@@ -178,6 +180,39 @@ a:hover {
     outline: 0;
     box-shadow: 0 0 0 .25rem rgba(38, 79, 63, .25); 
 }
+.form-check-input:checked {
+    background-color: #264f3f;
+    border-color: #264f3f;
+}
 .index{
     padding-right: 8rem;
+}
+/* files format */
+
+.file-upload {
+    border: 1px dashed #ced4da;
+    border-radius: 4px;
+    padding: 15px;
+    text-align: center;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.file-upload:hover {
+    background-color: #e9ecef;
+}
+.file-upload i {
+    font-size: 24px;
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+.file-upload-text {
+    color: #6c757d;
+}
+.file-name {
+    margin-top: 10px;
+    white-space: nowrap;     
+    overflow: hidden;            
+    text-overflow: ellipsis;  
+    font-size: 0.875rem;
 }

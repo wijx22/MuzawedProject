@@ -178,7 +178,7 @@ def stock_view(request:HttpRequest):
                 products = Product.objects.filter(City__id=city_id, City__suppliers=supplier)
             else:
                 # If no city is selected, return all products for cities covered by the supplier
-                products = Product.objects.filter(City__suppliers=supplier)
+                products = Product.objects.filter(City__suppliers=supplier).order_by("stock")
 
            
 
