@@ -1,0 +1,205 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %}طلب توريد{% endblock %}
+{% block ref %}
+<link rel="stylesheet" href="{% static 'css/store_style.css' %}">
+<link rel="stylesheet" href="{% static 'css/products_style.css' %}">
+<style>
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+<section class="d-flex flex-column justify-content-center align-items-center">
+
+        <div class="row justify-content-center align-items-center gap-2">
+            <div class="col-10">
+                <div class="store-profile">
+                    <div class="hero-section py-5">
+                        <div class="container">
+                            <div class="row justify-content-start align-items-start">
+                                <div class="col-lg-4 col-md-6 text-center">
+                                    <div class="logo-container">
+                                        <img src="{{ supply_details.logo_url }}" alt="Store Logo" class="logo-image">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h1 class="store-name">{{ commercial_info.store_name }}</h1>
+                                    <div class="status-badge">
+                                        {% if supply_details.is_available %}
+                                        <span class="badge bg-success">متاح حالياً</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">خارج الخدمة</span>
+                                        {% endif %}
+                                    </div>
+                                    <p class="store-description">{{ commercial_info.store_description }}</p>
+                                    <div class="d-flex flex-row mb-1">
+                                        {% if covered_cities %}
+                                        <h5 class="card-title"><i class="bi bi-geo-alt me-2"></i></h5>
+
+                                        {% for city in covered_cities %}
+                                        <p> {{ city.get_city_display }} |</p>
+                                        {% endfor %}
+                                        {% else %}
+                                        <p>لا توجد مدن مغطاة حالياً.</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="d-flex flex-row mb-1">
+                                        <h5 class="card-title"><i class="bi bi-telephone"></i></h5>
+                                        <a href="tel:{{commercial_info.commercial_contact_phone}}"
+                                            class="text-decoration-none"><strong>تواصل معنا </strong> </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container mt-1">
+                        <div class="row  justify-content-center align-items-start">
+                            <div class="col-md-4 store-card">
+                                <div class=" mb-1">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="bi bi-info-circle me-2"></i> معلومات التوريد
+                                        </h5>
+                                        <p><strong>قطاع التوريد:</strong> {{ supply_details.get_supply_sector_display }}
+                                        </p>
+                                        <p><strong>الدفع الآجل:</strong>
+                                            {% if supply_details.late_payment_options %}
+                                            <i class="bi bi-check-circle-fill text-success"></i> متاح
+                                            {% else %}
+                                            <i class="bi bi-x-circle-fill text-danger"></i> غير متاح
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 store-card">
+                                <div class=" mb-1">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="bi bi-truck me-2"></i> معلومات التوصيل</h5>
+                                        <p><strong>خدمة التوصيل:</strong> {{
+                                            supply_details.get_delivery_service_display}}</p>
+                                        <p><strong>مدة تنفيذ الطلب للشحن:</strong>
+                                            {{supply_details.order_lead_time_days|default_if_none:"-" }} أيام</p>
+                                        <p><strong>مدة تنفيذ الطلب للتوصيل:</strong>
+                                            {{supply_details.fast_service_details|default_if_none:"-" }} ساعات</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- <div class="row">
+                            <div class="col-md-12">
+                                <p class="text-muted">مزود منذ: {{ supply_details.created_at|date:"F j, Y" }}</p>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+
+                <div class="store-card ">
+                    <div class="row  justify-content-center align-items-start">
+                        <div class="col-lg-3 filter">
+
+                            <!-- Sidebar Filter -->
+                            <form method="GET" action="#">
+                                <!-- Replace 'product_list' with your URL name -->
+                                <div class="sidebar-filter">
+                                    <h3>مرشحات</h3>
+                        
+                                    <div class="filter-group">
+                                        <h5 class="section-title ">الفئة</h5>
+                                        {% for val , lable in categories %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="category" value="{{ val }}"
+                                                id="category-{{val }}" checked>
+                                            <label class="form-check-label " for="category-{{ val }}">{{lable }}</label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                        
+                                    <div class="filter-group">
+                                        <h5 class="section-title">نطاق السعر</h5>
+                                        <div class="price-range">
+                                            <label for="min-price">الحد الأدنى:</label>
+                                            <input class="form-control" min="1" type="number" id="min-price" name="min_price" value="{{ request.GET.min_price }}">
+                                            <label for="max-price">الحد الأقصى:</label>
+                                            <input class="form-control" min="1"  type="number" id="max-price" name="max_price" value="{{ request.GET.max_price }}">
+                                        </div>
+                                    </div>
+                        
+                                    <div class="filter-group">
+                                        <h5 class="section-title">المدينة</h5>
+                        
+                                        <select class="form-select" name="city">
+                                            <option value="">كل المدن</option>
+                                            {% for city in covered_cities %}
+                                            <option value="{{ city.id }}" {% if request.GET.city == city.id|stringformat:'s' %} selected
+                                                {%endif %}> {{ city.get_city_display }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="row justify-content-center align-items-center">
+                                     <button type="submit" class="btn btn-primary-custom my-3 col-10">تطبيق المرشحات</button>
+                                    <a href="#" class="btn btn-secondary col-10">إعادة تعيين المرشحات</a>
+                                    </div>
+                                
+                                    <!-- Link to the base URL -->
+                                </div>
+                            </form>
+                        </div>
+
+
+
+                        <div class="col-lg-9">
+                            {%include 'products/product_list.html'%}
+
+                            <div class="pagination d-flex justify-content-center align-items-center mt-5 gap-4">
+                                {% if products.has_previous %}
+                                    <div class="d-flex gap-1">
+                                        <a href="?page=1">&laquo; first</a>
+                                        <a href="?page={{ products.previous_page_number }}">&laquo; previous</a>
+                                    </div>
+                                {% endif %}
+                        
+                                <div class="current">
+                                    Page {{ products.number }} of {{ products.paginator.num_pages }}
+                                </div>
+                        
+                                <div class="d-flex gap-2">
+                                    {% for page in products.paginator.page_range %}
+                                        {% if page == products.number %}
+                                        <a href="#" class="p-3 bg-primary rounded-4 text-white disabled">{{page}}</a>
+                                        {% else %}
+                                        <a href="?page={{ page }}" class="p-3 bg-secondary rounded-4 text-white">{{page}}</a>
+                                        {% endif %}
+                                    {% endfor %}
+                        
+                                </div>
+                        
+                                {% if products.has_next %}
+                                    <div class="d-flex gap-1">
+                                        <a href="?page={{ products.next_page_number }}">next &raquo;</a>
+                                        <a href="?page={{ products.paginator.num_pages }}">last &raquo;</a>
+                                    </div>
+                                {% endif %}
+                        
+                        
+                        </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+
+    
+    </div>
+
+
+
+</section>
+{% endblock %}
