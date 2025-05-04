@@ -35,15 +35,16 @@
         <a class="p-0" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
           <i class="bi bi-person-circle" style="font-size: 30px; color: #1F3F2E;"></i>
         </a>
-        <ul class="dropdown-menu dropdown-menu-end text-center" aria-labelledby="userDropdown">
-          <li class="dropdown-item fw-bold">{{ request.user.username }}</li>
+        <ul class="dropdown-menu dropdown-menu-end text-center p-2 " aria-labelledby="userDropdown">
+          <li class="dropdown-item fw-bold my-2">{{ request.user.username }}</li>
           {% if request.user.supplier %}
-            <li><a class="dropdown-item" href="{% url 'accounts:supplier_profile_view' request.user.username %}">الملف الشخصي</a></li>
+            <li><a class="dropdown-item my-2" href="{% url 'accounts:supplier_profile_view' request.user.username %}">الملف الشخصي</a></li>
+            <li><a class="dropdown-item my-2" href="{% url 'supplier:store_info_view' %}">معلومات المتجر </a></li>
           {% else %}
             <li><a class="dropdown-item" href="{% url 'accounts:beneficiary_profile_view' request.user.username %}">الملف الشخصي</a></li>
+
           {% endif %}
           <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item text-danger" href="{% url 'accounts:store_info_view' %}">معلومات المورد </a></li>
           <li><a class="dropdown-item text-danger" href="{% url 'accounts:log_out' %}?next={{ request.path }}">تسجيل الخروج</a></li>
         </ul>
       </div>

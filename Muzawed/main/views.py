@@ -2,35 +2,21 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.urls import reverse
 from django.contrib.auth.views import LoginView
-from supplier.models import SupplyDetails
+from supplier.models import SupplyDetails, SupplierProfile
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from supplier.models import SupplyDetails
+from supplier.models import SupplyDetails, SupplierProfile 
 from datetime import datetime
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.shortcuts import render, get_object_or_404
-from accounts.models import SupplierProfile
-from products.models import Product
 from .models import Contact
 
-
-
-
 def index_view(request):
-
     if hasattr(request.user, 'supplier'):
+
         return render(request, 'main/supplier_index.html')
-
-
-    suppliers = Supplier.objects.filter(is_active=True, status="Accepted")[:6]
-    latest_products = Product.objects.filter(is_active=True).order_by('-created_at')[:6]
-
-    return render(request, 'main/index.html', {
-        'suppliers': suppliers,
-        'latest_products': latest_products,
-    })
-
+    else:
+        return render(request, 'main/index.html')
 
 
 def contact_view(request):
@@ -64,6 +50,8 @@ def contact_view(request):
 
 def about_view(request):
     return render(request, 'main/about.html')
+
+
 
 
 @login_required
@@ -101,10 +89,7 @@ def store_status_handler(request):
 
     return redirect('main:index_view')
 
+
 def our_suppliers(request):
-    suppliers = SupplierProfile.objects.filter(is_active=True, status="Accepted")
-    return render(request, 'main/our_suppliers.html', {'suppliers': suppliers})
 
-
-
-
+    return render(request, 'main/our_suppliers.html')
