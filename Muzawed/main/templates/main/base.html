@@ -53,6 +53,7 @@
           <li><a class="dropdown-item" href="{% url 'accounts:beneficiary_profile_view' request.user.username %}">الملف الشخصي</a></li>
         {% endif %}
         <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="{% url 'accounts:store_info_view' %}">معلومات المورد </a></li>
         <li><a class="dropdown-item text-danger" href="{% url 'accounts:log_out' %}?next={{ request.path }}">تسجيل الخروج</a></li>
       </ul>
     </div>

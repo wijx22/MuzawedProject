@@ -2,10 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.urls import reverse
 from django.contrib.auth.views import LoginView
-from supplier.models import SupplyDetails, SupplierProfile
+from supplier.models import SupplyDetails
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from supplier.models import SupplyDetails, SupplierProfile 
+from supplier.models import SupplyDetails
 from datetime import datetime
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -13,7 +13,7 @@ from django.shortcuts import render, get_object_or_404
 from accounts.models import SupplierProfile
 from products.models import Product
 from .models import Contact
-from .models import SupplierProfile, Product
+
 
 
 
@@ -66,8 +66,6 @@ def about_view(request):
     return render(request, 'main/about.html')
 
 
-
-
 @login_required
 def store_status_handler(request):
     if request.method == 'POST':
@@ -102,6 +100,10 @@ def store_status_handler(request):
         return redirect('main:index_view')
 
     return redirect('main:index_view')
+
+def our_suppliers(request):
+    suppliers = SupplierProfile.objects.filter(is_active=True, status="Accepted")
+    return render(request, 'main/our_suppliers.html', {'suppliers': suppliers})
 
 
 
