@@ -35,10 +35,21 @@
 
 
     <div class="form-floating">
-      <input type="text" class="form-control" id="floatingInput" placeholder="address" name="address" required>
-      <label for="floatingInput">العنوان</label>
-  </div>
-
+      <select class="form-select" id="floatingCity" name="city" required>
+        <option value="riyadh">الرياض</option>
+        <option value="jeddah">جدة</option>
+        <option value="mecca">مكة</option>
+        <option value="medina">المدينة</option>
+        <option value="dammam">الدمام</option>
+        <option value="khobar">الخبر</option>
+        <option value="tabuk">تبوك</option>
+        <option value="abha">أبها</option>
+        <option value="hail">حائل</option>
+        <option value="najran">نجران</option>
+      </select>
+      <label for="floatingCity">المدينة</label>
+    </div>
+    
 
       <div class="form-floating">
         <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password" required>

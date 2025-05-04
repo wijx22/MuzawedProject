@@ -318,23 +318,33 @@ def contact_messages_list_view(request):
 
 
 
+#def report_list_view(request):
+#    if request.user.is_staff:
+#        reports = Report.objects.all()
+#    else:
+#        reports = Report.objects.filter(user=request.user)
+#
+#
+#
+#
+#
+#    return render(request, 'administration/reports/report_list.html', {
+#        'reports': reports,
+#        'hide_header': True
+#
+#
+#    })
+
 def report_list_view(request):
     if request.user.is_staff:
         reports = Report.objects.all()
     else:
         reports = Report.objects.filter(user=request.user)
 
-
-
-
-
     return render(request, 'administration/reports/report_list.html', {
         'reports': reports,
         'hide_header': True
-
-
     })
-
 
 
 def reply_to_report_view(request, report_id):

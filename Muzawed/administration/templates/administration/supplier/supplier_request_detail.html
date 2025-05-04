@@ -249,7 +249,7 @@
     </div>
   </div>
 
-  <div class="card mb-4">
+  <!--<div class="card mb-4">
     <div class="card-header text-white" style="background-color: #1F3F2E;">معلومات التوريد</div>
     <div class="card-body">
       {% if supply_details %}
@@ -266,8 +266,62 @@
         <p>لا توجد معلومات توريد.</p>
       {% endif %}
     </div>
-  </div>
+  </div>-->
 
+
+  <div class="card mb-4">
+    <div class="card-header text-white" style="background-color: #1F3F2E;">معلومات التوريد</div>
+    <div class="card-body">
+      {% if supply_details %}
+        <p><strong>أيام التوريد:</strong> {{ supply_details.supply_days }}</p>
+        <p><strong>الخدمة السريعة:</strong> {{ supply_details.fast_service_details }} أيام</p>
+        
+        <p><strong>خدمة التوصيل:</strong> 
+          {% if supply_details.delivery_service == "both" %}
+          توصيل سريع وشحن
+          {% elif supply_details.delivery_service == "shipping" %}
+             شحن          
+          {% elif supply_details.delivery_service == "fast" %}
+             سريع 
+          {% else %}
+            غير محدد
+          {% endif %}
+        </p>
+  
+        <p><strong>مدة تجهيز الطلب:</strong> {{ supply_details.order_lead_time_days }} أيام</p>
+  
+        <p><strong>خيارات الدفع المتأخر:</strong> 
+          {% if supply_details.late_payment_options %}
+            متاحة
+          {% else %}
+            غير متاحة
+          {% endif %}
+        </p>
+  
+        <p><strong>القطاع:</strong> 
+          {% if supply_details.supply_sector == "both" %}
+          بيع تجزئة وجملة
+          {% elif supply_details.supply_sector == "wholesale" %}
+          بالجملة
+          {% elif supply_details.supply_sector == "retail" %}
+          بيع بالتجزئة
+          {% else %}
+            غير محدد
+          {% endif %}
+        </p>
+  
+        {% if supply_details.logo %}
+          <p><strong>شعار المورد:</strong><br>
+            <img src="{{ supply_details.logo.url }}" class="img-thumbnail" width="150">
+          </p>
+        {% endif %}
+  
+      {% else %}
+        <p>لا توجد معلومات توريد.</p>
+      {% endif %}
+    </div>
+  </div>
+  
   <div class="d-flex justify-content-between align-items-center mb-4">
     <a href="{% url 'administration:supplier_requests_view' %}" class="btn btn-outline-secondary">رجوع إلى قائمة الطلبات</a>
 

@@ -18,7 +18,7 @@ def sign_up_beneficiary(request: HttpRequest):
             new_user = User.objects.create_user(username=request.POST["username"],password=request.POST["password"],email=request.POST["email"], first_name=request.POST["first_name"], last_name=request.POST["last_name"])            
             new_user.save()
             #create profile after user save 
-            profile = ProfileBeneficiary(user=new_user,name=new_user.get_full_name(),contact_info=request.POST['contact_info'], address=request.POST['address'])
+            profile = ProfileBeneficiary(user=new_user,name=new_user.get_full_name(),contact_info=request.POST['contact_info'],  city=request.POST['city'])
             profile.save()
             Notification.objects.create(
                                     recipient=new_user,
