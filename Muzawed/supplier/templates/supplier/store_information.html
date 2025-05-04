@@ -1,0 +1,323 @@
+{% extends 'main/supplier_base.html' %}
+{% load static %}
+{% block title %}طلب توريد{% endblock %}
+{% block ref %}
+<link rel="stylesheet" href="{% static 'css/supplier_style.css' %}">
+<style>
+    .tab-buttons {
+        display: flex;
+    }
+
+    .tab-button {
+        background-color: #ffffff;
+        border: none;
+        border-top-right-radius: 15px;
+        border-top-left-radius: 15px;
+        padding: 10px 20px;
+        cursor: pointer;
+        height: 50px;
+        width: 50%;
+        color: #2c5545;
+    }
+
+
+    .tab {
+        display: none;
+        width: 100%;
+        padding: 20px;
+        min-height: 70vh;
+        /* background-color: #ffffff; */
+
+        background-color: #2c5545;
+
+    }
+
+    .active-tab-button {
+        color: white;
+
+        background-color: #2c5545;
+        transform: scaleY(1.1);
+        transform-origin: bottom;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section>
+    <div class="row justify-content-center align-items-center">
+        <div class="col-10">
+
+            <div class="tab-buttons">
+                <button class="tab-button active-tab-button" onclick="toggleTab(0)">المعلومات الأساسية</button>
+                <button class="tab-button" onclick="toggleTab(1)">معلومات التوريد</button>
+            </div>
+
+            <div class="tab" id="tab1">
+                <div class="container">
+
+                    <!-- Details Container -->
+                    <div class="details-container">
+                        <!-- Basic Info Section -->
+                        <div class="detail-section row">
+
+                            <div class="col-12 mb-3">
+                                <div class="d-flex ">
+                                    <div class="detail-label"> اسم المتجر: </div>
+                                    <div class="detail-value"> {{commercial_info.store_name}} </div>
+                                </div>
+
+                            </div>
+                            <div class="col-12">
+                                <div class="d-flex ">
+                                    <div class="detail-label"> وصف المتجر: </div>
+                                    <div class="detail-value"> {{commercial_info.store_description}} </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Additional Details Section -->
+                        <div class="detail-section">
+                            <h5 class="mb-3">المعلومات البنكية</h5>
+
+
+                            <div class="row mb-3">
+                                <div class="col-md-6 md-4">
+                                    <div class="detail-label">اسم صاحب الحساب</div>
+                                    <div class="detail-value">{{commercial_info.bank_account_name}}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="detail-label">رقم الحساب</div>
+                                    <div class="detail-value">
+                                        {{commercial_info.bank_account_number|default_if_none:"-"}}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="detail-label">اسم البنك</div>
+                                    <div class="detail-value">{{commercial_info.bank_name}}</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="detail-label">الايبان </div>
+                                    <div class="detail-value">{{commercial_info.iban}}</div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- System Info Section -->
+                        <div class="detail-section">
+                            <h5 class="mb-3">الوثائق والمستندات</h5>
+                            <div class="row">
+                                <p><strong>السجل التجاري:</strong>
+
+                                    {% if commercial_info.registration_document %}
+                                    <a href="{{ commercial_info.registration_document.url }}" target="_blank"
+                                        class="btn btn-sm btn-outline-primary">عرض</a>
+                                    {% else %} لا يوجد {% endif %}
+                                </p>
+                                <p><strong>رخصة:</strong>
+                                    {% if commercial_info.license_document %}
+                                    <a href="{{ commercial_info.license_document.url }}" target="_blank"
+                                        class="btn btn-sm btn-outline-primary">عرض</a>
+                                    {% else %} لا يوجد {% endif %}
+                                </p>
+                                <p><strong>شهادة ضريبية:</strong>
+                                    {% if commercial_info.tax_certificate %}
+                                    <a href="{{ commercial_info.tax_certificate.url }}" target="_blank"
+                                        class="btn btn-sm btn-outline-primary">عرض</a>
+                                    {% else %} لا يوجد {% endif %}
+                                </p>
+
+
+                            </div>
+                        </div>
+                        <!-- System Info Section -->
+                        <div class="detail-section">
+                            <h5 class="mb-3"> معلومات جهة الاتصال التجارية</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="detail-label">اسم جهة الاتصال التجارية </div>
+                                    <div class="detail-value ">
+                                        {{commercial_info.commercial_contact_name}}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="detail-label">هاتف جهة الاتصال التجارية </div>
+                                    <div class="detail-value ">
+                                        {{commercial_info.commercial_contact_phone}}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="detail-label">البريد الإلكتروني لجهة الاتصال التجارية</div>
+                                    <div class="detail-value">
+                                        {{commercial_info.commercial_contact_email}}
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        <!-- System Info Section -->
+                        <div class="detail-section">
+                            <h5 class="mb-3">معلومات النظام</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="detail-label">تاريخ الإنشاء</div>
+                                    <div class="detail-value timestamp">
+                                        <i class="bi bi-calendar-check me-1"></i>
+                                        {{commercial_info.created_at}}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="detail-label">آخر تحديث</div>
+                                    <div class="detail-value timestamp">
+                                        <i class="bi bi-clock-history me-1"></i>
+                                        {{commercial_info.updated_at}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class=" d-flex justify-content-start mt-4">
+                            <a href="{%url 'supplier:update_commercial_data_view'%}"
+                                class="btn btn-outline-secondary me-2">تحديث</a>
+                            <!-- <a href="#" class="btn action-btn"><i class="bi bi-pencil-square me-1"></i> تعديل</a> -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="tab" id="tab2">
+                <div class="container">
+
+                    <!-- Details Container -->
+                    <div class="details-container">
+                        <!-- Basic Info Section -->
+                        <div class="detail-section row">
+                            <div class="col-md-4 text-center mb-3">
+                                <img src="{{supply_details.logo_url}}" alt="شعار المورد" class="supplier-logo mb-2">
+                                <div class="mt-2">
+                                    {% if supply_details.is_available %}
+                                    <span class="badge bg-success">متاح حالياً</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">خارج الخدمة</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="row mb-2">
+                                    <div class="col-md-5">
+                                        <div class="detail-label">قطاع التوريد</div>
+                                        <div class="detail-value">{{supply_details.get_supply_sector_display}}</div>
+                                    </div>
+
+                                    <div class="col-md-6 ">
+                                        <div class="detail-label"> الدفع الآجل</div>
+                                        <div class="detail-value">
+                                            {% if supply_details.late_payment_options %}
+                                            <i class="bi bi-check-circle-fill text-success"></i> متاح
+                                            {% else %}
+                                            <i class="bi bi-x-circle-fill text-danger"></i> غير متاح
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mt-md-3">
+                                        <div class="detail-label">أيام العمل</div>
+                                        {% if supply_details.supply_days.all %}
+                                        <ul>
+                                            {% for day in supply_details.supply_days.all %}
+                                            <li>{{ day.get_name_display }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% else %}
+                                        <p>لا توجد أيام محددة</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Additional Details Section -->
+                        <div class="detail-section">
+                            <h5 class="mb-3">تفاصيل إضافية</h5>
+
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <div class="detail-label">خدمة التوصيل</div>
+                                    <div class="detail-value">{{supply_details.get_delivery_service_display}}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label"> مدة تنفيذ الطلب للشحن (بالايام) </div>
+                                    <div class="detail-value">
+                                        {{supply_details.order_lead_time_days|default_if_none:"-"}}</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="detail-label">مدة تنفيذ الطلب للتوصيل (بالساعات) </div>
+                                    <div class="detail-value">
+                                        {{supply_details.fast_service_details|default_if_none:"-"}}</div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- System Info Section -->
+                        <div class="detail-section">
+                            <h5 class="mb-3">معلومات النظام</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="detail-label">تاريخ الإنشاء</div>
+                                    <div class="detail-value timestamp">
+                                        <i class="bi bi-calendar-check me-1"></i>
+                                        {{supply_details.created_at}}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="detail-label">آخر تحديث</div>
+                                    <div class="detail-value timestamp">
+                                        <i class="bi bi-clock-history me-1"></i>
+                                        {{supply_details.updated_at}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class=" d-flex justify-content-start mt-4">
+                            <a href="{%url 'supplier:update_supply_details_view'%}"
+                                class="btn btn-outline-secondary me-2">تحديث</a>
+                            <!-- <a href="#" class="btn action-btn"><i class="bi bi-pencil-square me-1"></i> تعديل</a> -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<script>
+    function toggleTab(tabIndex) {
+        let tabs = document.getElementsByClassName("tab");
+        for (let i = 0; i < tabs.length; i++) {
+            tabs[i].style.display = "none";
+        }
+        tabs[tabIndex].style.display = "block";
+
+        // Remove the 'active-tab-button' class from all buttons
+        let buttons = document.getElementsByClassName("tab-button");
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].classList.remove("active-tab-button");
+        }
+
+        // Add the 'active-tab-button' class to the clicked button
+        buttons[tabIndex].classList.add("active-tab-button");
+    }
+
+    toggleTab(0);
+</script>
+{% endblock %}

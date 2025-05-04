@@ -4,7 +4,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db import transaction
 from .forms import CitiesForm, CommercialInfoForm
-from .models import City, SupplyDetails , CommercialInfo
+from .models import City, SupplyDetails , CommercialInfo,Day
 from accounts.models import SupplierProfile
 
 def supplier_details(request: HttpRequest):
@@ -12,8 +12,38 @@ def supplier_details(request: HttpRequest):
         try:
             # Check if the user is a supplier
             supplier:SupplierProfile = request.user.supplier
-            commercial_info = supplier.commercial_info
+            if supplier.status ==SupplierProfile.RequestStatusChoises.REJECTED or supplier.status ==SupplierProfile.RequestStatusChoises.NO_REQUEST:
+                messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
+                return redirect("main:index_view")
             supply_details = supplier.supply_details
+                  
+
+        except AttributeError:
+            messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
+            return redirect("main:index_view")
+
+        except Exception as error:
+            print("An error occurred:", error)
+            messages.error(request, 'حدث خطأ اثناء محاولة عرض المعلومات ')
+            return redirect("main:index_view")
+
+    return render(
+        request,
+        "supplier/supplier-details.html",
+        {
+            "request":supplier,
+            "supplier": supply_details,
+        },
+    )
+
+def cities_view(request:HttpRequest):
+    if request.user.is_authenticated:
+        try:
+            # Check if the user is a supplier
+            supplier:SupplierProfile = request.user.supplier
+            if supplier.status !=SupplierProfile.RequestStatusChoises.ACCEPTED:
+                messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
+                return redirect("main:index_view")
             covered_cities = supplier.cities_covered.all()  
 
             # Get all available city choices
@@ -36,16 +66,14 @@ def supplier_details(request: HttpRequest):
             return redirect("main:index_view")
 
     return render(
-        request,
-        "supplier/supplier-details.html",
-        {
-            "request":supplier,
-            "supplier": supply_details,
-            "cities": covered_cities,
-            "available_city_choices": available_city_choices,  
-        },
-    )
-@login_required
+            request,
+            "supplier/cities.html",
+            {
+                "cities": covered_cities,
+                "available_city_choices": available_city_choices,  
+            },
+        )
+
 def add_city_view(request: HttpRequest):
     if request.user.is_authenticated:
         try:
@@ -59,7 +87,7 @@ def add_city_view(request: HttpRequest):
                     city.save()  
                     city.suppliers.add(supplier) 
                     messages.success(request, "تم إضافة المدينة بنجاح!")
-                    return redirect("supplier:supplier_details")
+                    return redirect("supplier:cities_view")
                 else:
                     messages.error(request, "يرجى التحقق من بيانات المدينة.")
 
@@ -74,9 +102,6 @@ def add_city_view(request: HttpRequest):
 
     return redirect("main:index_view") 
 
-
-
-@login_required
 def delete_city_view(request: HttpRequest, city_id: int):
     if request.user.is_authenticated:
         try:
@@ -94,7 +119,7 @@ def delete_city_view(request: HttpRequest, city_id: int):
                 city.delete()
 
             messages.success(request, "تم حذف المدينة بنجاح!")
-            return redirect("supplier:supplier_details")
+            return redirect("supplier:cities_view")
 
         except AttributeError:
             messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
@@ -106,46 +131,30 @@ def delete_city_view(request: HttpRequest, city_id: int):
 
     return redirect("main:index_view")
 
-# def update_commercial_info_view(request):
-#     supplier = Supplier.objects.filter(user=request.user).first()
-#     if not supplier:
-#         return redirect("supplier:create_supplier_details")
-
-#     commercial_info = supplier.commercialinfo_set.first()
-#     if not commercial_info:
-#         return redirect('supplier:add_commercial_info')
-
-#     form = CommercialInfoForm(request.POST or None, request.FILES or None, instance=commercial_info)
-
-#     if request.method == 'POST' and form.is_valid():
-#         form.save()
-#         messages.success(request, 'تم تحديث المعلومات التجارية بنجاح.')
-#         return redirect('supplier:dashboard')  
-
-#     return render(request, 'supplier/commercial_info_form.html', {'form': form})
-
-
-
-def commercial_data_view(request: HttpRequest):
+def update_commercial_data_view(request: HttpRequest):
     if request.user.is_authenticated:
         try:
             # Check if the user is a supplier
             supplier = request.user.supplier
-            form = CommercialInfoForm(request.POST or None, request.FILES or None)
             commercial_info=CommercialInfo.objects.filter(supplier=supplier).first()
+
             if request.method == 'POST':
-                if commercial_info:
-                    
-                    commercial_info.delete()
+                # Pass the instance to the form for updating
+                form = CommercialInfoForm(request.POST, request.FILES, instance=commercial_info)
 
                 if form.is_valid():
-                    commercial_info = form.save(commit=False)
-                    commercial_info.supplier = supplier
-                    commercial_info.save()
-                    messages.success(request, 'تم بنجاح إضافة المعلومات التجارية للمورد.')
-                    return redirect("supplier:supply_details_view")
+                    commercial_info = form.save(commit=False) 
+                    commercial_info.supplier = supplier 
+                    commercial_info.save() 
+                    messages.success(request, 'تم بنجاح تحديث المعلومات التجارية .')
+                    return redirect("supplier:store_info_view")
+                else:
+                    messages.error(request, 'الرجاء تصحيح الأخطاء في النموذج.')
 
-            return render(request, 'supplier/commercial_info_form.html', {'form': form})
+            else:
+                form = CommercialInfoForm(instance=commercial_info)
+
+            return render(request, 'supplier/update_commercial_info.html', {'form': form ,"commercial_info":commercial_info})
 
         except AttributeError:
             messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
@@ -153,59 +162,77 @@ def commercial_data_view(request: HttpRequest):
 
         except Exception as error:
             print("An error occurred:", error)
-            messages.error(request, 'حدث خطأ اثناء محاولة اضافة المعلومات التجارية يرجى المحاولة مرة اخرى ')
-            return redirect("main:supplie_view")
+            messages.error(request, 'حدث خطأ اثناء محاولة تحديث المعلومات التجارية يرجى المحاولة مرة اخرى ')
+            return redirect("main:store_info_view")
 
-    return redirect("accounts:sign_in")          
+    return redirect("accounts:sign_in")
 
-def supply_details_view(request: HttpRequest):
+
+def update_supply_details_view(request: HttpRequest):
     if request.user.is_authenticated:
         try:
             # Check if the user is a supplier
             supplier = request.user.supplier
-            supply_details=SupplyDetails.objects.filter(supplier=supplier).first()
+            supply_details = SupplyDetails.objects.filter(supplier=supplier).first()
+
             if request.method == 'POST':
                 if supply_details:
-                    
-                    supply_details.delete()
+                    # Extract data from request
+                    late_payment_options = request.POST.get('late_payment_options')
+                    fast_service_details = request.POST.get('fast_service_details')
+                    order_lead_time_days = request.POST.get('order_lead_time_days')
+                    delivery_service = request.POST.get('delivery_service')
+                    supply_sector = request.POST.get('supply_sector')
+                    # Handle the image upload
+                    logo = request.FILES.get('logo')
+
+                    # Clear fast_service_details if delivery_service is not 'fast' or 'both'
+                    if delivery_service != 'fast' and delivery_service != 'both':
+                        supply_details.fast_service_details = None  # Or '' if it's a CharField
+
+                    else:
+                        supply_details.fast_service_details = fast_service_details
 
 
-                # Extract data from request
-                supply_days = ' - '.join(request.POST.getlist('supply_days'))
-                late_payment_options = request.POST.get('late_payment_options')
-                fast_service_details = request.POST.get('fast_service_details')
-                order_lead_time_days = request.POST.get('order_lead_time_days')
-                delivery_service = request.POST.get('delivery_service')
-                supply_sector = request.POST.get('supply_sector')
-                # Handle the image upload
-                logo = request.FILES.get('logo')
+                    # Clear fast_service_details if delivery_service is not 'fast' or 'both'
+                    if delivery_service != 'shipping' and delivery_service != 'both':
+                        supply_details.order_lead_time_days = None  # Or '' if it's a CharField
 
-                # Create a new Product instance
-                supplyDetails = SupplyDetails(
-                    supplier=supplier,
-                    logo=logo,
-                    supply_sector=supply_sector,
-                    delivery_service=delivery_service,
-                    order_lead_time_days=order_lead_time_days,
-                    fast_service_details=fast_service_details,
-                    late_payment_options=late_payment_options is not None,
-                    supply_days=supply_days,
-                )
+                    else:
+                        supply_details.order_lead_time_days = order_lead_time_days
+                    print(delivery_service)
+                    # Update the existing SupplyDetails instance
+                    supply_details.supply_sector = supply_sector
+                    supply_details.delivery_service = delivery_service
+                    supply_details.late_payment_options = late_payment_options is not None  # Correctly handle the boolean
+                    if logo:
+                        supply_details.logo = logo  # Update the logo only if a new one is uploaded
 
-                # Save the product to the database
-                supplyDetails.save()
+                    # Save the updated SupplyDetails to the database
+                    supply_details.save()
 
-                # Show success message
-                messages.success(request, 'تم اضافة معلومات التوريد بنجاح')
-                supplier.status = SupplierProfile.RequestStatusChoises.PENDING
-                supplier.save() 
-                return redirect("supplier:supplier_details")
+                    # Handle the supply_days separately (assuming it's a ManyToManyField)
+                    selected_day_ids = request.POST.getlist('supply_days')
+                    day_objects = Day.objects.filter(id__in=selected_day_ids)  # Or pk__in if you use pk
+                    supply_details.supply_days.set(day_objects)
+
+                    # Show success message
+                    messages.success(request, 'تم تحديث معلومات التوريد بنجاح')
+                    return redirect("supplier:store_info_view")
+                else:
+                    messages.error(request, 'معلومات التوريد غير موجودة.')  # Handle the case where supply_details doesn't exist
+                    return redirect("supplier:store_info_view")
 
             supply_sector_choices = SupplyDetails._meta.get_field('supply_sector').choices
             delivery_service_choices = SupplyDetails._meta.get_field('delivery_service').choices
+            days = Day.objects.all()
 
-            return render(request, "supplier/create-supplier.html",{"supply_sector_choices":supply_sector_choices,"delivery_service_choices":delivery_service_choices})
-
+            return render(request, "supplier/update_supply_details.html", {
+                "supply_details": supply_details,
+                "supply_sector_choices": supply_sector_choices,
+                "delivery_service_choices": delivery_service_choices,
+                "days": days,
+            })
 
         except AttributeError:
             messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
@@ -213,10 +240,14 @@ def supply_details_view(request: HttpRequest):
 
         except Exception as error:
             print("An error occurred:", error)
-            messages.error(request, 'حدث خطأ اثناء محاولة اضافة معلومات التوريد يرجى المحاولة مرة اخرى ')
-            return redirect("main:ndex_view")
+            messages.error(request, 'حدث خطأ اثناء محاولة تحديث معلومات التوريد يرجى المحاولة مرة اخرى ')
+            return redirect("main:index_view")
 
-    return redirect("accounts:sign_in")          
+    return redirect("accounts:sign_in")
+
+
+
+
 
 
 def supply_request_view(request: HttpRequest):
@@ -242,7 +273,7 @@ def supply_request_view(request: HttpRequest):
                             commercial_info.save()
 
                         # Handle supply details form
-                        supply_days = ' - '.join(request.POST.getlist('supply_days'))
+                        selected_days = request.POST.getlist('supply_days')
                         late_payment_options = request.POST.get('late_payment_options')
                         fast_service_details = request.POST.get('fast_service_details')
                         order_lead_time_days = request.POST.get('order_lead_time_days')
@@ -266,9 +297,11 @@ def supply_request_view(request: HttpRequest):
                             order_lead_time_days=order_lead_time_days,
                             fast_service_details=fast_service_details,
                             late_payment_options=late_payment_options is not None,
-                            supply_days=supply_days,
                         )
                         supply_details.save()
+
+                        day_objects = Day.objects.filter(pk__in=selected_days)
+                        supply_details.supply_days.set(day_objects)
 
                         # Update supplier status
                         supplier.status = SupplierProfile.RequestStatusChoises.PENDING
@@ -278,11 +311,13 @@ def supply_request_view(request: HttpRequest):
                         return redirect("supplier:supplier_details")
 
                 # Supply sector choices 
+                days=Day.objects.all()
                 supply_sector_choices = SupplyDetails._meta.get_field('supply_sector').choices
                 delivery_service_choices = SupplyDetails._meta.get_field('delivery_service').choices
                 commercial_form = CommercialInfoForm(instance=commercial_info) 
 
                 return render(request, "supplier/supply_request.html", {
+                    "days":days,
                     'commercial_form': commercial_form,
                     'supply_sector_choices': supply_sector_choices,
                     'delivery_service_choices': delivery_service_choices,
@@ -302,3 +337,40 @@ def supply_request_view(request: HttpRequest):
             return redirect("main:index_view")
 
     return redirect("accounts:sign_in")
+
+
+def store_info_view(request:HttpRequest):
+    if request.user.is_authenticated:
+        try:
+            supplier:SupplierProfile = request.user.supplier
+
+            if supplier.status ==SupplierProfile.RequestStatusChoises.ACCEPTED :
+
+                commercial_info = CommercialInfo.objects.filter(supplier=supplier).first()
+                supply_details = SupplyDetails.objects.filter(supplier=supplier).first()
+
+                # Supply sector choices 
+                supply_sector_choices = SupplyDetails._meta.get_field('supply_sector').choices
+                delivery_service_choices = SupplyDetails._meta.get_field('delivery_service').choices
+                commercial_form = CommercialInfoForm(instance=commercial_info) 
+
+                return render(request, "supplier/store_information.html", {
+                    "commercial_info":commercial_info,
+                    "supply_details": supply_details,
+                })
+            else:
+                messages.error(request, "حسابك قيد المراجعة من قبل الإدارة. سيتم تفعيله قريبًا.")
+                return redirect('main:index_view') 
+             
+
+        except AttributeError:
+            messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
+            return redirect("main:index_view")
+
+        except Exception as error:
+            print("An error occurred:", error)
+            messages.error(request, 'حدث خطأ اثناء معالجة البيانات.')
+            return redirect("main:index_view")
+
+    return redirect("accounts:sign_in")
+

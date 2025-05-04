@@ -1,7 +1,21 @@
 from django.db import models
 from accounts.models import SupplierProfile
 
+class Day(models.Model):
+    class DaysChoices(models.IntegerChoices):
+        SATURDAY = 1, 'السبت'
+        SUNDAY = 2, 'الاحد'
+        MONDAY = 3, 'الاثنين'
+        TUESDAY = 4, 'الثلاثاء'
+        WEDNESDAY = 5, 'الاربعاء'
+        THURSDAY = 6, 'الخميس'
+        FRIDAY = 7, 'الجمعة'
 
+    name = models.SmallIntegerField(unique=True, choices=DaysChoices.choices)
+
+    def __str__(self):
+        return self.DaysChoices(self.name).label
+    
 class SupplyDetails(models.Model):
     supplier =models.OneToOneField(SupplierProfile,on_delete=models.CASCADE, related_name="supply_details")
     logo = models.ImageField(upload_to="supplier_logos/", null=True, blank=True)
@@ -24,10 +38,7 @@ class SupplyDetails(models.Model):
     unavailable_to = models.DateTimeField(null=True, blank=True)
     fast_service_details = models.IntegerField(null=True, blank=True)
     late_payment_options = models.BooleanField(default=False)
-    supply_days = models.CharField(
-        max_length=6,
-        help_text="Days the supplier is available to supply (e.g., 'Saturday to Thursday')",
-    )
+    supply_days = models.ManyToManyField(Day)
     supply_type = models.CharField(
         max_length=50,
         choices=[

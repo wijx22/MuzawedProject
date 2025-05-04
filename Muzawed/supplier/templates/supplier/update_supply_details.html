@@ -1,0 +1,156 @@
+{% extends 'main/supplier_base.html' %}
+{% load static %}
+{% block title %}إضافة مورد جديد{% endblock %}
+{% block ref %}
+<link rel="stylesheet" href="{% static 'css/supplier_style.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <!-- Form Container -->
+        <div class="form-container">
+            <h3 class="text-center mb-4">تحديث معلومات التوريد  </h3>
+            
+            <form method="POST" action="{%url 'supplier:update_supply_details_view'%}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <!-- Logo Upload -->
+                <div class="mb-3">
+                    <label for="supplierLogo" class="form-label">الشعار </label>
+                    <div class="file-upload" id="logoUpload">
+                        <input name="logo" type="file" class="d-none" id="supplierLogo" accept=".jpg,.jpeg,.png">
+                        <i class="bi bi-upload"></i>
+                        <div class="file-upload-text">اضغط لرفع صورة الشعار</div>
+                        <div class="file-name" id="logoUploadName">  {% if supply_details.logo %}
+                            {{ supply_details.logo.name }}
+                        {% endif %}</div>
+                    </div>
+                    <div class="form-text">صيغة JPG أو PNG</div>
+
+                </div>
+
+                <!-- Supply Sector -->
+                <div class="mb-3">
+                    <label for="supplySector" class="form-label">قطاع التوريد</label>
+                    <select class="form-select" id="supplySector" required name="supply_sector">
+                        <option value="" selected disabled>اختر قطاع التوريد</option>
+                        {% for value, display in supply_sector_choices %}
+                            <option value="{{ value }}" {% if value == supply_details.supply_sector %}selected{% endif %}>
+                                {{ display }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="deliveryService" class="form-label">خدمة التوصيل</label>
+                    <select class="form-select" id="deliveryService" name="delivery_service" required onchange="handleDeliveryChange(this)">
+                        <option value="" selected disabled>اختر خدمة التوصيل</option>
+                        {% for value, display in delivery_service_choices %}
+                            <option value="{{ value }}" {% if value == supply_details.delivery_service %}selected{% endif %}>
+                                {{ display }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="mb-3" id="shipping" hidden>
+                    <label for="orderLeadTime" class="form-label">مدة تنفيذ الطلب (بالأيام)</label>
+                    <input type="number" class="form-control" id="orderLeadTime" min="1" name="order_lead_time_days" value="{{ supply_details.order_lead_time_days }}">
+                </div>
+                
+                <div class="mb-3" id="delivery" hidden>
+                    <label for="fastServiceDetails" class="form-label">مدة تنفيذ الطلب للتوصيل (بالساعات)</label>
+                    <input type="number" class="form-control" id="fastServiceDetails" maxlength="24" min="1" name="fast_service_details" value="{{ supply_details.fast_service_details }}">
+                </div>
+                
+
+                <!-- Late Payment Options -->
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="latePaymentOptions" name="late_payment_options" {% if supply_details.late_payment_options %}checked{% endif %}>
+                        <label class="form-check-label" for="latePaymentOptions">
+                            خيارات الدفع المتأخر
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Supply Days -->
+                <div class="mb-3">
+                    <label class="form-label">أيام العمل</label>
+                    <div class="form-text mb-3">أيام الأسبوع التي يكون فيها المورد متاحًا للتوريد</div>
+
+                    <div class="d-flex flex-row gap-4">
+                        {% for day in days %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="supply_days" id="check-{{ day.id }}" value="{{ day.id }}" {% if day in supply_details.supply_days.all %}checked{% endif %} />
+                            <label class="form-check-label" for="check-{{ day.id }}">{{ day.get_name_display }}</label>
+                        </div>
+                    {% endfor %}
+                    </div>
+           
+                </div>
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn mt-4">تحديث</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Handle file upload
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoUpload = document.getElementById('logoUpload');
+            const supplierLogo = document.getElementById('supplierLogo');
+            const logoUploadName = document.getElementById('logoUploadName');
+            
+            logoUpload.addEventListener('click', function() {
+                supplierLogo.click();
+            });
+            
+            supplierLogo.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    
+                    // Check file size (5MB limit)
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('حجم الملف كبير جدًا. الحد الأقصى هو 5 ميجابايت.');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    logoUploadName.textContent = file.name;
+                }
+            });
+        });
+    </script>
+    <script>
+        function handleDeliveryChange(select) {
+            const shippingSection = document.getElementById('shipping');
+            const deliverySection = document.getElementById('delivery');
+            const inputOrderLeadTime = document.getElementById('orderLeadTime');
+            const inputFast = document.getElementById('fastServiceDetails');
+    
+            shippingSection.hidden = true;
+            deliverySection.hidden = true;
+            inputOrderLeadTime.removeAttribute('required');
+            inputFast.removeAttribute('required');
+    
+            if (select.value === 'shipping') {
+                shippingSection.hidden = false;
+                inputOrderLeadTime.setAttribute('required', 'required');
+            } else if (select.value === 'fast') {
+                deliverySection.hidden = false;
+                inputFast.setAttribute('required', 'required');
+            } else if (select.value === 'both') {
+                shippingSection.hidden = false;
+                deliverySection.hidden = false;
+                inputOrderLeadTime.setAttribute('required', 'required');
+                inputFast.setAttribute('required', 'required');
+            }
+        }
+    
+        // Trigger the handleDeliveryChange function on page load to initialize the display
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectElement = document.getElementById('deliveryService');
+            handleDeliveryChange(selectElement);
+        });
+    </script>
+{% endblock %}
