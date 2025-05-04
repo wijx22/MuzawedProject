@@ -49,6 +49,47 @@
                 </div>
             </div>
         </div>
+
+        <hr class="my-5">
+
+        <!-- الموردين المميزين -->
+        <div class="mt-5">
+        <h3 class="text-center mb-4 fw-bold" style="color: #1F3F2E;">الموردين المميزين</h3>
+        <div class="row text-center">
+            {% for supplier in suppliers %}
+            <div class="col-md-4 mb-4">
+                <div class="p-4 bg-white shadow-sm rounded-4 h-100">
+                <i class="fa-solid fa-user fa-2x text-success mb-2"></i>
+                <h5 class="fw-semibold">{{ supplier.name }}</h5>
+                <p class="text-muted">المدينة: {{ supplier.city }}</p>
+                <a href="{% url 'supplier_profile_view' supplier.id %}" class="btn btn-sm btn-outline-success mt-2">عرض الملف</a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-muted">لا يوجد موردين حالياً</p>
+            {% endfor %}
+        </div>
+        </div>
+
+        <!-- أحدث المنتجات -->
+        <div class="mt-5">
+        <h3 class="text-center mb-4 fw-bold" style="color: #1F3F2E;">أحدث المنتجات</h3>
+        <div class="row text-center">
+            {% for product in latest_products %}
+            <div class="col-md-4 mb-4">
+                <div class="p-4 bg-white shadow-sm rounded-4 h-100">
+                <i class="fa-solid fa-box fa-2x text-success mb-2"></i>
+                <h5 class="fw-semibold">{{ product.name }}</h5>
+                <p class="text-muted">المورد: {{ product.supplier.name }}</p>
+                <a href="#" class="btn btn-sm btn-outline-success mt-2">عرض المنتج</a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-muted">لا توجد منتجات جديدة حالياً</p>
+            {% endfor %}
+        </div>
+        </div>
+
     </div>
 
 </div>
