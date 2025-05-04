@@ -5,8 +5,8 @@
 <div class="container py-4">
   <div class="row align-items-start justify-content-between mb-5 text-end"> 
 
-    <!-- الترحيب والمعلومات -->
-    <div class="col-lg-6 col-12 mb-3 mb-lg-0 text-start">
+   
+    <div class="col-lg-6 col-12 mb-3 mb-lg-0 text-start ">
       <h2 class="fw-bold mb-0 ms-2" style="color: #1F3F2E;">
         <i class="bi bi-patch-check"></i> أهلاً بك، {{ request.user.supplier.name }} 👋
       </h2>
@@ -25,21 +25,25 @@
         {% endif %}
       </div>
       {% endif %}
+
+      <!-- حالة المتجر -->
+
+      {% if request.user.supplier.status == "Accepted" %}
+      <div class="col-lg-6 col-12 text-start" style="padding-top:1rem ;">
+        <div class="d-flex justify-content-between mb-3">
+          <p class="fw-bold mb-1">حالة المتجر:</p>
+          <p class="mb-1">
+            {% if request.user.supplier.is_active %}
+              <span class="text-success">متاح للخدمة</span>
+            {% else %}
+              <span class="text-danger">خارج الخدمة</span>
+            {% endif %}
+          </p>
+        </div>
     </div>
 
-    <!-- حالة المتجر -->
-    {% if request.user.supplier.status == "Accepted" %}
-    <div class="col-lg-6 col-12 text-start">
-      <div class="d-flex justify-content-between mb-3">
-        <p class="fw-bold mb-1">حالة المتجر:</p>
-        <p class="mb-1">
-          {% if request.user.supplier.is_active %}
-            <span class="text-success">متاح للخدمة</span>
-          {% else %}
-            <span class="text-danger">خارج الخدمة</span>
-          {% endif %}
-        </p>
-      </div>
+   
+   
 
       <p 
         class="text-decoration-underline mb-0"
@@ -143,7 +147,7 @@
   </div>
 </div>
 
-<!-- ✅ Modal تغيير الحالة -->
+
 <div class="modal fade" id="toggleStatusModal" tabindex="-1" aria-labelledby="toggleStatusLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content text-end">
@@ -169,7 +173,7 @@
       </div>
 
       <div class="modal-footer">
-        <form method="post" action="#">
+        <form method="post" action="{% url 'main:store_status_handler' %}">
           {% csrf_token %}
           <button type="submit" class="btn btn-primary-custom">نعم، تغيير الحالة</button>
         </form>
