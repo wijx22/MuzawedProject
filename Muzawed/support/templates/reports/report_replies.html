@@ -1,21 +1,23 @@
 {% extends 'main/base.html' %}
 {% load static %}
 {% block title %}تواصل معنا{% endblock %}
-
+{% block ref %}
+<link rel="stylesheet" href="{% static 'css/report_replies.css' %}">
+{% endblock %}
 {% block content %}
-<div>
-    <h2>الردود على الشكوى: {{ report.subject }}</h2>
-    
-    <table class="table table-bordered">
-        <thead>
+
+<div class="container">
+    <p class="mainTitle">>الردود على الشكوى: {{ report.subject }}</p>
+    <table class="red">
+        <thead class="blue">
             <tr>
-                <th>نوع الرد</th>
-                <th>الرسالة</th>
-                <th>تاريخ الإرسال</th>
+            <th>نوع الرد</th>
+            <th>الرسالة</th>
+            <th>تاريخ الارسال</th>
+            <th>الحالة</th>
             </tr>
         </thead>
-        <tbody>
-            {% for reply in replies %}
+        {% for reply in replies %}
             <tr>
                 <td>
                     {% if reply.is_admin_reply %}
@@ -26,11 +28,23 @@
                 </td>
                 <td>{{ reply.message }}</td>
                 <td>{{ reply.created_at }}</td>
+                
+                <td>
+                    {% if reply.report.status == 'open' %}
+                        <span class="status">مفتوحة</span>
+                    {% elif reply.report.status == 'in_progress' %}
+                        <span class="status">قيد المراجعة</span>
+                    {% else %}
+                        <span class="status">مغلقة</span>
+                    {% endif %}
+                </td>
+                
             </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <br>
-</div>
+        {% endfor %}
 
+
+        
+        
+    </table>
+</div>
 {% endblock %}
