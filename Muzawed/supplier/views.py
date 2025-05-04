@@ -6,7 +6,8 @@ from django.db import transaction
 from .forms import CitiesForm, CommercialInfoForm
 from .models import City, SupplyDetails , CommercialInfo,Day
 from accounts.models import SupplierProfile
-
+from products.models import Product
+from django.core.paginator import Paginator
 def supplier_details(request: HttpRequest):
     if request.user.is_authenticated:
         try:
@@ -349,11 +350,6 @@ def store_info_view(request:HttpRequest):
                 commercial_info = CommercialInfo.objects.filter(supplier=supplier).first()
                 supply_details = SupplyDetails.objects.filter(supplier=supplier).first()
 
-                # Supply sector choices 
-                supply_sector_choices = SupplyDetails._meta.get_field('supply_sector').choices
-                delivery_service_choices = SupplyDetails._meta.get_field('delivery_service').choices
-                commercial_form = CommercialInfoForm(instance=commercial_info) 
-
                 return render(request, "supplier/store_information.html", {
                     "commercial_info":commercial_info,
                     "supply_details": supply_details,
@@ -374,3 +370,76 @@ def store_info_view(request:HttpRequest):
 
     return redirect("accounts:sign_in")
 
+def store_view(request:HttpRequest):
+    supplier:SupplierProfile = request.user.supplier
+    commercial_info = CommercialInfo.objects.filter(supplier=supplier).first()
+    supply_details = SupplyDetails.objects.filter(supplier=supplier).first()
+    products= Product.objects.all()
+    covered_cities = supplier.cities_covered.all()
+
+    # Get filter parameters from the request
+    categories = request.GET.getlist('category')  # Returns a list of category values
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    city = request.GET.get('city')
+
+    # Apply filters
+    if categories:
+        products = products.filter(category__in=categories)  # Filter by category (using __in for multiple values)
+    if min_price:
+        products = products.filter(price__gte=min_price)  # Filter by minimum price (greater than or equal to)
+    if max_price:
+        products = products.filter(price__lte=max_price)  # Filter by maximum price (less than or equal to)
+    if city:
+        products = products.filter(City=city)  # Filter by city
+
+    # Get all categories and cities for the filter form
+    categories = Product.ProductCategory.choices  # Get category choices
+
+    all_cities = City.CityChoices.choices
+
+
+
+
+
+    
+    # if category_name == "all":
+    #     games = Game.objects.all().order_by("-release_date")
+    # else:
+    #     games = Game.objects.filter(categories__name__in=[category_name]).order_by("-release_date")
+
+
+
+
+
+
+
+
+
+    page_number = request.GET.get("page", 1)
+
+    paginator = Paginator(products, 5)
+    store_page = paginator.get_page(page_number)
+
+
+
+
+
+
+    
+
+
+
+
+    # return render(request, "games/all_games.html", {"games":games_page, "category_name":category_name, "esrb_ratings": Game.ESRBRating.choices})
+
+
+
+
+  
+    return render(request, "supplier/store.html" ,
+                {"commercial_info":commercial_info,
+                 "categories":categories,
+                "supply_details": supply_details,"products":store_page ,
+
+                "covered_cities":covered_cities})

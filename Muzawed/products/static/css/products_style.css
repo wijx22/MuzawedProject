@@ -163,12 +163,7 @@ td i{
     width: 100px;
     text-align: center;
 }
-.product-card {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-}
+
 .product-image {
     max-width: 100%;
     max-height: 100%; 
@@ -367,6 +362,7 @@ td i{
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   }
   
+
   .card:hover .card__title {
     color: var(--card-accent);
     transform: translateX(2px);
