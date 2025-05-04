@@ -37,7 +37,7 @@
         </a>
         <ul class="dropdown-menu dropdown-menu-end text-center" aria-labelledby="userDropdown">
           <li class="dropdown-item fw-bold">{{ request.user.username }}</li>
-          {% if request.user.supplierprofile %}
+          {% if request.user.supplier %}
             <li><a class="dropdown-item" href="{% url 'accounts:supplier_profile_view' request.user.username %}">الملف الشخصي</a></li>
           {% else %}
             <li><a class="dropdown-item" href="{% url 'accounts:beneficiary_profile_view' request.user.username %}">الملف الشخصي</a></li>
