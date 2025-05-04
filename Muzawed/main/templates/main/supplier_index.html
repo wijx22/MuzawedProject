@@ -4,13 +4,11 @@
 {% block content %}
 <div class="container py-4">
   <div class="row align-items-start justify-content-between mb-5 text-end"> 
-
-    <!-- الترحيب والمعلومات -->
     <div class="col-lg-6 col-12 mb-3 mb-lg-0 text-start">
       <h2 class="fw-bold mb-0 ms-2" style="color: #1F3F2E;">
         <i class="bi bi-patch-check"></i> أهلاً بك، {{ request.user.supplier.name }} 👋
       </h2>
-      
+
       {% if request.user.supplier.status != "Accepted" %}
       <div class="d-flex align-items-center mb-3">
         <p class="text-muted mb-0 ms-2">حالة طلب التوريد:</p>
@@ -25,156 +23,156 @@
         {% endif %}
       </div>
       {% endif %}
-    </div>
 
-    <!-- حالة المتجر -->
-    {% if request.user.supplier.status == "Accepted" %}
-    <div class="col-lg-6 col-12 text-start">
-      <div class="d-flex justify-content-between mb-3">
-        <p class="fw-bold mb-1">حالة المتجر:</p>
-        <p class="mb-1">
-          {% if request.user.supplier.is_active %}
-            <span class="text-success">متاح للخدمة</span>
-          {% else %}
-            <span class="text-danger">خارج الخدمة</span>
-          {% endif %}
-        </p>
+      {% if request.user.supplier.status == "Accepted" %}
+      <div class="col-lg-6 col-12 text-start" style="padding-top:1rem;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <p class="fw-bold mb-1">حالة المتجر:</p>
+          <p class="mb-1 d-flex align-items-center">
+            {% if request.user.supplier.is_active %}
+              <span class="text-success me-2">متاح للخدمة</span>
+            {% else %}
+              <span class="text-danger me-2">خارج الخدمة</span>
+            {% endif %}
+            <i 
+              class="bi bi-pencil-square text-secondary"
+              style="cursor: pointer; font-size: 1.2rem;"
+              data-bs-toggle="modal"
+              data-bs-target="#toggleStatusModal"
+              title="تعديل الحالة"
+            ></i>
+          </p>
+        </div>
+        <hr class="my-2">
       </div>
-
-      <p 
-        class="text-decoration-underline mb-0"
-        style="cursor: pointer; display: inline-block;"
-        data-bs-toggle="modal"
-        data-bs-target="#toggleStatusModal"
-      >
-        تغيير الحالة
-      </p>
-
-      <hr class="my-2">
+      {% endif %}
     </div>
-    {% endif %}
   </div>
 
-  <!-- الكروت -->
+
   <div class="row justify-content-center g-4">
-    {%if request.user.supplier.is_active%}
-    <div class="col-md-6">
+
+    {% if request.user.supplier.is_active %}
+
+    <div class="col-12 col-md-6">
       <div class="card h-100 text-center shadow-sm border-0 p-4">
         <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <span class="material-symbols-outlined mb-3">inventory_2</span>
-          <h5 class="card-title mb-2"> المدن المغطاة</h5>
-          <a href="{%url 'supplier:cities_view'%}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card h-100 text-center shadow-sm border-0 p-4">
-        <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <span class="material-symbols-outlined mb-3">inventory_2</span>
-          <h5 class="card-title mb-2"> إدارة المخزون</h5>
-          <a href="{%url 'products:stock_view'%}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+          <i class="fa-solid fa-truck-fast fa-2x mb-3 text-success"></i>
+          <h5 class="card-title mb-2">إدارة الطلبات</h5>
+          <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
         </div>
       </div>
     </div>
 
-      <div class="col-12 col-md-6">
-        <div class="card h-100 text-center shadow-sm border-0 p-4">
-          <div class="card-body d-flex flex-column justify-content-center align-items-center">
-            <i class="fa-solid fa-truck-fast fa-2x mb-3 text-success"></i>
-            <h5 class="card-title mb-2">إدارة الطلبات</h5>
-            <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-          </div>
+
+    <div class="col-md-6">
+      <div class="card h-100 text-center shadow-sm border-0 p-4">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="fa-solid fa-boxes-stacked fa-2x mb-3 text-success"></i>
+          <h5 class="card-title mb-2">إدارة المخزون</h5>
+          <a href="{% url 'products:stock_view' %}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
         </div>
       </div>
+    </div>
 
-      <div class="col-12 col-md-6">
-        <div class="card h-100 text-center shadow-sm border-0 p-4">
-          <div class="card-body d-flex flex-column justify-content-center align-items-center">
-            <i class="fa-solid fa-chart-line fa-2x mb-3 text-success"></i>
-            <h5 class="card-title mb-2">لوحة التقارير</h5>
-            <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-          </div>
+
+    <div class="col-md-6">
+      <div class="card h-100 text-center shadow-sm border-0 p-4">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="fa-solid fa-map-location-dot fa-2x mb-3 text-success"></i>
+          <h5 class="card-title mb-2">المدن المغطاة</h5>
+          <a href="{% url 'supplier:cities_view' %}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
         </div>
       </div>
+    </div>
 
-      <div class="col-12 col-md-6">
-        <div class="card h-100 text-center shadow-sm border-0 p-4">
-          <div class="card-body d-flex flex-column justify-content-center align-items-center">
-            <i class="fa-solid fa-clock-rotate-left fa-2x mb-3 text-success"></i>
-            <h5 class="card-title mb-2">سجل الطلبات</h5>
-            <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-          </div>
+    <div class="col-12 col-md-6">
+      <div class="card h-100 text-center shadow-sm border-0 p-4">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="fa-solid fa-clock-rotate-left fa-2x mb-3 text-success"></i>
+          <h5 class="card-title mb-2">سجل الطلبات</h5>
+          <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
         </div>
       </div>
-    {% else %}
+    </div>
 
-      {% if request.user.supplier.status == "Rejected" or request.user.supplier.status == "No-request" %}
-        <div class="col-12 col-md-6">
-          <div class="card h-100 text-center shadow-sm border-0 p-4">
-            <div class="card-body d-flex flex-column justify-content-center align-items-center">
-              <i class="fa-solid fa-clipboard-list fa-2x mb-3 text-warning"></i>
-              <h5 class="card-title mb-2">إنشاء طلب توريد</h5>
-              <a href="{% url 'supplier:supply_request_view' %}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-            </div>
-          </div>
-        </div>
-      {% endif %}
 
-      <div class="col-12 col-md-6">
-        <div class="card h-100 text-center shadow-sm border-0 p-4">
-          <div class="card-body d-flex flex-column justify-content-center align-items-center">
-            <i class="fa-solid fa-users fa-2x mb-3 text-success"></i>
-            <h5 class="card-title mb-2">الموردين</h5>
-            <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-          </div>
+    <div class="col-12 col-md-6">
+      <div class="card h-100 text-center shadow-sm border-0 p-4">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="fa-solid fa-chart-line fa-2x mb-3 text-success"></i>
+          <h5 class="card-title mb-2">لوحة التقارير</h5>
+          <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
         </div>
       </div>
-
-      <div class="col-12 col-md-6">
-        <div class="card h-100 text-center shadow-sm border-0 p-4">
-          <div class="card-body d-flex flex-column justify-content-center align-items-center">
-            <i class="fa-solid fa-headset fa-2x mb-3 text-success"></i>
-            <h5 class="card-title mb-2">الدعم الفني</h5>
-            <a href="{% url 'main:contact_view' %}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
-          </div>
-        </div>
-      </div>
+    </div>
     {% endif %}
+
+    {% if request.user.supplier.status == "Rejected" or request.user.supplier.status == "No-request" %}
+   
+    <div class="col-12 col-md-6">
+      <div class="card h-100 text-center shadow-sm border-0 p-4">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="fa-solid fa-clipboard-list fa-2x mb-3 text-warning"></i>
+          <h5 class="card-title mb-2">إنشاء طلب توريد</h5>
+          <a href="{% url 'supplier:supply_request_view' %}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  
+    <div class="col-12 col-md-6">
+      <div class="card h-100 text-center shadow-sm border-0 p-4">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="fa-solid fa-users fa-2x mb-3 text-success"></i>
+          <h5 class="card-title mb-2">الموردين</h5>
+          <a href="#" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <div class="card h-100 text-center shadow-sm border-0 p-4">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <i class="fa-solid fa-headset fa-2x mb-3 text-success"></i>
+          <h5 class="card-title mb-2">الدعم الفني</h5>
+          <a href="{% url 'support:create_report' %}" class="btn btn-primary-custom mt-2 custom">الانتقال</a>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<!-- ✅ Modal تغيير الحالة -->
+
 <div class="modal fade" id="toggleStatusModal" tabindex="-1" aria-labelledby="toggleStatusLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content text-end">
-      <div class="modal-header">
-        <h5 class="modal-title" id="toggleStatusLabel">تأكيد تغيير حالة المتجر</h5>
-        <button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="إغلاق"></button>
-      </div>
-
-      <div class="mb-3 px-3 d-flex align-items-center">
-        <input class="form-check-input me-2" type="checkbox" id="isAvailable" name="is_available">
-        <label class="form-check-label mb-0" for="isAvailable">متاح حالياً</label>
-      </div>
-
-      <div class="row mb-3 px-3" id="availablePeriod" style="display: none;">
-        <div class="col-md-6">
-            <label for="availableFrom" class="form-label">متاح من</label>
-            <input type="datetime-local" class="form-control" id="availableFrom" name="available_from">
+      <form method="post" action="{% url 'main:store_status_handler' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="toggleStatusLabel">تأكيد تغيير حالة المتجر</h5>
+          <button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="إغلاق"></button>
         </div>
-        <div class="col-md-6">
-            <label for="availableTo" class="form-label">متاح إلى</label>
-            <input type="datetime-local" class="form-control" id="availableTo" name="available_to">
+        <div class="mb-3 px-3 d-flex align-items-center">
+          <input class="form-check-input me-2" type="checkbox" id="isAvailable" name="is_available">
+          <label class="form-check-label mb-0" for="isAvailable">متاح حالياً</label>
         </div>
-      </div>
-
-      <div class="modal-footer">
-        <form method="post" action="#">
-          {% csrf_token %}
+        <div class="row mb-3 px-3" id="availablePeriod" style="display: none;">
+          <div class="col-md-6">
+              <label for="availableFrom" class="form-label">متاح من</label>
+              <input type="datetime-local" class="form-control" id="availableFrom" name="available_from">
+          </div>
+          <div class="col-md-6">
+              <label for="availableTo" class="form-label">متاح إلى</label>
+              <input type="datetime-local" class="form-control" id="availableTo" name="available_to">
+          </div>
+        </div>
+        <div class="modal-footer">
           <button type="submit" class="btn btn-primary-custom">نعم، تغيير الحالة</button>
-        </form>
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
-      </div>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

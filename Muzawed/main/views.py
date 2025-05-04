@@ -2,7 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.urls import reverse
 from django.contrib.auth.views import LoginView
-
+from supplier.models import SupplyDetails, SupplierProfile
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from supplier.models import SupplyDetails, SupplierProfile 
+from datetime import datetime
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from .models import Contact
 
 def index_view(request):
@@ -19,7 +25,17 @@ def contact_view(request):
         subject = request.POST.get('subject')
         message = request.POST.get('message')
 
-        if email and subject and message:
+        if not (email and subject and message):
+            messages.error(request, 'جميع الحقول مطلوبة.')
+        elif len(message.strip()) < 10:
+            messages.error(request, 'الرسالة يجب أن تحتوي على 10 أحرف على الأقل.')
+        else:
+            try:
+                validate_email(email)
+            except ValidationError:
+                messages.error(request, 'صيغة البريد الإلكتروني غير صحيحة.')
+                return render(request, 'main/contact.html')
+
             Contact.objects.create(
                 user=request.user if request.user.is_authenticated else None,
                 email=email,
@@ -28,11 +44,52 @@ def contact_view(request):
             )
             messages.success(request, 'تم إرسال رسالتك بنجاح! سنقوم بالرد عليك قريبًا.')
             return redirect('main:contact_view')
-        else:
-            messages.error(request, 'يرجى تعبئة جميع الحقول.')
 
     return render(request, 'main/contact.html')
 
+
 def about_view(request):
     return render(request, 'main/about.html')
-    
+
+
+
+
+@login_required
+def store_status_handler(request):
+    if request.method == 'POST':
+        supplier_profile = request.user.supplier
+
+        supply_details, _ = SupplyDetails.objects.get_or_create(supplier=supplier_profile)
+
+        from_date = request.POST.get('available_from')
+        to_date = request.POST.get('available_to')
+
+
+        supply_details.unavailable_from = None
+        supply_details.unavailable_to = None
+
+        if from_date and to_date:
+            try:
+         
+                from_dt = datetime.strptime(from_date, "%Y-%m-%dT%H:%M")
+                to_dt = datetime.strptime(to_date, "%Y-%m-%dT%H:%M")
+
+               
+                supply_details.unavailable_from = from_dt
+                supply_details.unavailable_to = to_dt
+
+                messages.success(request, f"تم حفظ فترة التوقف من {from_dt} إلى {to_dt} بنجاح.")
+            except ValueError:
+                messages.error(request, "صيغة التاريخ غير صحيحة. الرجاء التحقق من المدخلات.")
+        else:
+            messages.info(request, "تمت إزالة فترات التوقف.")
+
+        supply_details.save()
+        return redirect('main:index_view')
+
+    return redirect('main:index_view')
+
+
+def our_suppliers(request):
+
+    return render(request, 'main/our_suppliers.html')
