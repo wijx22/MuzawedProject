@@ -6,9 +6,9 @@
 </head>
 
 <body>
-    <section class="d-flex flex-row justify-content-center align-items-center">
+    <section class="d-flex flex-row justify-content-start align-items-start">
 
-            <div class="row gap-3">
+            <div class="row gap-1">
                 {% for product in products %}
                 <div class="col-auto">
                     <a href="{%url 'products:product_details_view' product.id%}" class="text-decoration-none">
