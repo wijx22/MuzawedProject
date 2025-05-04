@@ -1,11 +1,38 @@
-{% extends 'main/base.html' %}
+{% extends "administration/dashboard.html" %}
 {% load static %}
 
 {% block content %}
 <link href="{% static 'css/admin-dashboard.css' %}" rel="stylesheet">
+<style>
+  footer {
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+    text-align: center;
+    padding: 15px 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  footer img {
+    height: 40px;
+    margin-bottom: 5px;
+  }
+  
+  footer span {
+    display: block;
+    color: #006400; 
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 5px;
+  }
+  
+</style>
 
-<div class="container mt-5">
-  <h2 class="d-flex justify-content-center align-items-center fw-bold mb-3" style="color: #1F3F2E;">
+<div class="container mt-5 ">
+  <h2 class="d-flex justify-content-center align-items-center fw-bold mb-5" style="color: #1F3F2E;">
     طلبات الموردين
     <i class="fas fa-store me-3" style="font-size: 30px;"></i>
 
@@ -29,7 +56,7 @@
               <td>{{ supplier.user.get_full_name }}</td>
               <td>{{ supplier.get_status_display }}</td>
               <td>
-                <a href="{% url 'administration:supplier_request_detail' supplier.id %}" class="btn btn-sm btn-primary-custom">
+                <a href="{% url 'administration:supplier_request_detail' supplier.id %}" class="btn btn-sm btn-primary-custom" style="text-decoration: underline;">
                   عرض التفاصيل
                 </a>
               </td>
@@ -44,4 +71,10 @@
     </div>
   {% endif %}
 </div>
+
+<footer>
+  <img src="{% static 'img/logo.svg' %}" alt="مزود">
+  <span>© 2025 - لوحة تحكم الأدمن</span>
+</footer>
+
 {%endblock%}

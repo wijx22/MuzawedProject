@@ -1,6 +1,7 @@
 body {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
+  font-size: 14px;
   background-color: #f9f9f9;
   direction: rtl;
 }
@@ -11,7 +12,7 @@ body {
   padding: 15px 25px;
   font-size: 18px;
   font-weight: bold;
-  position: fixed;
+  position: sticky;
   top: 0;
   right: 0;
   width: 100%;
@@ -44,13 +45,13 @@ body {
   color: #fff;
   padding: 20px;
   height: 100%;
-  position: fixed;
-  top: 60px;
+  position: fixed;  /* تأكد من أن الـ Sidebar ثابت */
+  top: 59px;
   right: 0;
   bottom: 0;
   overflow-y: auto;
+  transition: width 0.3s ease; /* أضف انتقالًا سلسًا في حال تغيير العرض */
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
   z-index: 1001;
 }
 .card canvas {
@@ -116,6 +117,32 @@ body {
   margin: 0;
 }
 
+
+.charts-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.chart-card {
+  flex: 1 1 calc(50% - 10px); 
+  min-width: 250px;
+  max-width: 48%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.full-width {
+  flex: 1 1 100%;
+  max-width: 100%;
+}
+
+.chart-card canvas {
+  width: 100% !important;
+  height: 150px !important; 
+}
+
 @media (max-width: 1024px) {
   .menu-btn {
     display: block;
@@ -157,13 +184,6 @@ body {
   position: relative;
 }
 
-.charts-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-between;
-  margin-top: 20px;
-}
 
 .chart-card {
   flex: 1 1 48%;
@@ -242,4 +262,148 @@ body {
     margin-bottom: 40px; 
   }
 
+
+/*General design of the file list page (supplier/beneficiary)*/
+.bg-dark-green {
+  background-color: #204a3a !important;
+  color: #fff;
+}
+
+.profile-container {
+  margin: 100px auto 25px;
+  padding: 0 15px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.profile-card {
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1100px;
+  border: 2px solid #204a3a;
+}
+
+.profile-header {
+  background-color: #204a3a;
+  color: #fff;
+  text-align: right;
+  padding: 10px 15px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #f8f9fa;
+  margin-bottom: 0;
+}
+
+.profile-header h5 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.profile-badge {
+  background-color: #f8f9fa;
+  color: #204a3a;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 5px 15px;
+  border-radius: 20px;
+  border: 2px solid #204a3a;
+}
+
+.profile-table-responsive {
+  margin-top: 0;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.profile-table {
+  text-align: left;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.profile-table th, .profile-table td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 10px 15px;
+}
+
+.profile-table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.action-btn {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.action-btn.text-success {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.action-btn.text-danger {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-success {
+  color: #28a745;
+}
+
+.text-danger {
+  color: #dc3545;
+}
+
+/* استجابة للشاشات الصغيرة */
+@media (max-width: 768px) {
+  .profile-header {
+    font-size: 16px;
+  }
+
+  .profile-badge {
+    font-size: 14px;
+  }
+
+  .profile-table th, .profile-table td {
+    padding: 10px;
+  }
+
+  .profile-table-responsive {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .action-btn {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-header {
+    font-size: 14px;
+  }
+
+  .profile-table th, .profile-table td {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .profile-badge {
+    font-size: 12px;
+  }
+
+  .text-center {
+    font-size: 14px;
+  }
+}
 

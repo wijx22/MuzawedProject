@@ -9,10 +9,19 @@ from supplier.models import SupplyDetails, SupplierProfile
 
 from .models import Contact
 
+#def index_view(request):
+#    if hasattr(request.user, 'supplier'):
+#
+#        return render(request, 'main/supplier_index.html')
+#    
+#
+#    else:
+#        return render(request, 'main/index.html')
+
 def index_view(request):
     if hasattr(request.user, 'supplier'):
-
-        return render(request, 'main/supplier_index.html')
+        supplier = request.user.supplier
+        return render(request, 'main/supplier_index.html', {'supplier': supplier})
     else:
         return render(request, 'main/index.html')
 

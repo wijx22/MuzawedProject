@@ -11,6 +11,8 @@ from notification.models import Notification
 from django.db.models import Count
 from order.models import Order
 from django.http import HttpRequest, HttpResponse
+from django.core.paginator import Paginator
+
 User = get_user_model()
 
 #def dashboard(request):
@@ -87,9 +89,9 @@ def dashboard(request):
             elif status['status'] == 'Rejected':
                 status_data['مرفوض'] = status['count']
             elif status['status'] == 'Pending':
-                status_data['قيد المعالجة'] = status['count']
+                status_data['قيد_المعالجة'] = status['count']
             elif status['status'] == 'No-request':
-                status_data['لا طلب'] = status['count']
+                status_data['لا_طلب'] = status['count']
 
         open_count = Report.objects.filter(status='open').count()
         closed_count = Report.objects.filter(status='closed').count()
@@ -106,8 +108,8 @@ def dashboard(request):
         status_data = {
             'مقبول': 0,
             'مرفوض': 0,
-            'قيد المعالجة': 0,
-            'لا طلب': 0
+            'قيد_المعالجة': 0,
+            'لا_طلب': 0
         }
         open_count = closed_count = in_progress_count = 0
 
@@ -151,6 +153,7 @@ def suppliers_list_view(request):
 
     return render(request, 'administration/supplier/suppliers_list.html', {
         'suppliers': suppliers,
+
         'hide_header': True
 
     })
@@ -220,6 +223,7 @@ def supplier_request_detail(request, supplier_id):
         
         commercial_info = CommercialInfo.objects.filter(supplier=supplier).first()
         supply_details = SupplyDetails.objects.filter(supplier=supplier).first()
+
         print(55555)
         context = {
             'supplier': supplier,

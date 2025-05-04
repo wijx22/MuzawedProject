@@ -183,9 +183,16 @@
   </div>
 </div>
 
+{% if supplier.status == 'Rejected' %}
+  <div style="margin-bottom: 20px;">
+    <button onclick="showRejectionReason()" title="تم رفض الطلب" style="background-color: transparent; border: none; cursor: pointer;">
+      <span style="color: red; font-size: 24px;">&#9888;</span> 
+    </button>
+  </div>
+{%endif%}
 <script>
 function showRejectionReason() {
-  alert("تم رفض طلبك بسبب عدم استيفاء المستندات المطلوبة. يرجى تحديث بياناتك وإعادة الطلب.");
+  alert("سبب الرفض: {{ supplier.rejection_reason }}");
 }
 
 document.addEventListener("DOMContentLoaded", function () {
