@@ -1,7 +1,45 @@
 {% extends "administration/dashboard.html" %}
 
 {% block content %}
-<div class="container mt-4">
+
+<style>
+  .bg-brown {
+    background-color: #8B4513 !important;
+    color: white !important;
+  }
+</style>
+<div class="container my-4" dir="rtl">
+  <h3 class="mb-4 text-end" style="color: #204a3a;">تفاصيل المستفيد: {{ beneficiary.user.username }}</h3>
+
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="card shadow-sm border-brown">
+        <div class="card-header bg-brown text-end">
+          <strong>معلومات شخصية</strong>
+        </div>
+        <div class="card-body text-end">
+          <p style="font-size: 19px;"><strong>الاسم:</strong> {{ beneficiary.user.get_full_name }}</p>
+          <p style="font-size: 19px;"><strong>البريد الإلكتروني:</strong> {{ beneficiary.user.email }}</p>
+          <p style="font-size: 19px;"><strong>رقم الجوال:</strong> {{ beneficiary.contact_info }}</p>
+          <p style="font-size: 19px;"><strong>المدينة:</strong> {{ beneficiary.get_city_display }}</p>
+          {% if beneficiary.is_active %}
+            <span class="text-success">مفعل</span>
+          {% else %}
+            <span class="text-danger">غير مفعل</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <form method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذا المستفيد؟');">
+      {% csrf_token %}
+      <button type="submit" name="delete_beneficiary" class="btn btn-danger">
+        حذف المستفيد
+      </button>
+      <a href="{% url 'administration:beneficiary_list_view' %}" class="btn btn-secondary ml-2">رجوع للقائمة</a>
+    </form>
+  
+
+<!--<div class="container mt-4">
   <h4 class="mb-4">تفاصيل المستفيد</h4>
 
   <div class="card mb-4">
@@ -20,5 +58,5 @@
     </button>
     <a href="{% url 'administration:beneficiary_list_view' %}" class="btn btn-secondary ml-2">رجوع للقائمة</a>
   </form>
-</div>
+</div>-->
 {% endblock %}

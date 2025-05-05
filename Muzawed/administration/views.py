@@ -186,8 +186,8 @@ def supplier_detail_view(request, supplier_id):
     if request.method == "POST":
         try:
             if 'delete_supplier' in request.POST:
-                supplier.user.delete()  # حذف المستخدم المرتبط
-                supplier.delete()      # حذف ملف المورد
+                supplier.user.delete() 
+                supplier.delete()      
                 messages.success(request, "تم حذف المورد بنجاح.")
                 return redirect('administration:suppliers_list_view') 
         except SupplierProfile.DoesNotExist:
@@ -306,8 +306,8 @@ def beneficiary_detail_view(request, beneficiary_id):
     if request.method == "POST":
         try:
             if 'delete_beneficiary' in request.POST:
-                beneficiary.user.delete()  # حذف المستخدم المرتبط
-                beneficiary.delete()      # حذف ملف المستفيد
+                beneficiary.user.delete()  
+                beneficiary.delete()      
                 messages.success(request, "تم حذف المستفيد بنجاح.")
                 return redirect('administration:beneficiary_list_view')
         except ProfileBeneficiary.DoesNotExist:
@@ -320,15 +320,28 @@ def beneficiary_detail_view(request, beneficiary_id):
     })
 
 
+#def contact_messages_list_view(request):
+#    messages = Contact.objects.all().order_by('-created_at')
+#    return render(request, 'administration/contact/contact_list.html', {
+#        'messages': messages,
+#        'hide_header': True
+#
+#    })
+
+
 def contact_messages_list_view(request):
+    if request.method == 'POST':
+        message_id = request.POST.get('message_id')
+        message = get_object_or_404(Contact, id=message_id)
+        message.is_read = not message.is_read  
+        message.save()
+        return redirect('administration:contact_messages_list')  
+
     messages = Contact.objects.all().order_by('-created_at')
     return render(request, 'administration/contact/contact_list.html', {
         'messages': messages,
         'hide_header': True
-
     })
-
-
 
 
 
