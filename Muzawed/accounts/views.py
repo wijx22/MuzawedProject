@@ -18,7 +18,7 @@ def sign_up_beneficiary(request: HttpRequest):
             new_user = User.objects.create_user(username=request.POST["username"],password=request.POST["password"],email=request.POST["email"], first_name=request.POST["first_name"], last_name=request.POST["last_name"])            
             new_user.save()
             #create profile after user save 
-            profile = ProfileBeneficiary(user=new_user,name=new_user.get_full_name(),contact_info=request.POST['contact_info'], address=request.POST['address'])
+            profile = ProfileBeneficiary(user=new_user,name=new_user.get_full_name(),contact_info=request.POST['contact_info'],  city=request.POST['city'])
             profile.save()
             Notification.objects.create(
                                     recipient=new_user,
@@ -39,51 +39,46 @@ def sign_up_beneficiary(request: HttpRequest):
 
 
 
-def sign_in(request:HttpRequest):
+#def sign_in(request:HttpRequest):
+#    if request.user.is_authenticated:
+#        return redirect("main:index_view")
+#    
+#    if request.method == "POST":
+#        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
+#        if user:
+#            login(request, user)
+#            messages.success(request,"مرحبًا بك من جديد", "alert-success" )
+#            return redirect(request.GET.get("next", "/"))
+#
+#        else:
+#            messages.error(request, "اسم المستخدم أو كلمة المرور غير صالحة")
+#
+    
+#
+#
+#
+#   return render(request, "accounts/signin.html")
+
+
+
+def sign_in(request: HttpRequest):
     if request.user.is_authenticated:
         return redirect("main:index_view")
-    
+
     if request.method == "POST":
         user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         if user:
             login(request, user)
-            messages.success(request,"مرحبًا بك من جديد", "alert-success" )
-            return redirect(request.GET.get("next", "/"))
+            messages.success(request, "مرحبًا بك من جديد", "alert-success")
 
+            if user.is_staff:
+                return redirect("administration:dashboard")  # عدلي اسم المسار إذا مختلف
+            else:
+                return redirect(request.GET.get("next", "main:index_view"))
         else:
             messages.error(request, "اسم المستخدم أو كلمة المرور غير صالحة")
 
-    
-
-
-
     return render(request, "accounts/signin.html")
-
-
-
-#def sign_in(request):
-#    if request.method == 'POST':
-#        username = request.POST.get('username')
-#        password = request.POST.get('password')
-#
-#        try:
-#            user = User.objects.get(username=username)
-#        except User.DoesNotExist:
-#            messages.error(request, "اسم المستخدم أو كلمة المرور غير صحيحة.")
-#            return redirect('accounts:sign_in')
-#
-#        if not check_password(password, user.password):
-#            messages.error(request, "اسم المستخدم أو كلمة المرور غير صحيحة.")
-#            return redirect('accounts:sign_in')
-# 
-#        #Check activation status
-#        if not user.is_active:
-#            messages.error(request, "حسابك مقيد وذلك بسبب سياسة التوريد . يرجى التواصل مع الإدارة.")
-#            return redirect('accounts:sign_in')
-#
-#        login(request, user)
-#        return redirect("main:index_view")
-#    return render(request, 'accounts/signin.html')
 
 
 
@@ -251,33 +246,6 @@ def update_supplier_profile(request: HttpRequest):
 
 
 
-#def delete_supplier_account(request: HttpRequest):
-#    if not request.user.is_authenticated:
-#        messages.error(request, "يجب أن تكون مسجلاً للدخول لحذف حسابك.")
-#        return redirect('accounts:sign_in')
-#    
-#    if not SupplierProfile.objects.filter(user=request.user).exists():
-#        messages.error(request, "حساب المورد غير موجود.")
-#        return redirect('main:index_view')
-#
-#    try:
-#        user = request.user
-#        profile = SupplierProfile.objects.get(user=user)
-#        
-#        # حذف الملف الشخصي للمورد
-#        profile.delete()
-#        
-#        # حذف المستخدم من قاعدة البيانات
-#        user.delete()
-#
-#        messages.success(request, "تم حذف حسابك بنجاح.")
-#        return redirect("main:index_view")  # توجيه المستخدم إلى الصفحة الرئيسية أو صفحة أخرى
-#
-#    except Exception as e:
-#        messages.error(request, "حدث خطأ أثناء محاولة حذف الحساب. حاول مرة أخرى.")
-#        print(e)
-#        return redirect('accounts:supplier_profile_view', user_name=request.user.username)
-#
 
 def delete_supplier_account(request: HttpRequest):
     if not request.user.is_authenticated:

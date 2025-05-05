@@ -5,14 +5,22 @@ from django.contrib.auth.models import User
 
 from products.models import Product
 from accounts.models import SupplierProfile
+from accounts.models import SupplierProfile
 
 class Order(models.Model):
     STATUS_CHOICES = [
-        ('open', 'Open'),
-        ('closed', 'Closed'),
-        ('cancelled', 'Cancelled'),
+    ('open', 'مفتوح'),
+    ('processing', 'قيد المعالجة'),
+    ('closed', 'مستلم'),
+    ('cancelled', 'ملغاة'),
     ]
 
+    beneficiary = models.ForeignKey(User, on_delete=models.CASCADE, 
+                                    related_name='beneficiary_orders')
+    
+    supplier = models.ForeignKey(
+        SupplierProfile, on_delete=models.CASCADE, related_name='supplier_orders'
+    )
     beneficiary = models.ForeignKey(User, on_delete=models.CASCADE, 
                                     related_name='beneficiary_orders')
     

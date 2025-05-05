@@ -1,0 +1,51 @@
+.container {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate; /* Allows rounding */
+  border-spacing: 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+
+  font-family: "Tajawal", sans-serif;
+
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.bg-grey {
+  background-color: rgb(245, 244, 244);
+}
+
+.mainTitle {
+  font-family: "Tajawal", sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+th,
+td {
+  padding: 1rem;
+  text-align: start;
+  border-bottom: 1px solid #f0f0f0; /* Light grey row separators */
+}
+
+thead th {
+  background-color: #8bbd8e;
+  color: #ffffff;
+  font-weight: bold;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+tbody tr:hover {
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
