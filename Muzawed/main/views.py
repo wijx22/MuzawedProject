@@ -10,7 +10,12 @@ from datetime import datetime
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from .models import Contact
-from products.models import Product
+from products.models import Product, City
+import json
+from support.models import Report
+
+
+
 
 #def index_view(request):
 #    if hasattr(request.user, 'supplier'):
@@ -21,7 +26,6 @@ from products.models import Product
 #    else:
 #        return render(request, 'main/index.html')
 
-from support.models import Report
 
 def index_view(request):
     if hasattr(request.user, 'supplier'):
@@ -109,16 +113,26 @@ def store_status_handler(request):
 
 
 def our_suppliers(request):
-    categories = Product.ProductCategory.choices
-    categorized_products = []
+    selected_subcategories = request.GET.getlist("subcategory")
+    category_filter = request.GET.get("category")
 
-    for key, label in categories:
-        products = Product.objects.filter(category=key).order_by('-created_at')[:6]
-        if products:
-            categorized_products.append((label, products))
+    products = Product.objects.all()
+
+    if category_filter:
+        products = products.filter(category=category_filter)
+
+    if selected_subcategories:
+        products = products.filter(subcategory__in=selected_subcategories)
 
     context = {
-        'categorized_products': categorized_products,
+        "products": products,
+        "product_categories": Product.ProductCategory.choices,
+        "selected_categories": selected_subcategories,
+        "covered_cities": City.objects.all(),
+        "subcategories": Product.AgriculturalSubcategory.choices +
+                        Product.ProcessedFoodSubcategory.choices +
+                        Product.IndustrialSubcategory.choices +
+                        Product.SpecialProductsSubcategory.choices +
+                        Product.MiscellaneousSubcategory.choices,
     }
-
     return render(request, 'main/our_suppliers.html', context)

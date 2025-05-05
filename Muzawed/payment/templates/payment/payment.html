@@ -13,11 +13,11 @@
     <script>
       Moyasar.init({
         element: '.mysr-form',
-        amount: 1000,
+        amount: 100000,
         currency: 'SAR',
-        description: 'Coffee Order #1',
-        publishable_api_key: 'pk_test_3wkYhtTqESiNDrgecUxsDfFKAphzupRWi4JKL9af',  // ← المفتاح من لوحة ميسر (sandbox)
-        callback_url: 'http://127.0.0.1:8000/payment/pay/',  // ← URL في موقعك
+        description: 'Muzawed Order #1',
+        publishable_api_key: 'pk_test_3wkYhtTqESiNDrgecUxsDfFKAphzupRWi4JKL9af', 
+        callback_url: 'http://127.0.0.1:8000/', 
         methods: ['creditcard'],
         on_completed: async function (payment) {
             await fetch("/payment/save-payment/", {
