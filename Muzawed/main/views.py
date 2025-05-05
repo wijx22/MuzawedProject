@@ -10,6 +10,7 @@ from datetime import datetime
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from .models import Contact
+from products.models import Product
 
 #def index_view(request):
 #    if hasattr(request.user, 'supplier'):
@@ -20,10 +21,18 @@ from .models import Contact
 #    else:
 #        return render(request, 'main/index.html')
 
+from support.models import Report
+
 def index_view(request):
     if hasattr(request.user, 'supplier'):
         supplier = request.user.supplier
-        return render(request, 'main/supplier_index.html', {'supplier': supplier})
+
+       
+        report = Report.objects.filter(user=request.user).first()
+
+        context = {'supplier': supplier, 'report_id': report.id if report else None}
+
+        return render(request, 'main/supplier_index.html', context)
     else:
         return render(request, 'main/index.html')
 
@@ -100,5 +109,16 @@ def store_status_handler(request):
 
 
 def our_suppliers(request):
+    categories = Product.ProductCategory.choices
+    categorized_products = []
 
-    return render(request, 'main/our_suppliers.html')
+    for key, label in categories:
+        products = Product.objects.filter(category=key).order_by('-created_at')[:6]
+        if products:
+            categorized_products.append((label, products))
+
+    context = {
+        'categorized_products': categorized_products,
+    }
+
+    return render(request, 'main/our_suppliers.html', context)
