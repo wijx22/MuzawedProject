@@ -1,34 +1,3 @@
 {% extends 'main/base.html' %}
-{% block title %}ملف المورد{% endblock %}
+{% block title %}مزودينا{% endblock %}
 {% block content %}
-<div class="container py-4">
-  <h2 class="fw-bold mb-3 text-end">ملف المورد: {{ supplier.name }}</h2>
-
-  <div class="mb-4 text-end">
-    <p><strong>اسم الشركة:</strong> {{ supplier.company_name }}</p>
-    <p><strong>المدينة:</strong> {{ supplier.city }}</p>
-    <p><strong>سياسة التوريد:</strong> {{ supplier.get_supply_policy_display }}</p>
-    <p><strong>التوصيل:</strong> {{ supplier.delivery_method }}</p>
-
-  </div>
-
-  <hr>
-  <h4 class="mb-3 text-end">المنتجات المتوفرة</h4>
-  <div class="row">
-    {% for product in products %}
-    <div class="col-md-4 mb-4">
-      <div class="card h-100">
-        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-        <div class="card-body text-end">
-          <h5 class="card-title">{{ product.name }}</h5>
-          <p class="card-text">السعر: {{ product.price }} ريال</p>
-          <p class="card-text">الكمية: {{ product.quantity }}</p>
-        </div>
-      </div>
-    </div>
-    {% empty %}
-    <p class="text-center">لا توجد منتجات متاحة حالياً.</p>
-    {% endfor %}
-  </div>
-</div>
-{% endblock %}
