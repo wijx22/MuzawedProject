@@ -1,0 +1,189 @@
+{% extends "administration/dashboard.html" %}
+{%load static %}
+{% block content %}
+
+<style>
+  footer {
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+    text-align: center;
+    padding: 15px 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  footer img {
+    height: 40px;
+    margin-bottom: 5px;
+  }
+  
+  footer span {
+    display: block;
+    color: #006400; 
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 5px;
+  }
+  
+</style>
+
+
+<style>
+  .bg-brown {
+    background-color: #8B4513 !important;
+    color: white !important;
+  }
+</style>
+<div class="container my-4" dir="rtl">
+  <h3 class="mb-4 text-end">تفاصيل المورد: {{ supplier.user.username }}</h3>
+
+  <div class="row g-4">
+    <!-- معلومات شخصية -->
+    <div class="col-12">
+      <div class="card shadow-sm border-brown">
+        <div class="card-header bg-brown text-end">
+          <strong>معلومات شخصية</strong>
+        </div>
+        <div class="card-body text-end">
+          <p style="font-size: 19px;"><strong>الاسم:</strong> {{ supplier.user.get_full_name }}</p>
+          <p style="font-size: 19px;"><strong>البريد الإلكتروني:</strong> {{ supplier.user.email }}</p>
+          <p style="font-size: 19px;"><strong>رقم الجوال:</strong> {{ supplier.phone }}</p>
+          <p style="font-size: 19px;"><strong>الحالة:</strong> {{ supplier.get_status_display }}</p>
+          {% if supplier.is_active %}
+            <span class="text-success">مفعل</span>
+          {% else %}
+            <span class="text-danger">غير مفعل</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- معلومات التوريد -->
+    <div class="col-12">
+      <div class="card shadow-sm border-brown">
+        <div class="card-header bg-brown text-end">
+          <strong>معلومات التوريد</strong>
+        </div>
+        <div class="card-body text-end">
+          {% if supply_details %}
+            <p style="font-size: 19px;"><strong>أيام التوريد:</strong></p>
+            {% if supply_details.supply_days.all|length > 0 %}
+              <ul class="text-end">
+                {% for day in supply_details.supply_days.all %}
+                  <li>{{ day.name }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p>لا توجد أيام توريد محددة.</p>
+            {% endif %}
+
+            <p style="font-size: 19px;"><strong>الخدمة السريعة:</strong> {{ supply_details.fast_service_details }} أيام</p>
+
+            <p style="font-size: 19px;"><strong>خدمة التوصيل:</strong> 
+              {% if supply_details.delivery_service == "both" %}
+                توصيل سريع وشحن
+              {% elif supply_details.delivery_service == "shipping" %}
+                شحن          
+              {% elif supply_details.delivery_service == "fast" %}
+                سريع 
+              {% else %}
+                غير محدد
+              {% endif %}
+            </p>
+
+            <p style="font-size: 19px;"><strong>مدة تجهيز الطلب:</strong> {{ supply_details.order_lead_time_days }} أيام</p>
+
+            <p style="font-size: 19px;"><strong>خيارات الدفع المتأخر:</strong> 
+              {% if supply_details.late_payment_options %}
+                متاحة
+              {% else %}
+                غير متاحة
+              {% endif %}
+            </p>
+
+            <p style="font-size: 19px;"><strong>القطاع:</strong> 
+              {% if supply_details.supply_sector == "both" %}
+                بيع تجزئة وجملة
+              {% elif supply_details.supply_sector == "wholesale" %}
+                بالجملة
+              {% elif supply_details.supply_sector == "retail" %}
+                بيع بالتجزئة
+              {% else %}
+                غير محدد
+              {% endif %}
+            </p>
+
+            {% if supply_details.logo %}
+              <p style="font-size: 19px;"><strong>شعار المورد:</strong><br>
+                <img src="{{ supply_details.logo.url }}" class="img-thumbnail" width="150">
+              </p>
+            {% endif %}
+          {% else %}
+            <p>لا توجد معلومات توريد.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- معلومات تجارية -->
+    <div class="col-12">
+      <div class="card shadow-sm border-brown">
+        <div class="card-header bg-brown text-end">
+          <strong>معلومات تجارية</strong>
+        </div>
+        <div class="card-body text-end">
+          {% if commercial_info %}
+            <p style="font-size: 19px;"><strong>اسم المتجر:</strong> {{ commercial_info.store_name }}</p>
+            <p style="font-size: 19px;"><strong>وصف المتجر:</strong> {{ commercial_info.store_description }}</p>
+            <p style="font-size: 19px;"><strong>اسم الحساب البنكي:</strong> {{ commercial_info.bank_account_name }}</p>
+            <p style="font-size: 19px;"><strong>رقم الحساب:</strong> {{ commercial_info.bank_account_number }}</p>
+            <p style="font-size: 19px;"><strong>اسم البنك:</strong> {{ commercial_info.bank_name }}</p>
+            <p style="font-size: 19px;"><strong>IBAN:</strong> {{ commercial_info.iban }}</p>
+            <p style="font-size: 19px;"><strong>SWIFT:</strong> {{ commercial_info.swift_code }}</p>
+            <p style="font-size: 19px;"><strong>اسم جهة الاتصال:</strong> {{ commercial_info.commercial_contact_name }}</p>
+            <p style="font-size: 19px;"><strong>رقم الجوال:</strong> {{ commercial_info.commercial_contact_phone }}</p>
+            <p style="font-size: 19px;"><strong>الإيميل:</strong> {{ commercial_info.commercial_contact_email }}</p>
+            <p style="font-size: 19px;"><strong>السجل التجاري:</strong>
+              {% if commercial_info.registration_document %}
+                <a href="{{ commercial_info.registration_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary">عرض</a>
+              {% else %} لا يوجد {% endif %}
+            </p>
+            <p style="font-size: 19px;"><strong>رخصة:</strong>
+              {% if commercial_info.license_document %}
+                <a href="{{ commercial_info.license_document.url }}" target="_blank" class="btn btn-sm btn-outline-primary">عرض</a>
+              {% else %} لا يوجد {% endif %}
+            </p>
+            <p style="font-size: 19px;"><strong>شهادة ضريبية:</strong>
+              {% if commercial_info.tax_certificate %}
+                <a href="{{ commercial_info.tax_certificate.url }}" target="_blank" class="btn btn-sm btn-outline-primary">عرض</a>
+              {% else %} لا يوجد {% endif %}
+            </p>
+          {% else %}
+            <p style="font-size: 19px;">لا توجد معلومات تجارية.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <form method="POST" onsubmit="return confirm('هل أنت متأكد أنك تريد حذف المورد؟');">
+      {% csrf_token %}
+      <button type="submit" name="delete_supplier" class="btn btn-danger">
+          حذف المورد
+      </button>
+    </form>
+    
+  </div>
+</div>
+
+<br>
+<br>
+<br>
+<br>  
+<footer>
+  <img src="{% static 'img/logo.svg' %}" alt="مزود">
+  <span>© 2025 - لوحة تحكم الأدمن</span>
+</footer>
+
+{%endblock%}

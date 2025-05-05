@@ -104,13 +104,19 @@
               <td>{{ b.contact_info }}</td>
               <td>{{ b.get_city_display }}</td>
               
-              <td class="text-center align-middle">
+              <!--<td class="text-center align-middle">
                 {% if b.status == 'active' %}
                   <span class="text-success">✅ مفعل</span>
                 {% else %}
                   <span class="text-danger">❌ غير مفعل</span>
                 {% endif %}
+              </td>-->
+              <td class="text-center align-middle">
+                <a href="{% url 'administration:beneficiary_detail' b.id %}" class="btn btn-primary btn-sm">
+                  الحالة
+                </a>
               </td>
+              
             </tr>
             {% empty %}
             <tr>

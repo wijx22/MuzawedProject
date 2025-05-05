@@ -1,0 +1,24 @@
+{% extends "administration/dashboard.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h4 class="mb-4">تفاصيل المستفيد</h4>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <p><strong>الاسم:</strong> {{ beneficiary.user.get_full_name }}</p>
+      <p><strong>البريد الإلكتروني:</strong> {{ beneficiary.user.email }}</p>
+      <p><strong>رقم الجوال:</strong> {{ beneficiary.contact_info }}</p>
+      <p><strong>المدينة:</strong> {{ beneficiary.get_city_display }}</p>
+    </div>
+  </div>
+
+  <form method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذا المستفيد؟');">
+    {% csrf_token %}
+    <button type="submit" name="delete_beneficiary" class="btn btn-danger">
+      حذف المستفيد
+    </button>
+    <a href="{% url 'administration:beneficiary_list_view' %}" class="btn btn-secondary ml-2">رجوع للقائمة</a>
+  </form>
+</div>
+{% endblock %}
