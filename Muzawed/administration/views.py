@@ -69,6 +69,10 @@ User = get_user_model()
 
 
 def dashboard(request):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
     try:
         new_suppliers = SupplierProfile.objects.filter(status='Pending')
         new_suppliers_count = SupplierProfile.objects.count()
@@ -159,25 +163,28 @@ def dashboard(request):
 #    })
 
 def suppliers_list_view(request):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
     suppliers = SupplierProfile.objects.select_related('user').all()
+    paginator = Paginator(suppliers, 10)  
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     return render(request, 'administration/supplier/suppliers_list.html', {
         'suppliers': suppliers,
-        'hide_header': True
+        'page_obj': page_obj
     })
 
-#def supplier_detail_view(request, pk):
-#    supplier = get_object_or_404(SupplierProfile, pk=pk)
-#    commercial_info = supplier.commercial_info
-#    supply_details = supplier.supply_details
-#
-#    return render(request, 'administration/supplier/supplier_detail.html', {
-#        'supplier': supplier,
-#        'commercial_info': commercial_info,
-#        'supply_details': supply_details
-#    })
+
+
 
 def supplier_detail_view(request, supplier_id):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
     supplier = get_object_or_404(SupplierProfile, id=supplier_id)
     
     commercial_info = CommercialInfo.objects.filter(supplier=supplier).first()
@@ -201,6 +208,8 @@ def supplier_detail_view(request, supplier_id):
         'supply_details': supply_details
     })
 
+
+
 def supplier_requests_list(request):
     if not request.user.is_staff:
         messages.error(request, "غير مصرح لك.")
@@ -215,8 +224,9 @@ def supplier_requests_list(request):
         return redirect("main:index_view")
 
 
-def supplier_request_detail(request, supplier_id):
 
+
+def supplier_request_detail(request, supplier_id):
 
     if not request.user.is_staff:
         messages.error(request, "غير مصرح لك.")
@@ -245,6 +255,8 @@ def supplier_request_detail(request, supplier_id):
         return redirect("administration:supplier_requests_view")
 
 
+
+
 def approve_supplier_view(request, supplier_id):
     if not request.user.is_staff:
         messages.warning(request, "غير مصرح لك بالوصول")
@@ -261,6 +273,8 @@ def approve_supplier_view(request, supplier_id):
     except Exception as e:
         messages.error(request, f"حدث خطأ أثناء قبول المورد: {e}")
         return redirect("administration:supplier_requests_list")
+
+
 
 
 def reject_supplier_view(request, supplier_id):
@@ -292,6 +306,10 @@ def reject_supplier_view(request, supplier_id):
 
 
 def beneficiary_list_view(request):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
     beneficiaries = ProfileBeneficiary.objects.select_related('user').all()
     return render(request, 'administration/beneficiary/beneficiary_list.html', {
         'beneficiaries': beneficiaries,
@@ -300,7 +318,13 @@ def beneficiary_list_view(request):
     })
 
 
+
+
 def beneficiary_detail_view(request, beneficiary_id):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
     beneficiary = get_object_or_404(ProfileBeneficiary, id=beneficiary_id)
 
     if request.method == "POST":
@@ -320,16 +344,14 @@ def beneficiary_detail_view(request, beneficiary_id):
     })
 
 
-#def contact_messages_list_view(request):
-#    messages = Contact.objects.all().order_by('-created_at')
-#    return render(request, 'administration/contact/contact_list.html', {
-#        'messages': messages,
-#        'hide_header': True
-#
-#    })
+
 
 
 def contact_messages_list_view(request):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
     if request.method == 'POST':
         message_id = request.POST.get('message_id')
         message = get_object_or_404(Contact, id=message_id)

@@ -1,9 +1,9 @@
 {% extends 'main/base.html'%}
 
-
+{%load static %}
 {% block content %}
 
-<div class="container d-flex flex-column justify-content-center align-items-center mt-5 mb-5">
+<!--<div class="container d-flex flex-column justify-content-center align-items-center mt-5 mb-5">
   <h2 class="mb-4">تسجيل جديد كمورد</h2>
   <form class="d-flex flex-column gap-3 w-75" action="{% url 'accounts:sign_up_supplier' %}" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
@@ -47,7 +47,69 @@
     </form>
 
   </div>
+</div>-->
+
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center align-items-center flex-row-reverse">
+    
+    <!-- يسار: صورة مع نص تحفيزي -->
+    <div class="col-md-6 mb-4 mb-md-0 text-center">
+      <img src="{% static 'img/supplier_signup.jpeg' %}" alt="Supplier Illustration" class="img-fluid" style="max-height: 400px;">
+
+      <h4 class="mt-4" style="color:#264F3F;">لماذا تنضم كمورد معنا؟</h4>
+      <p class="px-3" style="color:#264F3F;">
+        كن أحد شركائنا الموردين وابدأ رحلة التوسع والنجاح الحقيقي.
+        معنا، ستصل بخدماتك ومنتجاتك إلى المؤسسات الأكثر تأثيرًا في السوق.
+        نوفر لك بيئة احترافية، دعم مستمر، وإمكانيات نمو حقيقية.
+        
+              </p>
+              
+    </div>
+
+    <!-- يمين: نموذج التسجيل -->
+    <div class="col-md-6">
+      <h2 class="mb-4 text-center">         سجّل الآن وكن المورد الذي يبحث عنه الجميع!
+      </h2>
+      <form class="d-flex flex-column gap-3" action="{% url 'accounts:sign_up_supplier' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-floating">
+          <input type="email" class="form-control" id="email" placeholder="name@example.com" name="email" required>
+          <label for="email">البريد الإلكتروني</label>
+        </div>
+
+        <div class="form-floating">
+          <input type="text" class="form-control" id="username" placeholder="Username" name="username" required>
+          <label for="username">اسم المستخدم</label>
+        </div>
+
+        <div class="form-floating">
+          <input type="text" class="form-control" id="first_name" placeholder="First name" name="first_name" required>
+          <label for="first_name">الاسم الأول</label>
+        </div>
+
+        <div class="form-floating">
+          <input type="text" class="form-control" id="last_name" placeholder="Last name" name="last_name" required>
+          <label for="last_name">اسم العائلة</label>
+        </div>
+
+        <div class="form-floating">
+          <input type="text" class="form-control" id="contact_info" placeholder="Contact Info" name="contact_info" required>
+          <label for="contact_info">معلومات التواصل</label>
+        </div>
+
+        <div class="form-floating">
+          <input type="password" class="form-control" id="password" placeholder="Password" name="password" required>
+          <label for="password">كلمة المرور</label>
+        </div>
+
+        <button class="btn-primary-custom w-100 py-2" type="submit">سجل كمورد</button>
+      </form>
+    </div>
+
+  </div>
 </div>
+
 
 
 {% endblock %}
