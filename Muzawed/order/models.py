@@ -21,12 +21,7 @@ class Order(models.Model):
     supplier = models.ForeignKey(
         SupplierProfile, on_delete=models.CASCADE, related_name='supplier_orders'
     )
-    beneficiary = models.ForeignKey(User, on_delete=models.CASCADE, 
-                                    related_name='beneficiary_orders')
-    
-    supplier = models.ForeignKey(
-        SupplierProfile, on_delete=models.CASCADE, related_name='supplier_orders'
-    )
+
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -43,11 +38,14 @@ class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
 
     def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  
+        self.refresh_from_db()  
         self.subtotal = Decimal(self.quantity) * self.unit_price
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs)  
 
     def _str_(self):
         return f"{self.quantity} x {self.product.name} in Order {self.order.id}"
