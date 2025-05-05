@@ -216,3 +216,14 @@ a {
     text-overflow: ellipsis;  
     font-size: 0.875rem;
 }
+
+.supplier-card {
+    background-color: #FAFAF7;
+    border-radius: 15px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .supplier-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
