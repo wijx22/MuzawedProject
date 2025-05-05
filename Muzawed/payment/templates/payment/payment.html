@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.moyasar.com/mpf/1.15.0/moyasar.css" />
+  <script src="https://cdn.moyasar.com/mpf/1.15.0/moyasar.js"></script>
+  <title>دفع</title>
+</head>
+
+<body>
+    <div class="mysr-form"></div>
+    <script>
+      Moyasar.init({
+        element: '.mysr-form',
+        amount: 1000,
+        currency: 'SAR',
+        description: 'Coffee Order #1',
+        publishable_api_key: 'pk_test_3wkYhtTqESiNDrgecUxsDfFKAphzupRWi4JKL9af',  // ← المفتاح من لوحة ميسر (sandbox)
+        callback_url: 'http://127.0.0.1:8000/payment/pay/',  // ← URL في موقعك
+        methods: ['creditcard'],
+        on_completed: async function (payment) {
+            await fetch("/payment/save-payment/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify(payment)
+            });
+        },
+      });
+    </script>
+  </script>
+</body>
+</html>
