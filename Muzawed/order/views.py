@@ -93,8 +93,9 @@ def add_to_cart_view(request: HttpRequest, product_id: int):
 
 
 def supplier_orders_view(request):
+    '''Displays all orders related to the current supplier.'''
     supplier: SupplierProfile = request.user.supplier
-    orders = Order.objects.filter(supplier=supplier, in_cart=False)
+    orders = Order.objects.filter(supplier=supplier)
 
 
     return render(request, 'order/supplier_orders_list.html', {
@@ -104,11 +105,8 @@ def supplier_orders_view(request):
 
 
 def supplier_order_detail(request, order_id):
+    '''Shows the details of a specific order for the supplier and allows them to accept or reject the order via POST.'''
     order = Order.objects.get(id=order_id)
-    if order.supplier != request.user.supplierprofile:
-        messages.error(request, "غير مسموح لك بعرض هذا الطلب.")
-        return redirect('supplier_orders_view')  
-
     if request.method == "POST":
         action = request.POST.get("action")
         if action == "accept":
@@ -119,7 +117,7 @@ def supplier_order_detail(request, order_id):
             order.status = 'cancelled'  
             order.save()
             messages.warning(request, "تم رفض الطلب.")
-        return redirect('supplier_order_detail', order_id=order.id)
+        return redirect('order:supplier_order_detail', order_id=order.id)
 
     cart_items = order.items.all()
     return render(request, 'order/supplier_order_detail.html', {

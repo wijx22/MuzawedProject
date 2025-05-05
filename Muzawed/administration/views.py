@@ -163,6 +163,11 @@ def dashboard(request):
 #    })
 
 def suppliers_list_view(request):
+    """
+    View to display all supplier profiles to admin users only.
+    Only staff members can access this page. Shows supplier info with pagination support.
+    """
+
     if not request.user.is_staff:
         messages.error(request, "غير مصرح لك.")
         return redirect("main:index_view")
@@ -181,6 +186,11 @@ def suppliers_list_view(request):
 
 
 def supplier_detail_view(request, supplier_id):
+    """
+    Admin-only view to display detailed information about a specific supplier.
+    Includes commercial and supply-related data. Allows deletion of the supplier account.
+    """
+
     if not request.user.is_staff:
         messages.error(request, "غير مصرح لك.")
         return redirect("main:index_view")
@@ -211,6 +221,11 @@ def supplier_detail_view(request, supplier_id):
 
 
 def supplier_requests_list(request):
+    """
+    Displays a list of supplier requests that have both commercial and supply details submitted.
+    Accessible by admin users only.
+    """
+
     if not request.user.is_staff:
         messages.error(request, "غير مصرح لك.")
         return redirect("main:index_view")
@@ -227,7 +242,10 @@ def supplier_requests_list(request):
 
 
 def supplier_request_detail(request, supplier_id):
-
+    """
+    Displays detailed information of a specific supplier request for admin users.
+    Redirects to the supplier requests list if an error occurs.
+    """
     if not request.user.is_staff:
         messages.error(request, "غير مصرح لك.")
         return redirect("main:index_view")
@@ -258,6 +276,10 @@ def supplier_request_detail(request, supplier_id):
 
 
 def approve_supplier_view(request, supplier_id):
+    """
+    Approves and activates a supplier's account for admin users.
+    Redirects to the supplier's request details page on success or error.
+    """
     if not request.user.is_staff:
         messages.warning(request, "غير مصرح لك بالوصول")
         return redirect("main:index_view")
@@ -278,6 +300,9 @@ def approve_supplier_view(request, supplier_id):
 
 
 def reject_supplier_view(request, supplier_id):
+    """
+    Rejects a supplier's request and deactivates the account, with an optional rejection reason.
+    """
     if not request.user.is_staff:
         messages.warning(request, "غير مصرح لك بالوصول")
         return redirect("main:index_view")
@@ -306,6 +331,9 @@ def reject_supplier_view(request, supplier_id):
 
 
 def beneficiary_list_view(request):
+    """
+    Displays a list of all beneficiaries for admin users.
+    """
     if not request.user.is_staff:
         messages.error(request, "غير مصرح لك.")
         return redirect("main:index_view")
@@ -321,6 +349,9 @@ def beneficiary_list_view(request):
 
 
 def beneficiary_detail_view(request, beneficiary_id):
+    """
+    Displays details of a specific beneficiary and allows deletion for admin users.
+    """
     if not request.user.is_staff:
         messages.error(request, "غير مصرح لك.")
         return redirect("main:index_view")
@@ -435,6 +466,16 @@ def reply_to_report_view(request, report_id):
 
     })
 
+
+def order_list_view(request:HttpRequest):
+    if request.user.is_staff:
+        orders = Order.objects.all()
+    else:
+        orders = Order.objects.filter(user=request.user)
+
+    return render(request, 'administration/orders/order_list.html', {
+        'orders': orders,
+    })
 
 
 
