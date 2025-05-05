@@ -104,6 +104,7 @@ def add_city_view(request: HttpRequest):
     return redirect("main:index_view") 
 
 def delete_city_view(request: HttpRequest, city_id: int):
+    
     if request.user.is_authenticated:
         try:
             # Check if the user is a supplier
@@ -370,22 +371,26 @@ def store_info_view(request:HttpRequest):
 
     return redirect("accounts:sign_in")
 
-def store_view(request:HttpRequest):
-    supplier:SupplierProfile = request.user.supplier
+
+def store_view(request: HttpRequest ):
+
+    supplier: SupplierProfile = SupplierProfile.objects.get(pk= request.GET.get('supplier_id'))
     commercial_info = CommercialInfo.objects.filter(supplier=supplier).first()
     supply_details = SupplyDetails.objects.filter(supplier=supplier).first()
-    products= Product.objects.all()
+    # products = Product.objects.all()
+    products = Product.objects.filter( City__suppliers=supplier)
+
     covered_cities = supplier.cities_covered.all()
 
     # Get filter parameters from the request
-    categories = request.GET.getlist('category')  # Returns a list of category values
+    selected_categories = request.GET.getlist('category')  
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')
     city = request.GET.get('city')
 
     # Apply filters
-    if categories:
-        products = products.filter(category__in=categories)  # Filter by category (using __in for multiple values)
+    if selected_categories:
+        products = products.filter(category__in=selected_categories)  # Filter by category (using __in for multiple values)
     if min_price:
         products = products.filter(price__gte=min_price)  # Filter by minimum price (greater than or equal to)
     if max_price:
@@ -393,53 +398,34 @@ def store_view(request:HttpRequest):
     if city:
         products = products.filter(City=city)  # Filter by city
 
-    # Get all categories and cities for the filter form
-    categories = Product.ProductCategory.choices  # Get category choices
-
-    all_cities = City.CityChoices.choices
-
-
-
-
-
-    
-    # if category_name == "all":
-    #     games = Game.objects.all().order_by("-release_date")
-    # else:
-    #     games = Game.objects.filter(categories__name__in=[category_name]).order_by("-release_date")
-
-
-
-
-
-
-
-
+    categories = Product.ProductCategory.choices
 
     page_number = request.GET.get("page", 1)
 
-    paginator = Paginator(products, 5)
+    paginator = Paginator(products, 4)
     store_page = paginator.get_page(page_number)
-
-
-
-
-
-
-    
-
-
-
-
-    # return render(request, "games/all_games.html", {"games":games_page, "category_name":category_name, "esrb_ratings": Game.ESRBRating.choices})
-
-
-
-
-  
-    return render(request, "supplier/store.html" ,
-                {"commercial_info":commercial_info,
-                 "categories":categories,
-                "supply_details": supply_details,"products":store_page ,
-
-                "covered_cities":covered_cities})
+    return render(
+        request,
+        "supplier/store.html",
+        {
+            "commercial_info": commercial_info,
+            "categories": categories,
+            "supply_details": supply_details,
+            "products": store_page,
+            "covered_cities": covered_cities,
+            "selected_categories": selected_categories,
+            "get_params": request.GET  # Pass the GET parameters to the template
+        },
+    )
+    # return render(
+    #     request,
+    #     "supplier/store.html",
+    #     {
+    #         "commercial_info": commercial_info,
+    #         "categories": categories,
+    #         "supply_details": supply_details,
+    #         "products": store_page,
+    #         "covered_cities": covered_cities,
+    #         "selected_categories": selected_categories,  
+    #     },
+    # )

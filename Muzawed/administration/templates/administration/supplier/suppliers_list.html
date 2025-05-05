@@ -58,7 +58,13 @@
             {% for s in suppliers %}
             <tr>
               <th scope="row">{{ s.pk }}</th>
-              <td>{{ s.user.username }}</td>
+              <!--<td>{{ s.user.username }}</td>-->
+              <td>
+                <a href="{% url 'administration:supplier_detail' s.pk %}">
+                  {{ s.user.username }}
+                </a>
+              </td>
+              
               <td><a href="mailto:{{ s.user.email }}">{{ s.user.email }}</a></td>
               <td>{{ s.contact_info }}</td>
               <td class="text-center align-middle">
@@ -69,6 +75,12 @@
                 {% endif %}
               </td>
               <td class="text-center align-middle">
+                <a href="{% url 'administration:supplier_detail' s.id %}" class="btn btn-primary btn-xs">
+                  عرض 
+                </a>
+              </td>
+                            
+              <!--<td class="text-center align-middle">
                 <form method="POST" onsubmit="return confirm('هل أنت متأكد من حذف المورد؟');">
                   {% csrf_token %}
                   <input type="hidden" name="supplier_id" value="{{ s.id }}">
@@ -76,7 +88,7 @@
                     حذف
                   </button>
                 </form>
-              </td>
+              </td>-->
             </tr>
             {% empty %}
             <tr>
@@ -89,6 +101,7 @@
     </div>
   </div>
 </div>
+
 
 <footer>
   <img src="{% static 'img/logo.svg' %}" alt="مزود">

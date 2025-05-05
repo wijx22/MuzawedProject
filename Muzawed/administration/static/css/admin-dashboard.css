@@ -1,9 +1,7 @@
 body {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
-  font-size: 14px;
   background-color: #f9f9f9;
-  direction: rtl;
 }
 
 .header {
@@ -35,7 +33,7 @@ body {
 
 .dashboard {
   display: flex;
-  padding-top: 60px;
+  padding-top: 0;
   min-height: 100vh;
 }
 
@@ -45,12 +43,12 @@ body {
   color: #fff;
   padding: 20px;
   height: 100%;
-  position: fixed;  /* تأكد من أن الـ Sidebar ثابت */
+  position: fixed;  
   top: 59px;
   right: 0;
   bottom: 0;
   overflow-y: auto;
-  transition: width 0.3s ease; /* أضف انتقالًا سلسًا في حال تغيير العرض */
+  transition: width 0.3s ease; 
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
   z-index: 1001;
 }

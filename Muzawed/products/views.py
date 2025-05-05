@@ -216,10 +216,11 @@ def stock_view(request:HttpRequest):
 def product_details_view(request:HttpRequest,product_id):
     try:
         product = get_object_or_404(Product, pk=product_id)
+        related_products = product.get_related_products(supplier_id=request.GET.get('supplier_id'))
 
 
        
-        return render(request,"products/product_details.html",{"product": product})
+        return render(request,"products/product_details.html",{"product": product, "products":related_products})
     except Http404 as e:
         print(e)
         return redirect('main:index_view')

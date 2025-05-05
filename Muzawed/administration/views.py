@@ -69,6 +69,10 @@ User = get_user_model()
 
 
 def dashboard(request):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
     try:
         new_suppliers = SupplierProfile.objects.filter(status='Pending')
         new_suppliers_count = SupplierProfile.objects.count()
@@ -127,38 +131,7 @@ def dashboard(request):
     return render(request, 'administration/dashboard.html', context)
 
 
-
-def suppliers_list_view(request):
-    suppliers = SupplierProfile.objects.select_related('user').all()
-
-    if request.method == 'POST':
-        supplier_id = request.POST.get('supplier_id')
-
-        try:
-            if 'delete_supplier' in request.POST:
-                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
-
-                supplier_profile.user.delete()
-                supplier_profile.delete()
-
-
-
-                messages.success(request, "تم حذف المورد بنجاح.")
-        except SupplierProfile.DoesNotExist:
-            messages.error(request, "المورد غير موجود.")
-        except Exception as e:
-            messages.error(request, f"حدث خطأ: {str(e)}")
-
-        return redirect('administration:suppliers_list_view')
-
-    return render(request, 'administration/supplier/suppliers_list.html', {
-        'suppliers': suppliers,
-
-        'hide_header': True
-
-    })
-
-
+#دالة مع حذف سبلاير 
 #def suppliers_list_view(request):
 #    suppliers = SupplierProfile.objects.select_related('user').all()
 #
@@ -168,22 +141,13 @@ def suppliers_list_view(request):
 #        try:
 #            if 'delete_supplier' in request.POST:
 #                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
+#
 #                supplier_profile.user.delete()
 #                supplier_profile.delete()
+#
+#
+#
 #                messages.success(request, "تم حذف المورد بنجاح.")
-#
-#            elif 'activate_supplier' in request.POST:
-#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
-#                supplier_profile.user.is_active = True
-#                supplier_profile.user.save()
-#                messages.success(request, "تم تفعيل المورد.")
-#
-#            elif 'deactivate_supplier' in request.POST:
-#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
-#                supplier_profile.user.is_active = False
-#                supplier_profile.user.save()
-#                messages.success(request, "تم تعطيل المورد.")
-#
 #        except SupplierProfile.DoesNotExist:
 #            messages.error(request, "المورد غير موجود.")
 #        except Exception as e:
@@ -193,9 +157,58 @@ def suppliers_list_view(request):
 #
 #    return render(request, 'administration/supplier/suppliers_list.html', {
 #        'suppliers': suppliers,
-#        'hide_header': True
-#    })
 #
+#        'hide_header': True
+#
+#    })
+
+def suppliers_list_view(request):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
+    suppliers = SupplierProfile.objects.select_related('user').all()
+    paginator = Paginator(suppliers, 10)  
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'administration/supplier/suppliers_list.html', {
+        'suppliers': suppliers,
+        'page_obj': page_obj
+    })
+
+
+
+
+def supplier_detail_view(request, supplier_id):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
+    supplier = get_object_or_404(SupplierProfile, id=supplier_id)
+    
+    commercial_info = CommercialInfo.objects.filter(supplier=supplier).first()
+    supply_details = SupplyDetails.objects.filter(supplier=supplier).first()
+
+    if request.method == "POST":
+        try:
+            if 'delete_supplier' in request.POST:
+                supplier.user.delete() 
+                supplier.delete()      
+                messages.success(request, "تم حذف المورد بنجاح.")
+                return redirect('administration:suppliers_list_view') 
+        except SupplierProfile.DoesNotExist:
+            messages.error(request, "المورد غير موجود.")
+        except Exception as e:
+            messages.error(request, f"حدث خطأ: {str(e)}")
+
+    return render(request, 'administration/supplier/supplier_detail.html', {
+        'supplier': supplier,
+        'commercial_info': commercial_info,
+        'supply_details': supply_details
+    })
+
+
 
 def supplier_requests_list(request):
     if not request.user.is_staff:
@@ -211,8 +224,9 @@ def supplier_requests_list(request):
         return redirect("main:index_view")
 
 
-def supplier_request_detail(request, supplier_id):
 
+
+def supplier_request_detail(request, supplier_id):
 
     if not request.user.is_staff:
         messages.error(request, "غير مصرح لك.")
@@ -241,6 +255,8 @@ def supplier_request_detail(request, supplier_id):
         return redirect("administration:supplier_requests_view")
 
 
+
+
 def approve_supplier_view(request, supplier_id):
     if not request.user.is_staff:
         messages.warning(request, "غير مصرح لك بالوصول")
@@ -257,6 +273,8 @@ def approve_supplier_view(request, supplier_id):
     except Exception as e:
         messages.error(request, f"حدث خطأ أثناء قبول المورد: {e}")
         return redirect("administration:supplier_requests_list")
+
+
 
 
 def reject_supplier_view(request, supplier_id):
@@ -283,22 +301,15 @@ def reject_supplier_view(request, supplier_id):
 
 
 
-def supplier_products_view(request, supplier_id):
-    try:
-        supplier = get_object_or_404(User, id=supplier_id)
-        products = Product.objects.filter(supplier=supplier)
-        return render(request, 'administration/supplier/supplier_products.html', {
-            'supplier': supplier,
-            'products': products
-        })
-    except Exception as e:
-        messages.error(request, f"حدث خطأ أثناء جلب المنتجات: {e}")
-        return redirect("main:index_view")
 
 
 
 
 def beneficiary_list_view(request):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
     beneficiaries = ProfileBeneficiary.objects.select_related('user').all()
     return render(request, 'administration/beneficiary/beneficiary_list.html', {
         'beneficiaries': beneficiaries,
@@ -308,36 +319,56 @@ def beneficiary_list_view(request):
 
 
 
-def contact_messages_list_view(request):
-    messages = Contact.objects.all().order_by('-created_at')
-    return render(request, 'administration/contact/contact_list.html', {
-        'messages': messages,
-        'hide_header': True
 
+def beneficiary_detail_view(request, beneficiary_id):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
+    beneficiary = get_object_or_404(ProfileBeneficiary, id=beneficiary_id)
+
+    if request.method == "POST":
+        try:
+            if 'delete_beneficiary' in request.POST:
+                beneficiary.user.delete()  
+                beneficiary.delete()      
+                messages.success(request, "تم حذف المستفيد بنجاح.")
+                return redirect('administration:beneficiary_list_view')
+        except ProfileBeneficiary.DoesNotExist:
+            messages.error(request, "المستفيد غير موجود.")
+        except Exception as e:
+            messages.error(request, f"حدث خطأ: {str(e)}")
+
+    return render(request, 'administration/beneficiary/beneficiary_detail.html', {
+        'beneficiary': beneficiary
     })
 
 
 
 
 
+def contact_messages_list_view(request):
+    if not request.user.is_staff:
+        messages.error(request, "غير مصرح لك.")
+        return redirect("main:index_view")
+
+    if request.method == 'POST':
+        message_id = request.POST.get('message_id')
+        message = get_object_or_404(Contact, id=message_id)
+        message.is_read = not message.is_read  
+        message.save()
+        return redirect('administration:contact_messages_list')  
+
+    messages = Contact.objects.all().order_by('-created_at')
+    return render(request, 'administration/contact/contact_list.html', {
+        'messages': messages,
+        'hide_header': True
+    })
 
 
-#def report_list_view(request):
-#    if request.user.is_staff:
-#        reports = Report.objects.all()
-#    else:
-#        reports = Report.objects.filter(user=request.user)
-#
-#
-#
-#
-#
-#    return render(request, 'administration/reports/report_list.html', {
-#        'reports': reports,
-#        'hide_header': True
-#
-#
-#    })
+
+
+
 
 def report_list_view(request):
     if request.user.is_staff:
@@ -407,10 +438,6 @@ def reply_to_report_view(request, report_id):
 
 
 
-#def view_report_replies(request, report_id):
-#    report = get_object_or_404(Report, id=report_id)
-#    replies = ReportReply.objects.filter(report=report).order_by('-created_at')
-#    return render(request, 'administration/reports/report_replies.html', {'report': report, 'replies': replies})
 
 
 
