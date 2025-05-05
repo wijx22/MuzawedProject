@@ -4,6 +4,7 @@ from django.db import models
 
 from django.db import models
 
+from accounts.models import SupplierProfile
 from supplier.models import City
 
 class Product(models.Model):
@@ -92,3 +93,23 @@ class Product(models.Model):
         elif self.category == self.ProductCategory.MISCELLANEOUS:
             return self.MiscellaneousSubcategory(self.subcategory).label
         return self.subcategory
+    
+    
+    def get_related_products(self, supplier_id):
+        """
+        Gets related products from a specific supplier, same city, and same category,
+        excluding the current product.
+
+        Args:
+            supplier_id (int): The ID of the supplier to find related products for.
+        """
+
+        try:
+            supplier = SupplierProfile.objects.get(pk=supplier_id)
+        except SupplierProfile.DoesNotExist:
+            return Product.objects.none()  
+
+        
+        products = Product.objects.filter(City__id=self.City.id, City__suppliers=supplier).exclude(pk=self.pk) 
+        return products
+       

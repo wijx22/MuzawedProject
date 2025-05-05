@@ -6,12 +6,12 @@
 </head>
 
 <body>
-    <section class="d-flex flex-row justify-content-start align-items-start">
+    <section class="d-flex flex-row justify-content-center align-items-center">
 
-            <div class="row gap-1">
+            <div class="row justify-content-center gap-1">
                 {% for product in products %}
                 <div class="col-auto">
-                    <a href="{%url 'products:product_details_view' product.id%}" class="text-decoration-none">
+                    <a href="{% url 'products:product_details_view' product.id %}?supplier_id={{ request.GET.supplier_id }}" class="text-decoration-none">
                            <div class="card">
                         <div class="card__shine"></div>
                         <div class="card__glow"></div>

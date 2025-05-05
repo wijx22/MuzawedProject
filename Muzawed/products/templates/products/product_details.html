@@ -9,63 +9,162 @@
 {% endblock %}
 
 {% block content %}
-
-<section class="d-flex flex-row justify-content-center align-items-center">
-    <div class="container-fluid w-100">
-
-        <div class="row justify-content-center align-items-center">
-
-            <div class="col-10  p-3 p-md-5">
-                <div class="row justify-content-center align-items-center">
-                    <div class="col-12 col-md-5">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" class="img-fluid w-100 product-image " />
-                        {% else %}
-                        <img src="{% static 'image/default.png' %}" class="img-fluid w-100 product-image" />
-                        {% endif %}
-
-                    </div>
-                    <div class="col-12 col-md-6">
-
-                        <div class="d-flex flex-column justify-content-start align-items-start product-card">
-                            <h1 class="product-title">{{ product.name }}</h1>
-
-                            <p class="product-category">{{ product.get_category_display }}> {{ product.get_subcategory_display }}</p>
-                            <p>عن المنتج: </p>
-                            <p class="product-description">{{ product.description }}</p>
-                            <p>اقل كمية للطلب: {{ product.min_order_quantity }} {{ product.get_unit_display }}</p>
-
-                            <p class="price">{{ product.price }} ﷼ </p>
-                            <a href="#" class="btn mazood-main-btn">اضف الى السلة <i class="bi bi-basket2-fill"></i></a>
-                            <!-- <div class="d-flex justify-content-start align-items-start">
-                                <button id="decrement" class="btn btn-danger">-</button>
-                                <input type="number" id="counter" class="form-control counter mx-1" value="0" readonly>
-                                <button id="increment" class="btn btn-success">+</button>
-                            </div> -->
-                        </div>
-
-                    </div>
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center align-items-center gx-5">
+            <aside class="col-lg-6">
+                <div class="border rounded-4 mb-3 d-flex justify-content-center">
+                    {% if product.image %}
+                        <a href="{{ product.image.url }}" data-fancybox>
+                            <img style="max-width: 100%; max-height: 500px;" src="{{ product.image.url }}" class="rounded-4 fit" alt="{{ product.name }}" />
+                        </a>
+                    {% else %}
+                        <img style="max-width: 100%; max-height: 500px;" src="{% static 'image/default.png' %}" class="rounded-4 fit" alt="صورة المنتج الافتراضية" />
+                    {% endif %}
                 </div>
-            </div>
+            </aside>
+            <main class="col-lg-6">
+                <div class="ps-lg-3">
+                    <h4 class="product-title mb-4">
+                        {{ product.name }}
+                    </h4>
+                    <p class="product-category">
+                        {{ product.get_category_display }} <span> &gt;&gt; </span>{{ product.get_subcategory_display }}
+                    </p>
+
+                    <div class="mb-3">
+                        <span class="h5">{{ product.price }} ﷼</span>
+                        <span class="text-muted">/ لكل قطعة</span>
+                    </div>
+
+                    <p>
+                        {{ product.description }}
+                    </p>
+
+                    <dl class="d-flex flex-row ">
+                        <dt class="">الحد الأدنى لكمية الطلب:</dt>
+                        <dd class="">{{ product.min_order_quantity }} {{ product.get_unit_display }}</dd>
+
+                    </dl>
+
+                    <hr />
+
+                    <div class="row mb-4">
+                        <div class="col-md-4 col-6 mb-2 mb-md-0">
+                            <label class="mb-0">الكمية:</label>
+                            <div class="d-flex align-items-center mb-3">
+                                <button class="btn btn-danger border icon-hover px-2" id="decrement"> <i
+                                        class="fa fa-minus"></i> </button>
+                                <input class="form-control text-center border border-secondary" type="text" value="1"
+                                    style="max-width: 40px" id="counter" readonly>
+                                <button class="btn btn-light border icon-hover px-2" id="increment"> <i
+                                        class="fa fa-plus"></i> </button>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="btn mazood-main-btn shadow-0" id="add-to-cart-btn" data-product-id="{{ product.id }}">
+                        أضف إلى السلة <i class="bi bi-basket2-fill"></i>
+                    </a>
+                    <!-- <a href="#" class="btn mazood-main-btn shadow-0"> أضف إلى السلة <i
+                            class="bi bi-basket2-fill"></i> </a> -->
+
+                </div>
+            </main>
         </div>
     </div>
-</section>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <div>
+        <h1>منتجات مماثلة</h1>
+    </div>
+    {%include 'products/product_list.html'%}
 
+    <input type="hidden" id="product-stock" value="{{ product.stock }}">
+    <input type="hidden" id="product-min-order-quantity" value="{{ product.min_order_quantity }}">
+
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- 
 <script>
     $(document).ready(function () {
-        let count = 0;
+        let stock = parseInt($('#product-stock').val());
+        let minOrderQuantity = parseInt($('#product-min-order-quantity').val());
+        let count = minOrderQuantity;
+        $('#counter').val(count);
 
         $('#increment').click(function () {
-            count++;
-            $('#counter').val(count);
+            if (stock >= count + 1) {
+                count++;
+                $('#counter').val(count);
+            } else {
+                alert("الكمية المطلوبة غير متوفرة");
+            }
+            $('#counter').val(count); // Update the counter after incrementing
         });
 
         $('#decrement').click(function () {
-            if (count > 0) {
+            if (count > minOrderQuantity) {
                 count--;
                 $('#counter').val(count);
             }
+            $('#counter').val(count); // Update the counter after decrementing
+        });
+
+        $('#add-to-cart-btn').click(function (event) {
+            event.preventDefault(); // Prevent the default link behavior
+
+            let productId = $(this).data('product-id');
+            let quantity = parseInt($('#counter').val());
+
+            // Construct the URL for your "Add Item" view
+            let addToCartUrl = `/add_item/${productId}/?quantity=${quantity}`;  // Replace with your actual URL
+
+            // Redirect the user to the "Add Item" view
+            window.location.href = addToCartUrl;
+        });
+    });
+</script> -->
+<script>
+    $(document).ready(function () {
+        let stock = parseInt($('#product-stock').val());
+        let minOrderQuantity = parseInt($('#product-min-order-quantity').val());
+        let count = minOrderQuantity;
+        $('#counter').val(count);
+
+        $('#increment').click(function () {
+            if (stock >= count + 1) {
+                count++;
+                $('#counter').val(count);
+            } else {
+                alert("الكمية المطلوبة غير متوفرة");
+            }
+            $('#counter').val(count); // Update the counter after incrementing
+        });
+
+        $('#decrement').click(function () {
+            if (count > minOrderQuantity) {
+                count--;
+                $('#counter').val(count);
+            }
+            $('#counter').val(count); // Update the counter after decrementing
+        });
+
+        $('#add-to-cart-btn').click(function (event) {
+            event.preventDefault();
+
+            let productId = $(this).data('product-id');
+            let quantity = parseInt($('#counter').val());
+            const urlParams = new URLSearchParams(window.location.search);
+            const supplierId = urlParams.get('supplier_id');
+
+            let addToCartUrl = `/order/add_to_cart/${productId}/?quantity=${quantity}&supplier_id=${supplierId}`;
+
+            console.log("productId:", productId);
+            console.log("quantity:", quantity);
+            console.log("supplierId:", supplierId);
+            console.log("addToCartUrl:", addToCartUrl);
+
+            window.location.href = addToCartUrl;
+            console.log("Redirecting to:", addToCartUrl); // Add this line
         });
     });
 </script>
