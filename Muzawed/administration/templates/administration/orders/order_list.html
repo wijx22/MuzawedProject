@@ -9,7 +9,6 @@
   }
 
   .filters {
-    margin-bottom: 30px;
     padding: 15px;
     background-color: #f8f9fa;
     border: 1px solid #ddd;
@@ -42,21 +41,46 @@
   }
 
   .filters button:hover {
-    background-color: #264F3F;
+    background-color: #1e3b2f;
   }
+
   .btn-info {
-    background-color: #264F3F; 
-    color: #f1f9f6 !important; 
+    background-color: #264F3F;
+    color: #f1f9f6 !important;
     border: 1px solid #264F3F;
   }
-  .btn-info:hover{
-    background-color: #264F3F;
-  }
-  </style>
 
+  .btn-info:hover {
+    background-color: #1e3b2f;
+  }
+
+  .table-container {
+    max-width: 90%;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  table {
+    width: 100%;
+    text-align: center;
+  }
+
+  th {
+    background-color: #1e3b2f;
+    color: white;
+  }
+
+  td {
+    vertical-align: middle;
+  }
+</style>
 
 <h2 style="text-align: center; color: #264F3F; margin-bottom: 24px;">قائمة الطلبات</h2>
-  <div class="filters-container">
+
+<div class="filters-container">
   <div class="filters">
     <form method="get">
       <label for="status">تصفية الحالة:</label>
@@ -70,9 +94,10 @@
       <button type="submit">تصفية</button>
     </form>
   </div>
-  </div>
+</div>
 
-  <table class="table table-striped">
+<div class="table-container">
+  <table class="table table-bordered table-striped">
     <thead>
       <tr>
         <th>#</th>
@@ -88,21 +113,28 @@
         <tr>
           <td>{{ order.id }}</td>
           <td>{{ order.beneficiary.username }}</td>
-          <td>{{ order.get_status_display }}</td>
+          <td>
+            <span class="badge 
+              {% if order.status == 'closed' %} bg-success 
+              {% elif order.status == 'cancelled' %} bg-danger 
+              {% elif order.status == 'processing' %} bg-warning text-dark
+              {% else %} bg-secondary {% endif %}">
+              {{ order.get_status_display }}
+            </span>
+          </td>
           <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
           <td>{{ order.delivery_date|date:"Y-m-d H:i" }}</td>
           <td>
-            <a href="#" class="btn btn-info  btn-sm">عرض التفاصيل</a>
-            {% if order.status == 'open' %}
-            {% endif %}
+            <a href="{% url 'administration:order_detail_view' order.id%}" class="btn btn-info btn-sm">عرض التفاصيل</a>
           </td>
         </tr>
       {% empty %}
         <tr>
-          <td colspan="6" class="text-center">لا توجد طلبات لعرضها.</td>
+          <td colspan="6" class="text-center text-muted">لا توجد طلبات لعرضها.</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+</div>
 
 {% endblock %}

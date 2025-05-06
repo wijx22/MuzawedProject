@@ -1,0 +1,40 @@
+{% extends "administration/dashboard.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>تفاصيل الطلب #{{ order.id }}</h2>
+
+    <div class="card mt-3 p-3">
+        <p><strong>رقم الطلب:</strong> {{ order.id }}</p>
+        <p><strong>اسم المستخدم:</strong> {{ order.beneficiary.username }}</p>
+        <p><strong>الحالة:</strong> {{ order.status }}</p>
+        <p><strong>تاريخ الإنشاء:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</p>
+    </div>
+
+    {% if order.items.exists %}
+        <h4 class="mt-4">المنتجات:</h4>
+        <div class="row">
+            {% for item in order.items.all %}
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" class="card-img-top" alt="{{ item.product.name }}">
+                        {% else %}
+                            <img src="https://via.placeholder.com/150" class="card-img-top" alt="no image">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.product.name }}</h5>
+                            <p class="card-text">الكمية: {{ item.quantity }}</p>
+                            <p class="card-text text-muted">البائع: {{ order.supplier.user.username }}</p>
+                          </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted mt-3">لا توجد منتجات مرتبطة بهذا الطلب.</p>
+    {% endif %}
+
+    <a href="{% url 'administration:order_list' %}" class="btn btn-secondary mt-4">⬅ العودة لقائمة الطلبات</a>
+</div>
+{% endblock %}
