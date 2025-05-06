@@ -223,6 +223,15 @@ def process_order(request, order_id):  # Pass order_id as an argument
 
 def supplier_order_detail(request, order_id):
     '''Shows the details of a specific order for the supplier and allows them to accept, reject, delete, or mark as delivered.'''
+
+    if not request.user.is_authenticated:
+        messages.error(request, "يجب عليك تسجيل الدخول للوصول إلى هذه الصفحة.", "alert-danger")
+        return redirect("accounts:sign_in")
+
+    if not SupplierProfile.objects.filter(user=request.user).exists():
+        messages.error(request, "هذه الصفحة مخصصة لحسابات الموردين فقط.", "alert-danger")
+        return redirect('main:index_view')
+
     order = Order.objects.get(id=order_id)
 
     # Check if order is already in "processing" or "closed" state
