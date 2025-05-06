@@ -70,7 +70,7 @@
 
                                 <div class="card bg-orange text-white rounded-3">
                                     <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <!-- <div class="d-flex justify-content-between align-items-center mb-4">
                                             <h5 class="mb-0">اختر طريقة الدفع</h5>
                                         </div>
                                         <div class="mb-3">
@@ -87,11 +87,63 @@
                                                 <input type="radio" id="card" name="paymentMethod" value="card">
                                                 <label for="card">بطاقة</label>
                                             </div>
-                                        </div>
+                                        </div> -->
 
+                                        <form method="post" action="{% url 'order:process_order' order.id %}">  
+                                            {% csrf_token %}  
+                                        
+                                            <!-- Payment Method -->
+                                            <div class="mb-3">
+                                                <div>
+                                                    <input type="radio" id="cash" name="payment_method" value="cash" checked>
+                                                    <label for="cash">نقد</label>
+                                                </div>
+                                                {%if order.supplier.late_payment_options%}
+                                                <div>
+                                                    <input type="radio" id="late-payment" name="payment_method" value="deferred">
+                                                    <label for="late-payment">دفع آجل</label>
+                                                </div>
+                                                {%endif%}
+                                                <div>
+                                                    <input type="radio" id="card" name="payment_method" value="credit">
+                                                    <label for="card">بطاقة</label>
+                                                </div>
+                                            </div>
+                                        
+                                    
+                                        
+                                            <!-- Hidden Inputs for Cart Items -->
+                                            {% for item in items %}
+                                                <input type="hidden" name="product_id_{{ item.product.id }}" value="{{ item.product.id }}">
+                                                <input type="hidden" name="quantity_{{ item.product.id }}" value="{{ item.quantity }}">
+                                            {% endfor %}
+                                        
+                                            <hr class="my-4">
+                                        
+                                            <div class="d-flex justify-content-between">
+                                                <p class="mb-2">المجموع الفرعي </p>
+                                                <p class="mb-2">{{items.price}} ﷼</p>
+                                            </div>
+                                        
+                                            <div class="d-flex justify-content-between">
+                                                <p class="mb-2">رسوم التوصيل</p>
+                                                <p class="mb-2"> 20.00 ﷼</p>
+                                            </div>
+                                            <hr class="my-4">
+                                        
+                                            <div class="d-flex justify-content-between mb-4">
+                                                <p class="mb-2">المجموع (شامل ضريبة القيمة المضافة)</p>
+                                                <p class="mb-2">{{items.price}} ﷼</p>
+                                            </div>
+                                        
+                                            <button type="submit" class="btn-primary-custom">
+                                                <div class="d-flex justify-content-between">
+                                                    <span>اتمام الطلب </span>
+                                                </div>
+                                            </button>
+                                        </form>
 
-
-                                        <form class="mt-4 d-none" id="cardDetails">
+                                        <!-- <form class="mt-4 d-none" id="cardDetails">
                                             <p class="small mb-2">نوع البطاقة</p>
                                             <a href="#!" type="submit" class="text-white"><i
                                                     class="fab fa-cc-mastercard fa-2x me-2"></i></a>
@@ -130,8 +182,8 @@
                                                 </div>
                                             </div>
 
-                                        </form>
-
+                                        </form> -->
+<!-- 
                                         <hr class="my-4">
 
                                         <div class="d-flex justify-content-between">
@@ -155,7 +207,7 @@
                                                 <span>اتمام الطلب </span>
                                             </div>
                                         </button>
-
+ -->
                                     </div>
                                 </div>
 

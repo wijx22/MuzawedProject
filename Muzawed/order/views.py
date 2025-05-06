@@ -1,5 +1,8 @@
+from time import timezone
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
+
+from payment.models import Payment
 from .models import Order
 from django.http import HttpRequest
 from django.urls import reverse
@@ -23,7 +26,7 @@ def cart_view(request: HttpRequest, order_id: int):
 
     cart = get_object_or_404(Order, id=order_id)
     items = cart.items.all()
-    return render(request, "order/cart.html", {"items": items})
+    return render(request, "order/cart.html", {"order":cart,"items": items})
 
 def add_to_cart_view(request: HttpRequest, product_id: int):
     supplier_id = request.GET.get('supplier_id')
@@ -136,7 +139,49 @@ def supplier_orders_view(request):
     })
 
 
+def process_order(request, order_id):  # Pass order_id as an argument
+    order = get_object_or_404(Order,beneficiary=request.user)
 
+    if request.method == 'POST':
+        # 1. Get Payment Method
+        payment_method = request.POST.get('payment_method')
+
+        # 2. Access Cart Items from the Order
+        cart_items = order.items.all()  # Assuming 'items' is the related_name in your CartItem model
+        total_amount = order.total 
+     
+        # 3. Stock Check
+        out_of_stock_items = []
+        for item in cart_items:
+            if item.product.stock < item.quantity:
+                out_of_stock_items.append(item.product.name)
+
+        if out_of_stock_items:
+            error_message = "المنتجات التالية غير متوفرة بالكمية المطلوبة: " + ", ".join(out_of_stock_items)
+            messages.error(request, error_message)
+            return redirect('order:cart_view' ,order.id)  # Redirect back to cart
+
+        # 4. Create Payment Object (if stock is sufficient)
+        payment = Payment(
+            order=order,
+            payment_method=payment_method,
+            total_amount=total_amount,  # Use the order's total
+        )
+        payment.save()
+
+        for item in cart_items:
+            product = item.product
+            product.stock -= item.quantity
+            product.save()
+
+        order.in_cart=False
+        order.save()
+
+        messages.success(request, "تم اتمام الطلب بنجاح!")
+        return redirect('order:cart_orders_view')  
+
+
+        
 #def supplier_order_detail(request, order_id):
 #    '''Shows the details of a specific order for the supplier and allows them to accept or reject the order via POST.'''
 #    order = Order.objects.get(id=order_id)

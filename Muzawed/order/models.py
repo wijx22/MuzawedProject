@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 
 from products.models import Product
 from accounts.models import SupplierProfile
-from accounts.models import SupplierProfile
 
 class Order(models.Model):
     STATUS_CHOICES = [
