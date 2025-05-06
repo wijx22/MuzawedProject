@@ -6,96 +6,122 @@ from django.urls import reverse
 # Create your views here.
 from .models import Product
 from .models import Order, CartItem
-from django.utils import timezone
 from django.contrib import messages
 from django.db import transaction
-
+from django.db.models import F
 from accounts.models import ProfileBeneficiary, SupplierProfile
-#def cart_view(request:HttpRequest):
-#    items =Product.objects.all()
-#    return render(request, "order/cart.html",{"items":items})
+# def cart_view(request:HttpRequest):
+#     items =Product.objects.all()
+#     return render(request, "order/cart.html",{"items":items})
 
 
-
-
-
-def cart_view(request: HttpRequest, order_id ):
+def cart_view(request: HttpRequest, order_id: int):
     """Display the contents of the cart to the user."""
-    if not request.user.is_authenticated :
-        messages.error(request, "You must be logged in to view your cart.", "alert-danger")
+    if not request.user.is_authenticated:
+        messages.error(request, "يجب عليك تسجيل الدخول لعرض سلة التسوق الخاصة بك.", "alert-danger")
         return redirect("accounts:sign_in")
-    # if not Profile_User.objects.filter(user=request.user).exists():
-    #       messages.error(request, "Only User can view cart.", "alert-danger")
-    #       return redirect('main:index_view')
 
-    cart= Order.objects.get(id=order_id)
-    return render(request, "cart/cart_view.html", {"cart": cart})
-
+    cart = get_object_or_404(Order, id=order_id)
+    items = cart.items.all()
+    return render(request, "order/cart.html", {"items": items})
 
 def add_to_cart_view(request: HttpRequest, product_id: int):
     supplier_id = request.GET.get('supplier_id')
+    print("this is the error ")
+    print(request.GET)
     if not supplier_id:
-        messages.error(request, "Supplier ID is required.", "alert-danger")
-        return redirect("main:index_view")  # Or wherever appropriate
+        messages.error(request, "try", "alert-danger")
+        return redirect("main:index_view")
 
     try:
-        supplier_id = int(supplier_id)  # Convert to integer
-    except ValueError:
-        messages.error(request, "Invalid Supplier ID.", "alert-danger")
-        return redirect("main:index_view")  # Or wherever appropriate
+        supplier_id = int(supplier_id)
+    except ValueError as error:
+        messages.error(request, "المورد غير موجود.", "alert-danger")
+        print("an error ",error)
+        return redirect("main:index_view")
 
     try:
-        supplier = SupplierProfile.objects.get(pk=supplier_id)  # Get the Supplier object
-    except SupplierProfile.DoesNotExist:
-        messages.error(request, "Supplier not found.", "alert-danger")
-        return redirect("main:index_view")  # Or wherever appropriate
+        supplier = SupplierProfile.objects.get(pk=supplier_id)
 
-    #cart = Order.objects.filter(supplier=supplier, beneficiary=request.user, in_cart=True).first()
-    cart = Order.objects.filter(
-    supplier=supplier,
-    beneficiary=request.user,
-    in_cart=True,
-    status__in=['open', 'processing']  
-      ).first()
-    
-    if cart is None:  # Check if cart is None
+    except SupplierProfile.DoesNotExist as error:
+        messages.error(request, "المورد غير موجود.", "alert-danger")
+        print("an error ",error)
+
+        return redirect("main:index_view")
+
+    cart = Order.objects.filter(supplier=supplier, beneficiary=request.user, in_cart=True).first()
+    if cart is None:
         cart = Order(supplier=supplier, beneficiary=request.user)
         cart.save()
 
     """Add a product to the cart, and increase the quantity if it already exists."""
     if not request.user.is_authenticated:
-        messages.error(request, "You must be logged in to add items to your cart.", "alert-danger")
+        messages.error(request, "يجب عليك تسجيل الدخول لإضافة عناصر إلى سلة التسوق الخاصة بك.", "alert-danger")
         return redirect("accounts:sign_in")
 
     if not ProfileBeneficiary.objects.filter(user=request.user).exists():
-        messages.error(request, "Only User can add to cart.", "alert-danger")
+        messages.error(request, "يمكن للمستخدم فقط إضافة عناصر إلى سلة التسوق.", "alert-danger")
         return redirect('main:index_view')
 
     try:
         with transaction.atomic():
             product = get_object_or_404(Product, id=product_id)
             if product.stock == 0:
-                messages.warning(request, "Sorry, this product is currently out of stock.", "alert-warning")
-                return redirect("products:product_details_view", product_id=product.id, supplier_id=supplier_id)  # Pass supplier_id on redirect
+                messages.warning(request, "عذرًا، هذا المنتج غير متوفر حاليًا.", "alert-warning")
+                return redirect(reverse("products:product_details_view", kwargs={'product_id': product_id}) + f"?supplier_id={supplier_id}")
 
-            quantity = int(request.GET.get('quantity', 1))
+            quantity = int(request.GET.get('quantity', product.min_order_quantity))
             if quantity <= 0:
-                messages.error(request, "Invalid quantity.", "alert-danger")
-                return redirect("products:product_details_view", product_id=product.id, supplier_id=supplier_id) # Pass supplier_id on redirect
+                messages.error(request, "الكمية غير صالحة.", "alert-danger")
+                return redirect(reverse("products:product_details_view", kwargs={'product_id': product_id}) + f"?supplier_id={supplier_id}")
 
-            unit_price = product.price
-            cart_item = CartItem(order=cart, product=product, quantity=quantity, unit_price=unit_price)
-            cart_item.save()
+            # Try to get the existing cart item
+            cart_item = CartItem.objects.filter(order=cart, product=product).first()
+            if cart_item:
+                # If the item exists, update the quantity
+                cart_item.quantity = F('quantity') + quantity
+                cart_item.save()  # The save() method now handles subtotal calculation
+            else:
+                # If the item doesn't exist, create a new one
+                unit_price = product.price
+                cart_item = CartItem(order=cart, product=product, quantity=quantity, unit_price=unit_price)
+                cart_item.save() 
+     
 
-            messages.success(request, "تم اضافة المنتج الى العربة بنجاح", "alert-success")
+            messages.success(request, "تمت إضافة المنتج إلى العربة بنجاح", "alert-success")
 
     except Exception as e:
         print(e)
-        messages.error(request, f"An error occurred while adding the product: {e}", "alert-danger")
+        messages.error(request, f"حدث خطأ أثناء إضافة المنتج: {e}", "alert-danger")
 
-    return redirect(reverse("products:product_details_view", kwargs={'product_id': product_id}) + f"?supplier_id={supplier_id}") # Pass supplier_id on redirect
+    return redirect(reverse("products:product_details_view", kwargs={'product_id': product_id}) + f"?supplier_id={supplier_id}")
 
 
+
+def cart_orders_view(request):
+    """
+    Displays all 'in cart' orders for the logged-in user as cards,
+    with options to view details/checkout or delete the order.
+    """
+    if not request.user.is_authenticated:
+        return render(request, 'accounts/sign_in.html')  
+
+    cart_orders = Order.objects.filter(beneficiary=request.user, in_cart=True).order_by('created_at')
+
+    context = {
+        'cart_orders': cart_orders,
+    }
+    return render(request, 'order/cart_orders.html',context)
+
+
+def delete_cart_order_view(request, order_id):
+    """
+    Deletes an entire order from the cart.
+    """
+
+    order = get_object_or_404(Order, id=order_id, beneficiary=request.user, in_cart=True)
+    order.delete()  # This will also delete associated CartItems due to on_delete=CASCADE
+    return redirect('order:cart_orders_view')  # Redirect back to the cart view
 
 
 
