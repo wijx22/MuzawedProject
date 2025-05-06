@@ -140,75 +140,54 @@ def supplier_orders_view(request):
 
 
 def process_order(request, order_id):  # Pass order_id as an argument
-    order = get_object_or_404(Order,beneficiary=request.user)
+    try:
+        order = get_object_or_404(Order,beneficiary=request.user)
 
-    if request.method == 'POST':
-        # 1. Get Payment Method
-        payment_method = request.POST.get('payment_method')
+        if request.method == 'POST':
+            # 1. Get Payment Method
+            payment_method = request.POST.get('payment_method')
 
-        # 2. Access Cart Items from the Order
-        cart_items = order.items.all()  # Assuming 'items' is the related_name in your CartItem model
-        total_amount = order.total 
-     
-        # 3. Stock Check
-        out_of_stock_items = []
-        for item in cart_items:
-            if item.product.stock < item.quantity:
-                out_of_stock_items.append(item.product.name)
-
-        if out_of_stock_items:
-            error_message = "المنتجات التالية غير متوفرة بالكمية المطلوبة: " + ", ".join(out_of_stock_items)
-            messages.error(request, error_message)
-            return redirect('order:cart_view' ,order.id)  # Redirect back to cart
-
-        # 4. Create Payment Object (if stock is sufficient)
-        payment = Payment(
-            order=order,
-            payment_method=payment_method,
-            total_amount=total_amount,  # Use the order's total
-        )
-        payment.save()
-
-        for item in cart_items:
-            product = item.product
-            product.stock -= item.quantity
-            product.save()
-
-        order.in_cart=False
-        order.save()
-
-        messages.success(request, "تم اتمام الطلب بنجاح!")
-        return redirect('order:cart_orders_view')  
-
-
+            # 2. Access Cart Items from the Order
+            cart_items = order.items.all()  # Assuming 'items' is the related_name in your CartItem model
+            total_amount = order.total 
         
-#def supplier_order_detail(request, order_id):
-#    '''Shows the details of a specific order for the supplier and allows them to accept or reject the order via POST.'''
-#    order = Order.objects.get(id=order_id)
-#    if request.method == "POST":
-#        action = request.POST.get("action")
-#        if action == "accept":
-#            order.status = 'processing'  
-#            order.save()
-#            messages.success(request, "تم قبول الطلب وهو الآن قيد المعالجة.")
-#        elif action == "reject":
-#            order.status = 'cancelled'  
-#            order.save()
-#            messages.warning(request, "تم رفض الطلب.")
-#            
-#        elif action == "set_delivery_date":
-#          order.delivery_date = timezone.now()
-#          order.save()
-#          messages.success(request, "تم تسجيل وقت التوصيل.")
-#
-#        return redirect('order:supplier_order_detail', order_id=order.id)
-#
-#    cart_items = order.items.all()
-#    return render(request, 'order/supplier_order_detail.html', {
-#        'order': order,
-#        'cart_items': cart_items
-#    })
+            # 3. Stock Check
+            out_of_stock_items = []
+            for item in cart_items:
+                if item.product.stock < item.quantity:
+                    out_of_stock_items.append(item.product.name)
 
+            if out_of_stock_items:
+                error_message = "المنتجات التالية غير متوفرة بالكمية المطلوبة: " + ", ".join(out_of_stock_items)
+                messages.error(request, error_message)
+                return redirect('order:cart_view' ,order.id)  # Redirect back to cart
+
+            # 4. Create Payment Object (if stock is sufficient)
+            payment = Payment(
+                order=order,
+                payment_method=payment_method,
+                total_amount=total_amount,  # Use the order's total
+            )
+            payment.save()
+
+            for item in cart_items:
+                product = item.product
+                product.stock -= item.quantity
+                product.save()
+
+            order.in_cart=False
+            order.save()
+
+            messages.success(request, "تم اتمام الطلب بنجاح!")
+    except Exception as error :
+        messages.error(request, "حدث خطأ اثناء محاولة الوصول للعربة")
+        print(error)
+        return redirect('order:cart_orders_view')
+
+    return render(request,'order/cart_orders.html')
+
+
+ 
 
 def supplier_order_detail(request, order_id):
     '''Shows the details of a specific order for the supplier and allows them to accept, reject, delete, or mark as delivered.'''
@@ -249,3 +228,14 @@ def supplier_order_detail(request, order_id):
         'cart_items': cart_items,
         'actions_disabled': actions_disabled
     })
+
+
+def beneficiary_orders_view(request):
+    current_orders = Order.objects.filter(status='open')  # Replace with your actual filter
+    closed_orders = Order.objects.filter(status='closed')    # Replace with your actual filter
+
+    context = {
+        'current_orders': current_orders,
+        'closed_orders': closed_orders,
+    }
+    return render(request, 'order/orders.html', context)
