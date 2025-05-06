@@ -1,3 +1,26 @@
 .bg-orange{
     background-color: #f8a760;
 }
+.brown-title{
+    color: #4A3A20;   
+    white-space: nowrap; 
+    overflow: hidden;     
+    text-overflow: ellipsis; 
+}
+.green-title{
+    color: #264f3f;    
+    white-space: nowrap; 
+    overflow: hidden;     
+    text-overflow: ellipsis;
+}
+.orange-title{
+    white-space: nowrap; 
+    overflow: hidden;     
+    text-overflow: ellipsis;
+    color: #f8a760;    
+}
+p{
+    white-space: nowrap; 
+    overflow: hidden;     
+    text-overflow: ellipsis;
+}
