@@ -113,11 +113,6 @@ def store_status_handler(request):
     return redirect('main:index_view')
 
 
-
-from django.shortcuts import render
-from products.models import Product
-from supplier.models import City
-
 def our_suppliers_view(request):
     category = request.GET.get("category")
     subcategory = request.GET.get("subcategory")

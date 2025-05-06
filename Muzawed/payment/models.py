@@ -1,33 +1,31 @@
 from django.db import models
 from order.models import Order
 
-# Create your models here.
-
-
 
 class Payment(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    class StatusChoices(models.TextChoices):
+        PENDING = 'pending', 'لم يتم الدفع'
+        COMPLETED = 'completed', 'مكتمل'
+        CANCELLED = 'cancelled', 'ملغى'
 
+    class MethodChoices(models.TextChoices):
+        CASH = 'cash', 'نقداً'
+        CREDIT = 'credit', 'بطاقة ائتمان'
+        DEFERRED = 'deferred', 'دفع آجل'
+
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    
     status = models.CharField(
         max_length=20,
-        choices=[
-            ('pending', 'لم يتم الدفع'),
-            ('completed', 'مكتمل'),
-            ('cancelled', 'ملغى')
-        ],
-        default='pending'
+        choices=StatusChoices.choices,
+        default=StatusChoices.PENDING
     )
 
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-
     payment_method = models.CharField(
         max_length=20,
-        choices=[
-            ('cash', 'نقدا'),
-            ('credit', 'بطاقة ائتمان'),
-            ('deferred', 'دفع آجل')
-        ],
-        default='cash'
+        choices=MethodChoices.choices,
+        default=MethodChoices.CASH
     )
 
     ref_id = models.CharField(max_length=100, blank=True, null=True)
@@ -35,15 +33,8 @@ class Payment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"Payment #{self.id} for Order #{self.order.id} - {self.status}"
-    
+    def get_status_display_ar(self):
+        return self.StatusChoices(self.status).label
 
-    def get_status_in_arabic(self):
-        status_dict = {
-            'pending': 'لم يتم الدفع',
-            'completed': 'مكتمل',
-            'cancelled': 'ملغى'
-        }
-        return status_dict.get(self.status, self.status)
-    
+    def __str__(self):
+        return f"Order #{self.order.id} - {self.get_status_display_ar()}"
