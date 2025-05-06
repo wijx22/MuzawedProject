@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container py-5">
 
-  <!-- Banner -->
+
   <div class="row justify-content-center text-center mb-5">
     <div class="col-md-6">
       <h2 class="fw-bold mb-4" style="color: #EFC234;">وش حاب تطلب اليوم؟</h2>
@@ -14,7 +14,6 @@
     </div>
   </div>
 
-  <!-- Search -->
   <div class="row justify-content-center mb-4">
     <div class="col-md-8">
       <form method="GET">
@@ -26,7 +25,7 @@
     </div>
   </div>
 
-  <!-- Main Categories -->
+
   <h4 class="text-center mb-4 fw-bold" style="color: #1F3F2E;">التصنيفات</h4>
   <div class="row row-cols-2 row-cols-md-4 g-4 mb-5">
     {% for value, label in product_categories %}
@@ -43,7 +42,6 @@
     {% endfor %}
   </div>
 
-  <!-- Subcategories Filter -->
   {% if selected_category %}
   <form method="GET">
     <input type="hidden" name="category" value="{{ selected_category }}">
@@ -64,7 +62,6 @@
   </form>
   {% endif %}
 
-  <!-- Suppliers & Products -->
   <div class="row">
     {% for supplier in suppliers %}
       <div class="col-md-4 mb-4">

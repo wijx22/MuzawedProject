@@ -15,99 +15,126 @@
   {% block ref %}{% endblock %}
 </head>
 <body>
-{% if not hide_header %}
-<nav class="navbar navbar-expand-lg py-3">
-  <div class="container d-flex align-items-center justify-content-between">
-    <a class="navbar-brand" href="{% url 'main:index_view' %}">
-      <img src="{% static 'img/logo.svg' %}" alt="مزود" width="80">
-    </a>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="تبديل القائمة">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-      <ul class="navbar-nav text-center">
-        <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:index_view' %}">الرئيسية</a></li>
-        <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:our_suppliers' %}">مزوديننا</a></li>
-        <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:contact_view' %}">تواصل معنا</a></li>
-        <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:about_view' %}">عن مزود</a></li>
-      </ul>
-    </div>
-
-    {% if request.user.is_authenticated %}
-    <div class="d-flex align-items-center gap-3">
-      <div class="dropdown">
-        <a class="p-0" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="bi bi-person-circle" style="font-size: 30px; color: #1F3F2E;"></i>
+  {% if not hide_header %}
+  <nav class="navbar navbar-expand-lg py-3">
+    <div class="container d-flex align-items-center justify-content-between">
+  
+      <div class="d-flex align-items-center">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="تبديل القائمة">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand mx-auto" href="{% url 'main:index_view' %}">
+          <img src="{% static 'img/logo.svg' %}" alt="مزود" width="80">
         </a>
-        <ul class="dropdown-menu dropdown-menu-end text-center" aria-labelledby="userDropdown">
-          <li class="dropdown-item fw-bold">{{ request.user.username }}</li>
-          {% if request.user.supplier %}
-            <li><a class="dropdown-item" href="{% url 'accounts:supplier_profile_view' request.user.username %}">الملف الشخصي</a></li>
-          {% else %}
-            <li><a class="dropdown-item" href="{% url 'accounts:beneficiary_profile_view' request.user.username %}">الملف الشخصي</a></li>
-          {% endif %}
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item text-danger" href="{% url 'accounts:log_out' %}?next={{ request.path }}">تسجيل الخروج</a></li>
+      </div>
+  
+      <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+        <ul class="navbar-nav text-center">
+          <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:index_view' %}">الرئيسية</a></li>
+          <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:our_suppliers' %}">مزوديننا</a></li>
+          <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:contact_view' %}">تواصل معنا</a></li>
+          <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:about_view' %}">عن مزود</a></li>
         </ul>
       </div>
-
-      <div style="position: relative; cursor: pointer;" onclick="toggleSidebar()">
-        <i class="bi bi-bell" style="font-size: 30px; color: #1F3F2E;"></i>
-        {% if notifications %}
-        <span style="
-          position: absolute;
-          top: -5px;
-          right: -5px;
-          background: red;
-          color: white;
-          font-size: 10px;
-          padding: 2px 5px;
-          border-radius: 50%;">
-          {{ notifications|length }}
-        </span>
-        {% endif %}
-      </div>
-
-      <div id="sidebarNotifications" style="width: 0; height: 100%; position: fixed; top: 0; left: 0; background-color: #fff; overflow-x: hidden; transition: 0.5s; padding-top: 60px; z-index: 9999; box-shadow: 2px 0 5px rgba(0,0,0,0.2);">
-        <div class="text-end px-3">
-          <a href="#" onclick="toggleSidebar()" class="text-danger fs-4">✖</a>
+  
+      {% if request.user.is_authenticated %}
+      <div class="d-flex align-items-center gap-3 ms-auto">
+        <div class="dropdown">
+          <a class="p-0" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle" style="font-size: 30px; color: #1F3F2E;"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end text-center" aria-labelledby="userDropdown">
+            <li class="dropdown-item fw-bold">{{ request.user.username }}</li>
+            {% if request.user.supplier %}
+              <li><a class="dropdown-item" href="{% url 'accounts:supplier_profile_view' request.user.username %}">الملف الشخصي</a></li>
+            {% else %}
+              <li><a class="dropdown-item" href="{% url 'accounts:beneficiary_profile_view' request.user.username %}">الملف الشخصي</a></li>
+            {% endif %}
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="{% url 'accounts:log_out' %}?next={{ request.path }}">تسجيل الخروج</a></li>
+          </ul>
         </div>
-        <h5 class="text-center mb-4">الإشعارات</h5>
-        <ul class="list-unstyled px-3">
+  
+        <div style="position: relative; cursor: pointer;" onclick="toggleSidebar()">
+          <i class="bi bi-bell" style="font-size: 30px; color: #1F3F2E;"></i>
           {% if notifications %}
-            {% for notification in notifications %}
-            <li class="d-flex justify-content-between align-items-center p-2 mb-2 border rounded shadow-sm" style="background-color: #f9f9f9;">
-              <span>🔔 {{ notification.message }}</span>
-              <a href="{% url 'notification:mark_notification_as_read' notification.id %}?next={{ request.path }}" class="text-danger fs-5 text-decoration-none">&times;</a>
-            </li>
-            {% endfor %}
-          {% else %}
-            <li class="text-center text-muted">لا توجد إشعارات جديدة</li>
+          <span style="
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            font-size: 10px;
+            padding: 2px 5px;
+            border-radius: 50%;">
+            {{ notifications|length }}
+          </span>
           {% endif %}
-        </ul>
+        </div>
+  
+        <div id="sidebarNotifications" style="width: 0; height: 100%; position: fixed; top: 0; left: 0; background-color: #fff; overflow-x: hidden; transition: 0.5s; padding-top: 60px; z-index: 9999; box-shadow: 2px 0 5px rgba(0,0,0,0.2);">
+          <div class="text-end px-3">
+            <a href="#" onclick="toggleSidebar()" class="text-danger fs-4">✖</a>
+          </div>
+          <h5 class="text-center mb-4">الإشعارات</h5>
+          <ul class="list-unstyled px-3">
+            {% if notifications %}
+              {% for notification in notifications %}
+              <li class="d-flex justify-content-between align-items-center p-2 mb-2 border rounded shadow-sm" style="background-color: #f9f9f9;">
+                <span>🔔 {{ notification.message }}</span>
+                <a href="{% url 'notification:mark_notification_as_read' notification.id %}?next={{ request.path }}" class="text-danger fs-5 text-decoration-none">&times;</a>
+              </li>
+              {% endfor %}
+            {% else %}
+              <li class="text-center text-muted">لا توجد إشعارات جديدة</li>
+            {% endif %}
+          </ul>
+        </div>
       </div>
+      {% else %}
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-custom" href="{% url 'accounts:sign_in' %}">تسجيل الدخول</a>
+      </div>
+      {% endif %}
     </div>
-    {% else %}
-    <div class="d-flex gap-2">
-      <a class="btn btn-outline-custom" href="{% url 'accounts:sign_in' %}">تسجيل الدخول</a>
-    </div>
-    {% endif %}
-  </div>
-</nav>
-{% endif %}
+  </nav>
+  
+  <script>
+  function toggleSidebar() {
+    var sidebar = document.getElementById("sidebarNotifications");
+    sidebar.style.width = sidebar.style.width === "250px" ? "0" : "250px";
+  }
+  </script>
+  
+  {% endif %} 
+
+
+<a href="{% url 'order:cart_orders_view' %}" 
+   class="btn btn-light shadow rounded-circle position-fixed d-flex justify-content-center align-items-center"
+   style="bottom: 40px; left: 50px; width: 60px; height: 60px; z-index: 1050; border: 2px solid #1F3F2E;">
+  <i class="bi bi-cart" style="font-size: 1.5rem; color: #1F3F2E;"></i>
+</a>
 
 <main class="mt-4">
   {% if messages %}
     <div class="container mt-3">
       {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
-          <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% elif message.tags == 'error' %}bi-x-circle-fill{% elif message.tags == 'warning' %}bi-exclamation-triangle-fill{% else %}bi-info-circle-fill{% endif %} me-2"></i>
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
-        </div>
+        {% if 'success' in message.tags %}
+          <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> {{ message }}
+        {% elif 'error' in message.tags %}
+          <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-x-circle-fill me-2"></i> {{ message }}
+        {% elif 'warning' in message.tags %}
+          <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ message }}
+        {% else %}
+          <div class="alert alert-info alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i> {{ message }}
+        {% endif %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+          </div>
       {% endfor %}
     </div>
   {% endif %}
