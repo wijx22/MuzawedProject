@@ -18,6 +18,8 @@ class Order(models.Model):
 
     beneficiary = models.ForeignKey(User, on_delete=models.CASCADE, 
                                     related_name='beneficiary_orders')
+
+    
     
     supplier = models.ForeignKey(
         SupplierProfile, on_delete=models.CASCADE, related_name='supplier_orders'

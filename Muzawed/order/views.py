@@ -50,7 +50,13 @@ def add_to_cart_view(request: HttpRequest, product_id: int):
         messages.error(request, "Supplier not found.", "alert-danger")
         return redirect("main:index_view")  # Or wherever appropriate
 
-    cart = Order.objects.filter(supplier=supplier, beneficiary=request.user, in_cart=True).first()
+    #cart = Order.objects.filter(supplier=supplier, beneficiary=request.user, in_cart=True).first()
+    cart = Order.objects.filter(
+    supplier=supplier,
+    beneficiary=request.user,
+    in_cart=True,
+    status__in=['open', 'processing']  
+      ).first()
     if cart is None:  # Check if cart is None
         cart = Order(supplier=supplier, beneficiary=request.user)
         cart.save()
@@ -93,8 +99,9 @@ def add_to_cart_view(request: HttpRequest, product_id: int):
 
 
 def supplier_orders_view(request):
+    '''Displays all orders related to the current supplier.'''
     supplier: SupplierProfile = request.user.supplier
-    orders = Order.objects.filter(supplier=supplier, in_cart=False)
+    orders = Order.objects.filter(supplier=supplier)
 
 
     return render(request, 'order/supplier_orders_list.html', {
@@ -103,26 +110,70 @@ def supplier_orders_view(request):
 
 
 
-def supplier_order_detail(request, order_id):
-    order = Order.objects.get(id=order_id)
-    if order.supplier != request.user.supplierprofile:
-        messages.error(request, "غير مسموح لك بعرض هذا الطلب.")
-        return redirect('supplier_orders_view')  
+#def supplier_order_detail(request, order_id):
+#    '''Shows the details of a specific order for the supplier and allows them to accept or reject the order via POST.'''
+#    order = Order.objects.get(id=order_id)
+#    if request.method == "POST":
+#        action = request.POST.get("action")
+#        if action == "accept":
+#            order.status = 'processing'  
+#            order.save()
+#            messages.success(request, "تم قبول الطلب وهو الآن قيد المعالجة.")
+#        elif action == "reject":
+#            order.status = 'cancelled'  
+#            order.save()
+#            messages.warning(request, "تم رفض الطلب.")
+#            
+#        elif action == "set_delivery_date":
+#          order.delivery_date = timezone.now()
+#          order.save()
+#          messages.success(request, "تم تسجيل وقت التوصيل.")
+#
+#        return redirect('order:supplier_order_detail', order_id=order.id)
+#
+#    cart_items = order.items.all()
+#    return render(request, 'order/supplier_order_detail.html', {
+#        'order': order,
+#        'cart_items': cart_items
+#    })
 
+
+def supplier_order_detail(request, order_id):
+    '''Shows the details of a specific order for the supplier and allows them to accept, reject, delete, or mark as delivered.'''
+    order = Order.objects.get(id=order_id)
+
+    # Check if order is already in "processing" or "closed" state
+    actions_disabled = order.status in ['processing', 'closed', 'cancelled']
+    
     if request.method == "POST":
         action = request.POST.get("action")
-        if action == "accept":
+        
+        if action == "accept" and order.status == 'open':
             order.status = 'processing'  
             order.save()
             messages.success(request, "تم قبول الطلب وهو الآن قيد المعالجة.")
-        elif action == "reject":
+        
+        elif action == "reject" and order.status == 'open':
             order.status = 'cancelled'  
             order.save()
             messages.warning(request, "تم رفض الطلب.")
-        return redirect('supplier_order_detail', order_id=order.id)
+        
+        elif action == "delete" and not actions_disabled:
+            order.delete()
+            messages.success(request, "تم حذف الطلب.")
+            return redirect('order:supplier_orders')  
+        
+        elif action == "mark_delivered" and order.status == 'processing':  
+            order.status = 'closed'  
+            order.delivery_date = timezone.now()  
+            order.save()
+            messages.success(request, "تم تسليم الطلب بنجاح.")
+        
+        return redirect('order:supplier_order_detail', order_id=order.id)
 
     cart_items = order.items.all()
     return render(request, 'order/supplier_order_detail.html', {
         'order': order,
-        'cart_items': cart_items
+        'cart_items': cart_items,
+        'actions_disabled': actions_disabled
     })

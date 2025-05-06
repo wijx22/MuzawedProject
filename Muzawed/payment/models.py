@@ -13,8 +13,8 @@ class Payment(models.Model):
         CREDIT = 'credit', 'بطاقة ائتمان'
         DEFERRED = 'deferred', 'دفع آجل'
 
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='payments')
+
     status = models.CharField(
         max_length=20,
         choices=StatusChoices.choices,
