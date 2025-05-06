@@ -32,6 +32,15 @@ class Order(models.Model):
 
     def _str_(self):
         return f"Order {self.id} - {self.status}"
+    
+
+    @property
+    def total(self):
+        total = 0
+        for item in self.items.all():  
+            total += item.subtotal
+        return total
+    
 
 
 
@@ -40,11 +49,14 @@ class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
 
     def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  
+        self.refresh_from_db()  
         self.subtotal = Decimal(self.quantity) * self.unit_price
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs)  
 
     def _str_(self):
         return f"{self.quantity} x {self.product.name} in Order {self.order.id}"

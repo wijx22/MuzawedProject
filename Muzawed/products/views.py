@@ -195,8 +195,6 @@ def stock_view(request:HttpRequest):
                             notification_type='alert',
                             message=f"انخفاض المخزون: المنتج '{product.name}' أقل من الحد المحدد."
                         )
-
-
            
 
         except AttributeError:
