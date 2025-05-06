@@ -130,8 +130,19 @@ def delete_cart_order_view(request, order_id):
 
 def supplier_orders_view(request):
     '''Displays all orders related to the current supplier.'''
+      
+    if not request.user.is_authenticated:
+       messages.error(request, "يجب عليك تسجيل الدخول للوصول إلى هذه الصفحة.", "alert-danger")
+       return redirect("accounts:sign_in")
+
+    if not SupplierProfile.objects.filter(user=request.user).exists():
+        messages.error(request, "هذه الصفحة مخصصة لحسابات الموردين فقط.", "alert-danger")
+        return redirect('main:index_view')
+
+
     supplier: SupplierProfile = request.user.supplier
     orders = Order.objects.filter(supplier=supplier)
+
 
 
     return render(request, 'order/supplier_orders_list.html', {
