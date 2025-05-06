@@ -1,40 +1,49 @@
 {% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}عرض الشكاوى{% endblock %}
+
+{% block ref %}
+<link rel="stylesheet" href="{% static 'css/report_replies.css' %}">
+{% endblock %}
 
 {% block content %}
-<h2> عرض الشكاوى للمستخدم</h2>
+<div class="container">
+    <p class="mainTitle">الشكاوى الخاصة بك</p>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>اسم المستخدم</th>
-            <th>الرسالة</th>
-            <th>الحالة</th>
-            <th>تاريخ الرسالة</th>
-            <th>رد</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for report in reports %}
+    <table class="red">
+        <thead class="blue">
             <tr>
-                <td>{{ report.user.username }}</td>
-                <td>{{ report.description }}</td>
-                <td>
-                    {% if report.status == 'open' %}
-                        مفتوحة
-                    {% elif report.status == 'in_progress' %}
-                        قيد المعالجة
-                    {% else %}
-                        مغلقة
-                    {% endif %}
-                </td>
-                <td>{{ report.created_at }}</td>
-                <td>
-                    <a href="{% url 'support:reply_to_report_view' report.id %}">
-                        <i class="fas fa-reply"></i> <!-- أيقونة الرد -->
-                    </a>
-                </td>
+                <th>الفئة</th>
+                <th>الموضوع</th>
+                <th>الحالة</th>
+                <th>تاريخ الرسالة</th>
+                <th>رد</th>
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{%endblock%}
+        </thead>
+        <tbody>
+            {% for report in reports %}
+                <tr>
+                    <td>{{ report.category }}</td>
+                    <td>{{ report.subject }}</td>
+                    <td>
+                        {% if report.status == 'open' %}
+                            <span class="status">مفتوحة</span>
+                        {% elif report.status == 'in_progress' %}
+                            <span class="status">قيد المعالجة</span>
+                        {% else %}
+                            <span class="status">مغلقة</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ report.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        <a href="{% url 'support:view_report_replies' report.id %}">
+                            <i class="fas fa-reply"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
