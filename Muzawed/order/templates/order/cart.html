@@ -8,6 +8,8 @@
 {% endblock %}
 
 {% block content %}
+<h2 style="color: black;">Late Payment: {{ order.supplier.late_payment_options|yesno:"مسموح,غير مسموح" }}</h2>
+
 <section class="h-100 h-custom">
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -88,7 +90,6 @@
                                                 <label for="card">بطاقة</label>
                                             </div>
                                         </div> -->
-
                                         <form method="post" action="{% url 'order:process_order' order.id %}">  
                                             {% csrf_token %}  
                                         
