@@ -7,19 +7,19 @@
   <script src="https://cdn.moyasar.com/mpf/1.15.0/moyasar.js"></script>
   <title>دفع</title>
 </head>
-
 <body>
     <div class="mysr-form"></div>
     <script>
       Moyasar.init({
         element: '.mysr-form',
-        amount: 100000,
+        amount: 10000,
         currency: 'SAR',
         description: 'Muzawed Order #1',
         publishable_api_key: 'pk_test_3wkYhtTqESiNDrgecUxsDfFKAphzupRWi4JKL9af', 
         callback_url: 'http://127.0.0.1:8000/', 
         methods: ['creditcard'],
         on_completed: async function (payment) {
+            payment.order_id = "{{ order_id }}";  
             await fetch("/payment/save-payment/", {
                 method: "POST",
                 headers: {
@@ -28,9 +28,9 @@
                 },
                 body: JSON.stringify(payment)
             });
-        },
+        }
+
       });
     </script>
-  </script>
 </body>
 </html>

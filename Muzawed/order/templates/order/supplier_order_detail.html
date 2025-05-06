@@ -112,13 +112,18 @@
   </table>
 </div>
 
+
 <form method="post">
   {% csrf_token %}
   <div class="actions">
-    <button type="submit" name="action" value="accept">قبول الطلب</button>
-    <button type="submit" name="action" value="reject">رفض الطلب</button>
-    <button type="submit" name="action" value="delete" onclick="return confirm('هل أنت متأكد من حذف الطلب؟')">حذف الطلب</button>
+    <button type="submit" name="action" value="accept" {% if actions_disabled or order.status == 'processing' %}disabled{% endif %}>قبول الطلب</button>
+    <button type="submit" name="action" value="reject" {% if actions_disabled %}disabled{% endif %}>رفض الطلب</button>
+    <button type="submit" name="action" value="delete" onclick="return confirm('هل أنت متأكد من حذف الطلب؟')" {% if actions_disabled %}disabled{% endif %}>حذف الطلب</button>
+    
+    <!-- Show "Mark as Delivered" button when the order is in 'processing' state -->
+    {% if order.status == 'processing' %}
+      <button type="submit" name="action" value="mark_delivered">تم التسليم</button>
+    {% endif %}
   </div>
 </form>
-
 {%endblock%}

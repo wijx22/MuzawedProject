@@ -137,23 +137,70 @@ def supplier_orders_view(request):
 
 
 
+#def supplier_order_detail(request, order_id):
+#    '''Shows the details of a specific order for the supplier and allows them to accept or reject the order via POST.'''
+#    order = Order.objects.get(id=order_id)
+#    if request.method == "POST":
+#        action = request.POST.get("action")
+#        if action == "accept":
+#            order.status = 'processing'  
+#            order.save()
+#            messages.success(request, "تم قبول الطلب وهو الآن قيد المعالجة.")
+#        elif action == "reject":
+#            order.status = 'cancelled'  
+#            order.save()
+#            messages.warning(request, "تم رفض الطلب.")
+#            
+#        elif action == "set_delivery_date":
+#          order.delivery_date = timezone.now()
+#          order.save()
+#          messages.success(request, "تم تسجيل وقت التوصيل.")
+#
+#        return redirect('order:supplier_order_detail', order_id=order.id)
+#
+#    cart_items = order.items.all()
+#    return render(request, 'order/supplier_order_detail.html', {
+#        'order': order,
+#        'cart_items': cart_items
+#    })
+
+
 def supplier_order_detail(request, order_id):
-    '''Shows the details of a specific order for the supplier and allows them to accept or reject the order via POST.'''
+    '''Shows the details of a specific order for the supplier and allows them to accept, reject, delete, or mark as delivered.'''
     order = Order.objects.get(id=order_id)
+
+    # Check if order is already in "processing" or "closed" state
+    actions_disabled = order.status in ['processing', 'closed', 'cancelled']
+    
     if request.method == "POST":
         action = request.POST.get("action")
-        if action == "accept":
+        
+        if action == "accept" and order.status == 'open':
             order.status = 'processing'  
             order.save()
             messages.success(request, "تم قبول الطلب وهو الآن قيد المعالجة.")
-        elif action == "reject":
+        
+        elif action == "reject" and order.status == 'open':
             order.status = 'cancelled'  
             order.save()
             messages.warning(request, "تم رفض الطلب.")
+        
+        elif action == "delete" and not actions_disabled:
+            order.delete()
+            messages.success(request, "تم حذف الطلب.")
+            return redirect('order:supplier_orders')  
+        
+        elif action == "mark_delivered" and order.status == 'processing':  
+            order.status = 'closed'  
+            order.delivery_date = timezone.now()  
+            order.save()
+            messages.success(request, "تم تسليم الطلب بنجاح.")
+        
         return redirect('order:supplier_order_detail', order_id=order.id)
 
     cart_items = order.items.all()
     return render(request, 'order/supplier_order_detail.html', {
         'order': order,
-        'cart_items': cart_items
+        'cart_items': cart_items,
+        'actions_disabled': actions_disabled
     })

@@ -1,19 +1,41 @@
 from django.shortcuts import render
-
-# Create your views here.
-def payment_page(request):
-    return render(request, 'payment/payment.html')
-
-
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
+from payment.models import Payment
+from order.models import Order
+
+
+
+def payment_page(request, order_id):
+    return render(request, 'payment/payment.html', {'order_id': order_id})
 
 @csrf_exempt
 def save_payment(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        # تقدر تحفظها في قاعدة البيانات هنا
-        print("تم الدفع:", data)
-        return JsonResponse({'message': 'Payment received!'}, status=200)
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+        try:
+            data = json.loads(request.body)
+            print("تم الدفع:", data)
+
+            order_id = data.get('order_id')  
+            ref_id = data.get('id')
+            status = data.get('status')
+            amount = data.get('amount') / 100 
+            order = Order.objects.get(id=order_id)
+
+            Payment.objects.create(
+                order=order,
+                status='completed' if status == 'paid' else 'cancelled',
+                total_amount=amount,
+                payment_method='credit',
+                ref_id=ref_id
+            )
+
+            return JsonResponse({'message': 'تم حفظ الدفع بنجاح'}, status=201)
+
+        except Order.DoesNotExist:
+            return JsonResponse({'error': 'الطلب غير موجود'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'طلب غير صالح'}, status=400)
