@@ -20,7 +20,7 @@
   <div class="container d-flex align-items-center justify-content-between">
 
     <a class="navbar-brand" href="{% url 'main:index_view' %}">
-      <img src="{% static 'img/logo.svg' %}" alt="مزود" width="200">
+      <img src="{% static 'img/logo.svg' %}" alt="مزود" width="80">
     </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -31,7 +31,7 @@
     <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
       <ul class="navbar-nav text-center">
         <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:index_view' %}">الرئيسية</a></li>
-        <li class="nav-item"><a class="nav-link mx-2" href="{% url 'supplier:store_view' %}?supplier_id=15">مزوديننا</a></li>
+        <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:our_suppliers' %}">مزوديننا</a></li>
         <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:contact_view' %}">تواصل معنا</a></li>
         <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:about_view' %}">عن مزود</a></li>
       </ul>

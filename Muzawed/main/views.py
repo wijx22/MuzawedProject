@@ -13,6 +13,7 @@ from .models import Contact
 from products.models import Product, City
 import json
 from support.models import Report
+from django.db.models import Q, Min, Max
 
 
 
@@ -112,27 +113,39 @@ def store_status_handler(request):
     return redirect('main:index_view')
 
 
-def our_suppliers(request):
-    selected_subcategories = request.GET.getlist("subcategory")
-    category_filter = request.GET.get("category")
 
+from django.shortcuts import render
+from products.models import Product
+from supplier.models import City
+
+def our_suppliers_view(request):
+    category = request.GET.get("category")
+    subcategory = request.GET.get("subcategory")
     products = Product.objects.all()
 
-    if category_filter:
-        products = products.filter(category=category_filter)
+    if category:
+        products = products.filter(category=category)
 
-    if selected_subcategories:
-        products = products.filter(subcategory__in=selected_subcategories)
+    if subcategory:
+        products = products.filter(subcategory=subcategory)
+
+    # التصنيفات الفرعية حسب التصنيف المختار
+    category_subs = {
+        'agricultural': Product.AgriculturalSubcategory.choices,
+        'processed': Product.ProcessedFoodSubcategory.choices,
+        'industrial': Product.IndustrialSubcategory.choices,
+        'special': Product.SpecialProductsSubcategory.choices,
+        'miscellaneous': Product.MiscellaneousSubcategory.choices,
+    }
+
+    subcategories = category_subs.get(category, [])
 
     context = {
-        "products": products,
-        "product_categories": Product.ProductCategory.choices,
-        "selected_categories": selected_subcategories,
-        "covered_cities": City.objects.all(),
-        "subcategories": Product.AgriculturalSubcategory.choices +
-                        Product.ProcessedFoodSubcategory.choices +
-                        Product.IndustrialSubcategory.choices +
-                        Product.SpecialProductsSubcategory.choices +
-                        Product.MiscellaneousSubcategory.choices,
+        'product_categories': Product.ProductCategory.choices,
+        'subcategories': subcategories,
+        'selected_category': category,
+        'selected_subcategory': subcategory,
+        'products': products,
     }
+
     return render(request, 'main/our_suppliers.html', context)
