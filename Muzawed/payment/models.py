@@ -1,11 +1,11 @@
 from django.db import models
 
 # Create your models here.
-
+from order.models import Order
 
 
 class Payment(models.Model):
-    order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='payments')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='payments')
 
     status = models.CharField(
         max_length=20,
