@@ -98,6 +98,31 @@ def add_to_cart_view(request: HttpRequest, product_id: int):
 
 
 
+def cart_orders_view(request):
+    """
+    Displays all 'in cart' orders for the logged-in user as cards,
+    with options to view details/checkout or delete the order.
+    """
+    if not request.user.is_authenticated:
+        return render(request, 'accounts/sign_in.html')  
+
+    cart_orders = Order.objects.filter(beneficiary=request.user, in_cart=True).order_by('created_at')
+
+    context = {
+        'cart_orders': cart_orders,
+    }
+    return render(request, 'order/cart_orders.html',context)
+
+
+def delete_cart_order_view(request, order_id):
+    """
+    Deletes an entire order from the cart.
+    """
+
+    order = get_object_or_404(Order, id=order_id, beneficiary=request.user, in_cart=True)
+    order.delete()  # This will also delete associated CartItems due to on_delete=CASCADE
+    return redirect('order:cart_orders_view')  # Redirect back to the cart view
+
 
 
 def supplier_orders_view(request):
