@@ -11,9 +11,9 @@ from django.contrib import messages
 from django.db import transaction
 
 from accounts.models import ProfileBeneficiary, SupplierProfile
-def cart_view(request:HttpRequest):
-    items =Product.objects.all()
-    return render(request, "order/cart.html",{"items":items})
+#def cart_view(request:HttpRequest):
+#    items =Product.objects.all()
+#    return render(request, "order/cart.html",{"items":items})
 
 
 
@@ -57,6 +57,7 @@ def add_to_cart_view(request: HttpRequest, product_id: int):
     in_cart=True,
     status__in=['open', 'processing']  
       ).first()
+    
     if cart is None:  # Check if cart is None
         cart = Order(supplier=supplier, beneficiary=request.user)
         cart.save()

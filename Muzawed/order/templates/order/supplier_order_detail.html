@@ -113,16 +113,33 @@
 </div>
 
 
-<form method="post">
+<form method="post" class="text-center mt-4">
   {% csrf_token %}
-  <div class="actions">
-    <button type="submit" name="action" value="accept" {% if actions_disabled or order.status == 'processing' %}disabled{% endif %}>قبول الطلب</button>
-    <button type="submit" name="action" value="reject" {% if actions_disabled %}disabled{% endif %}>رفض الطلب</button>
-    <button type="submit" name="action" value="delete" onclick="return confirm('هل أنت متأكد من حذف الطلب؟')" {% if actions_disabled %}disabled{% endif %}>حذف الطلب</button>
-    
-    <!-- Show "Mark as Delivered" button when the order is in 'processing' state -->
+  <div class="d-inline-flex flex-wrap justify-content-center gap-3">
+    <button type="submit" name="action" value="accept" 
+            class="btn px-4" style="background-color: #264F3F; color: white;"
+            {% if actions_disabled or order.status == 'processing' %}disabled{% endif %}>
+      قبول الطلب
+    </button>
+
+    <button type="submit" name="action" value="reject" 
+            class="btn btn-warning px-4" 
+            {% if actions_disabled %}disabled{% endif %}>
+      رفض الطلب
+    </button>
+
+    <!--<button type="submit" name="action" value="delete" 
+            class="btn btn-danger px-4" 
+            onclick="return confirm('هل أنت متأكد من حذف الطلب؟')" 
+            {% if actions_disabled %}disabled{% endif %}>
+      حذف الطلب
+    </button>-->
+
     {% if order.status == 'processing' %}
-      <button type="submit" name="action" value="mark_delivered">تم التسليم</button>
+      <button type="submit" name="action" value="mark_delivered" 
+              class="btn px-4" style="background-color: #264F3F; color: white;">
+        تم التسليم
+      </button>
     {% endif %}
   </div>
 </form>
