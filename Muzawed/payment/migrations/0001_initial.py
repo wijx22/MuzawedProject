@@ -14,53 +14,16 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="Payment",
+            name='Payment',
             fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "status",
-                    models.CharField(
-                        choices=[
-                            ("pending", "Pending"),
-                            ("completed", "Completed"),
-                            ("cancelled", "Cancelled"),
-                        ],
-                        default="pending",
-                        max_length=20,
-                    ),
-                ),
-                ("total_amount", models.DecimalField(decimal_places=2, max_digits=10)),
-                (
-                    "payment_method",
-                    models.CharField(
-                        choices=[
-                            ("cash", "Cash"),
-                            ("credit", "Credit Card"),
-                            ("deferred", "Deferred Payment"),
-                        ],
-                        default="cash",
-                        max_length=20,
-                    ),
-                ),
-                ("ref_id", models.CharField(blank=True, max_length=100, null=True)),
-                ("created_at", models.DateTimeField(auto_now_add=True)),
-                ("updated_at", models.DateTimeField(auto_now=True)),
-                (
-                    "order",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="payments",
-                        to="order.order",
-                    ),
-                ),
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('status', models.CharField(choices=[('pending', 'لم يتم الدفع'), ('completed', 'مكتمل'), ('cancelled', 'ملغى')], default='pending', max_length=20)),
+                ('total_amount', models.DecimalField(decimal_places=2, max_digits=10)),
+                ('payment_method', models.CharField(choices=[('cash', 'نقدا'), ('credit', 'بطاقة ائتمان'), ('deferred', 'دفع آجل')], default='cash', max_length=20)),
+                ('ref_id', models.CharField(blank=True, max_length=100, null=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='order.order')),
             ],
         ),
     ]
