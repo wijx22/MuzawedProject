@@ -121,6 +121,14 @@ td i{
 .container-section table tbody td:last-child{
     white-space: nowrap;
 }
+.product-card{
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  min-height: 330px;
+
+
+}
 .board{
     padding: 30px;
     width: 94%;
@@ -173,10 +181,14 @@ td i{
 .product-title {
     font-size: 32px;
     font-weight: bold;
-    color: #333;
+    color: #4A3A20;
 }
 .product-category{
     font-size:12px ;
+    color: #e67e22;
+}
+.product-category span{
+  color: #4A3A20;
 }
 .product-description {
     font-size: 18px;
@@ -296,6 +308,9 @@ td i{
     margin: 0;
     font-weight: 700;
     transition: all 0.3s ease;
+    white-space: nowrap; 
+    overflow: hidden;     
+    text-overflow: ellipsis; 
   }
   
   .card__description {
@@ -304,6 +319,9 @@ td i{
     margin: 0;
     opacity: 0.7;
     transition: all 0.3s ease;
+    white-space: nowrap; 
+    overflow: hidden;     
+    text-overflow: ellipsis; 
   }
   
   .card__footer {

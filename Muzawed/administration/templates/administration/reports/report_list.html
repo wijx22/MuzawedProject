@@ -1,6 +1,36 @@
-{% extends 'main/base.html' %}
+{% extends "administration/dashboard.html" %}
 <!--عرض شكاوي بحيث المستخدم مايخرج الا شكاوي حقتة والادمن يشوف كل الشكاوي-->
+{%load static %}
 {% block content %}
+
+<style>
+    footer {
+      background-color: #ffffff;
+      border-top: 1px solid #e0e0e0;
+      text-align: center;
+      padding: 15px 10px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    footer img {
+      height: 40px;
+      margin-bottom: 5px;
+    }
+    
+    footer span {
+      display: block;
+      color: #006400; 
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+    
+  </style>
+  
 <!--<h2>عرض الشكاوى</h2>
 
 <table class="table table-bordered">
@@ -40,7 +70,7 @@
 
 
 
-<h2 style="text-align: center; margin-bottom: 20px;">
+<h2 style="text-align: center; margin-top: 20px;">
     <i class="fas fa-exclamation-circle" style="color: #dc3545;"></i>
     عرض الشكاوى
   </h2>
@@ -72,15 +102,13 @@
                 <td>{{ report.created_at }}</td>
                 <td>
                     {% if request.user.is_staff %}
-                        <!-- إذا كان المستخدم إدمن يظهر له زر الرد -->
                         <a href="{% url 'administration:reply_to_report_view' report.id %}">
                             <i class="fas fa-reply"></i> 
                         </a>
                     {% else %}
-                        <!-- إذا كان مستخدم عادي يظهر له زر لعرض الرد -->
                         {% if report.reply %}
                             <a href="{% url 'administration:view_report_reply' report.id %}">
-                                <i class="fas fa-eye"></i> <!-- أيقونة عرض -->
+                                <i class="fas fa-eye"></i> 
                             </a>
                         {% else %}
                             لا يوجد رد بعد
@@ -91,5 +119,9 @@
         {% endfor %}
     </tbody>
 </table>
-
+<footer>
+    <img src="{% static 'img/logo.svg' %}" alt="مزود">
+    <span>© 2025 - لوحة تحكم الأدمن</span>
+  </footer>
+  
 {%endblock%}

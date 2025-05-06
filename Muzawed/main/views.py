@@ -10,6 +10,12 @@ from datetime import datetime
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from .models import Contact
+from products.models import Product, City
+import json
+from support.models import Report
+
+
+
 
 #def index_view(request):
 #    if hasattr(request.user, 'supplier'):
@@ -20,10 +26,17 @@ from .models import Contact
 #    else:
 #        return render(request, 'main/index.html')
 
+
 def index_view(request):
     if hasattr(request.user, 'supplier'):
         supplier = request.user.supplier
-        return render(request, 'main/supplier_index.html', {'supplier': supplier})
+
+       
+        report = Report.objects.filter(user=request.user).first()
+
+        context = {'supplier': supplier, 'report_id': report.id if report else None}
+
+        return render(request, 'main/supplier_index.html', context)
     else:
         return render(request, 'main/index.html')
 
@@ -100,5 +113,26 @@ def store_status_handler(request):
 
 
 def our_suppliers(request):
+    selected_subcategories = request.GET.getlist("subcategory")
+    category_filter = request.GET.get("category")
 
-    return render(request, 'main/our_suppliers.html')
+    products = Product.objects.all()
+
+    if category_filter:
+        products = products.filter(category=category_filter)
+
+    if selected_subcategories:
+        products = products.filter(subcategory__in=selected_subcategories)
+
+    context = {
+        "products": products,
+        "product_categories": Product.ProductCategory.choices,
+        "selected_categories": selected_subcategories,
+        "covered_cities": City.objects.all(),
+        "subcategories": Product.AgriculturalSubcategory.choices +
+                        Product.ProcessedFoodSubcategory.choices +
+                        Product.IndustrialSubcategory.choices +
+                        Product.SpecialProductsSubcategory.choices +
+                        Product.MiscellaneousSubcategory.choices,
+    }
+    return render(request, 'main/our_suppliers.html', context)

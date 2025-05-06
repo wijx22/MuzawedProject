@@ -1,3 +1,8 @@
+.orange-title{
+    
+    color: #e67e22;
+}
+
 .logo-container {
     width: 250px; 
     height: 250px; 
@@ -40,7 +45,49 @@
     padding: 30px;
     width: 100%;
     margin: 5px 0;
+    height: auto;
     overflow: auto;
     background: #ffffff81;
     border-radius: 8px;
 }
+
+.form-check-label {
+    font-size: 12px;
+    font-weight: normal;
+}
+.filter-title{
+    font-size: 16px;
+    color: #4A3A20;
+}
+/* pagination */
+.pagination {
+    margin-top: auto;        /* Push pagination to the bottom */
+}
+.pagination a {
+    text-decoration: none; 
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.pagination a:hover {
+    color: #e67e22 !important;
+}
+
+.pagination .current {
+    font-weight: bold;
+    font-size: 1em;
+}
+
+.pagination .disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.pagination .disabled:hover {
+    background-color: #e67e22 !important; 
+    color: #fff !important;
+}
+.current_page{
+    background-color: #e67e22 !important; 
+
+}
+

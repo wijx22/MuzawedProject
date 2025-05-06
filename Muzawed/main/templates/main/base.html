@@ -31,7 +31,7 @@
     <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
       <ul class="navbar-nav text-center">
         <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:index_view' %}">الرئيسية</a></li>
-        <li class="nav-item"><a class="nav-link mx-2" href="#">مزوديننا</a></li>
+        <li class="nav-item"><a class="nav-link mx-2" href="{% url 'supplier:store_view' %}?supplier_id=15">مزوديننا</a></li>
         <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:contact_view' %}">تواصل معنا</a></li>
         <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:about_view' %}">عن مزود</a></li>
       </ul>
@@ -49,7 +49,6 @@
         <li class="dropdown-item fw-bold">{{ request.user.username }}</li>
         {% if request.user.supplier %}
           <li><a class="dropdown-item" href="{% url 'accounts:supplier_profile_view' request.user.username %}">الملف الشخصي</a></li>
-          
         {% else %}
           <li><a class="dropdown-item" href="{% url 'accounts:beneficiary_profile_view' request.user.username %}">الملف الشخصي</a></li>
         {% endif %}
@@ -145,7 +144,9 @@
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpCrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 
 <script>
 function toggleSidebar() {

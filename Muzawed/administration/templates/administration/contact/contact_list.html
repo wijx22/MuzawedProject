@@ -48,6 +48,7 @@
               <th class="hide-mobile" scope="col">اسم المستخدم</th>
               <th scope="col">الرسالة</th>
               <th class="hide-mobile" scope="col">تاريخ الإرسال</th>
+              <th scope="col">الحالة</th>
             </tr>
           </thead>
           <tbody>
@@ -64,6 +65,22 @@
               </td>
               <td>{{ msg.message }}</td>
               <td class="hide-mobile">{{ msg.created_at|date:"Y-m-d H:i" }}</td>
+
+              <!--test is read-->
+              <td style="text-align: center;">
+                <form method="post" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="message_id" value="{{ msg.id }}">
+                  <button type="submit" 
+                          class="btn btn-sm rounded-circle" 
+                          style="width: 20px; height: 20px; padding: 0; 
+                                 background-color: {% if msg.is_read %}green{% else %}red{% endif %}; 
+                                 border: none;"
+                          title="{% if msg.is_read %}تمت القراءة{% else %}غير مقروءة{% endif %}">
+                  </button>
+                </form>
+              </td>
+                        
             </tr>
             {% empty %}
             <tr>

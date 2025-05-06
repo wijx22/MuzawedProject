@@ -1,34 +1,103 @@
 {% extends 'main/base.html' %}
-{% block title %}ملف المورد{% endblock %}
+{% load static %}
+
+{% block title %}مزودينا{% endblock %}
+
 {% block content %}
-<div class="container py-4">
-  <h2 class="fw-bold mb-3 text-end">ملف المورد: {{ supplier.name }}</h2>
+<div class="container py-5">
 
-  <div class="mb-4 text-end">
-    <p><strong>اسم الشركة:</strong> {{ supplier.company_name }}</p>
-    <p><strong>المدينة:</strong> {{ supplier.city }}</p>
-    <p><strong>سياسة التوريد:</strong> {{ supplier.get_supply_policy_display }}</p>
-    <p><strong>التوصيل:</strong> {{ supplier.delivery_method }}</p>
-
+  <div class="row justify-content-center text-center mb-5">
+    <div class="col-md-6">
+      <h2 class="fw-bold mb-4" style="color: #EFC234;">وش حاب تطلب اليوم؟</h2>
+      <img src="{% static 'img/photo.svg' %}" alt="مزودينا" class="img-fluid mx-auto d-block" style="max-width: 500px;">
+    </div>
   </div>
 
-  <hr>
-  <h4 class="mb-3 text-end">المنتجات المتوفرة</h4>
+  <div class="row justify-content-end mb-3">
+    <div class="col-3 text-end d-lg-none">
+      <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
+        <i class="bi bi-filter" style="font-size: 1.5rem;"></i>
+      </button>
+    </div>
+  </div>
+
   <div class="row">
-    {% for product in products %}
-    <div class="col-md-4 mb-4">
-      <div class="card h-100">
-        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-        <div class="card-body text-end">
-          <h5 class="card-title">{{ product.name }}</h5>
-          <p class="card-text">السعر: {{ product.price }} ريال</p>
-          <p class="card-text">الكمية: {{ product.quantity }}</p>
+
+    <div class="col-lg-3 collapse d-lg-block" id="filterCollapse">
+      <form method="GET" action="">
+        <div class="sidebar-filter sticky-top">
+          <h5 class="mb-3">التصنيفات الفرعية</h5>
+          {% for val, label in subcategories %}
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="category" value="{{ val }}"
+              id="category-{{ val }}" {% if val in selected_categories %}checked{% endif %}>
+            <label class="form-check-label" for="category-{{ val }}">{{ label }}</label>
+          </div>
+          {% endfor %}
+
+          <div class="mt-4">
+            <h6>المدينة</h6>
+            <select class="form-select" name="city">
+              <option value="">كل المدن</option>
+              {% for city in covered_cities %}
+              <option value="{{ city.id }}" {% if request.GET.city == city.id|stringformat:'s' %}selected{% endif %}>{{ city.get_city_display }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <button class="btn btn-primary-custom mt-3 w-100" type="submit">تطبيق التصفية</button>
         </div>
+      </form>
+    </div>
+
+    <div class="col-lg-9">
+      <h4 class="fw-bold mb-3 text-center" style="color: #1F3F2E;">التصنيفات</h4>
+      <div class="row row-cols-2 row-cols-md-4 g-3">
+        {% for value, label in product_categories %}
+        {% if value == "special" %}
+          <a href="?category={{ value }}&subcategory=organic&subcategory=gluten_free" class="text-decoration-none">
+        {% elif value == "agricultural" %}
+          <a href="?category={{ value }}&subcategory=grains&subcategory=legumes&subcategory=vegetables&subcategory=fruits&subcategory=herbs" class="text-decoration-none">
+        {% elif value == "processed" %}
+          <a href="?category={{ value }}&subcategory=beverages&subcategory=dairy_products&subcategory=sweets_and_bakery&subcategory=meat_products&subcategory=frozen_foods" class="text-decoration-none">
+        {% elif value == "industrial" %}
+          <a href="?category={{ value }}&subcategory=canned_goods&subcategory=spices_and_herbs" class="text-decoration-none">
+        {% elif value == "miscellaneous" %}
+          <a href="?category={{ value }}&subcategory=honey_and_oils&subcategory=other" class="text-decoration-none">
+        {% else %}
+          <a href="?category={{ value }}" class="text-decoration-none">
+        {% endif %}
+            <div class="col">
+              <div class="card h-100 shadow-sm text-center border-0" style="background-color: #f9f9f9;">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                  <i class="fa fa-box fa-2x mb-2 text-success"></i>
+                  <h6 class="card-title text-dark">{{ label }}</h6>
+                </div>
+              </div>
+            </div>
+          </a>
+      {% endfor %}          
       </div>
     </div>
-    {% empty %}
-    <p class="text-center">لا توجد منتجات متاحة حالياً.</p>
-    {% endfor %}
   </div>
 </div>
+
+
+<script>
+document.querySelectorAll(".category-card").forEach(card => {
+  card.addEventListener("click", () => {
+    const category = card.dataset.category;
+    const filterCollapse = document.getElementById("filterCollapse");
+
+
+    if (filterCollapse.classList.contains("collapse")) {
+      filterCollapse.classList.add("show");
+    }
+
+    document.querySelectorAll("input[name='category']").forEach(cb => {
+      cb.checked = cb.id.startsWith("category-" + category);
+    });
+  });
+});
+</script>
 {% endblock %}
