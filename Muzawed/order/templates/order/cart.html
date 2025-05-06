@@ -8,8 +8,6 @@
 {% endblock %}
 
 {% block content %}
-<h2 style="color: black;">Late Payment: {{ order.supplier.late_payment_options|yesno:"مسموح,غير مسموح" }}</h2>
-
 <section class="h-100 h-custom">
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -39,8 +37,7 @@
                                             <div class="d-flex justify-content-between">
                                                 <div class="d-flex flex-row align-items-center">
                                                     <div>
-                                                        <img src={% if item.product.image %} "{{ item..product.image.url }}" 
-                                                        {% else%} "{% static 'image/default.png' %}" {% endif %}
+                                                        <img src={% if item.product.image %} "{{ item..product.image.url }}" {% else%} "{% static 'image/default.png' %}" {% endif %}
                                                             class="img-fluid rounded-3" alt="product item"
                                                             style="width: 65px;">
                                                     </div>
@@ -72,34 +69,17 @@
 
                                 <div class="card bg-orange text-white rounded-3">
                                     <div class="card-body">
-                                        <!-- <div class="d-flex justify-content-between align-items-center mb-4">
-                                            <h5 class="mb-0">اختر طريقة الدفع</h5>
-                                        </div>
-                                        <div class="mb-3">
-                                            <div>
-                                                <input type="radio" id="cash" name="paymentMethod" value="cash" checked>
-                                                <label for="cash">نقد</label>
-                                            </div>
-                                            <div>
-                                                <input type="radio" id="late-payment" name="paymentMethod"
-                                                    value="late-payment">
-                                                <label for="late-payment">دفع آجل</label>
-                                            </div>
-                                            <div>
-                                                <input type="radio" id="card" name="paymentMethod" value="card">
-                                                <label for="card">بطاقة</label>
-                                            </div>
-                                        </div> -->
-                                        <form method="post" action="{% url 'order:process_order' order.id %}">  
-                                            {% csrf_token %}  
-                                        
+
+                                        <form method="POST" action="{% url 'order:process_order' order.id %}">  
+                                            {% csrf_token %}
                                             <!-- Payment Method -->
                                             <div class="mb-3">
                                                 <div>
                                                     <input type="radio" id="cash" name="payment_method" value="cash" checked>
                                                     <label for="cash">نقد</label>
                                                 </div>
-                                                {%if order.supplier.late_payment_options%}
+
+                                                {%if  order.supplier.supply_details.late_payment_options%}
                                                 <div>
                                                     <input type="radio" id="late-payment" name="payment_method" value="deferred">
                                                     <label for="late-payment">دفع آجل</label>
@@ -144,71 +124,6 @@
                                             </button>
                                         </form>
 
-                                        <!-- <form class="mt-4 d-none" id="cardDetails">
-                                            <p class="small mb-2">نوع البطاقة</p>
-                                            <a href="#!" type="submit" class="text-white"><i
-                                                    class="fab fa-cc-mastercard fa-2x me-2"></i></a>
-                                            <a href="#!" type="submit" class="text-white"><i
-                                                    class="fab fa-cc-visa fa-2x me-2"></i></a>
-                                            <div data-mdb-input-init class="form-outline form-white mb-3">
-                                                <input type="text" id="typeName" class="form-control form-control-lg"
-                                                    siez="17" placeholder="SABREEN BIN SALMAN" />
-                                                <label class="form-label" for="typeName">اسم حامل البطاقة</label>
-                                            </div>
-
-                                            <div data-mdb-input-init class="form-outline form-white mb-3">
-                                                <input type="text" id="typeText" class="form-control form-control-lg"
-                                                    siez="17" placeholder="1234 5678 9012 3457" minlength="19"
-                                                    maxlength="19" />
-                                                <label class="form-label" for="typeText">رقم البطاقة</label>
-                                            </div>
-
-                                            <div class="row mb-3">
-                                                <div class="col-md-6">
-                                                    <div data-mdb-input-init class="form-outline form-white">
-                                                        <input type="text" id="typeExp"
-                                                            class="form-control form-control-lg" placeholder="MM/YYYY"
-                                                            size="7" id="exp" minlength="7" maxlength="7" />
-                                                        <label class="form-label" for="typeExp">تاريخ الانتهاء</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div data-mdb-input-init class="form-outline form-white">
-                                                        <input type="password" id="typeText"
-                                                            class="form-control form-control-lg"
-                                                            placeholder="&#9679;&#9679;&#9679;" size="1" minlength="3"
-                                                            maxlength="3" />
-                                                        <label class="form-label" for="typeText">CVV</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </form> -->
-<!-- 
-                                        <hr class="my-4">
-
-                                        <div class="d-flex justify-content-between">
-                                            <p class="mb-2">المجموع الفرعي </p>
-                                            <p class="mb-2">{{items.price}} ﷼</p>
-                                        </div>
-
-                                        <div class="d-flex justify-content-between">
-                                            <p class="mb-2">رسوم التوصيل</p>
-                                            <p class="mb-2"> 20.00 ﷼</p>
-                                        </div>
-                                        <hr class="my-4">
-
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <p class="mb-2">المجموع (شامل ضريبة القيمة المضافة)</p>
-                                            <p class="mb-2">{{items.price}} ﷼</p>
-                                        </div>
-
-                                        <button type="submit" class="btn-primary-custom">
-                                            <div class="d-flex justify-content-between">
-                                                <span>اتمام الطلب </span>
-                                            </div>
-                                        </button>
- -->
                                     </div>
                                 </div>
 
