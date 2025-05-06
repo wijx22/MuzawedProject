@@ -19,6 +19,7 @@
         callback_url: 'http://127.0.0.1:8000/', 
         methods: ['creditcard'],
         on_completed: async function (payment) {
+            payment.order_id = "{{ order_id }}";  
             await fetch("/payment/save-payment/", {
                 method: "POST",
                 headers: {
@@ -27,7 +28,8 @@
                 },
                 body: JSON.stringify(payment)
             });
-        },
+        }
+
       });
     </script>
 </body>

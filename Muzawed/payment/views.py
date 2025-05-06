@@ -7,11 +7,8 @@ from order.models import Order
 
 
 
-# Create your views here.
-def payment_page(request):
-    
-    return render(request, 'payment/payment.html')
-
+def payment_page(request, order_id):
+    return render(request, 'payment/payment.html', {'order_id': order_id})
 
 @csrf_exempt
 def save_payment(request):
