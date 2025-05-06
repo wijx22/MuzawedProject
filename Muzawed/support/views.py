@@ -48,6 +48,18 @@ def view_report_replies(request, report_id):
     )
 
 
+
+
+
+def view_reports(request):
+    # عرض جميع الشكاوى
+    reports = Report.objects.filter(user=request.user)
+    
+    return render(request, "reports/report_list.html", {
+        "reports": reports
+    })
+
+
 # def reply_to_report_view(request, report_id):
 #    report = Report.objects.get(id=report_id)
 #    if request.method == 'POST':
