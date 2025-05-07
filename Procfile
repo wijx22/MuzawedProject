@@ -1,1 +1,1 @@
-web: gunicorn Muzawed.Muzawed.wsgi:application --chdir Muzawed
+web: gunicorn Muzawed.wsgi:application --chdir Muzawed
