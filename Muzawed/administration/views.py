@@ -16,57 +16,6 @@ from django.db.models import Sum
 
 User = get_user_model()
 
-#def dashboard(request):
-#    new_suppliers = SupplierProfile.objects.filter(status='Pending')
-#
-#    new_suppliers_count = SupplierProfile.objects.count()
-#    beneficiaries_count = ProfileBeneficiary.objects.count()
-#    total_users = User.objects.count()
-#
-#
-#    status_counts = SupplierProfile.objects.values('status').annotate(count=Count('id'))
-#    status_data = {
-#        'مقبول': 0,
-#        'مرفوض': 0,
-#        'قيد المعالجة': 0,
-#        'لا طلب': 0
-#    }
-#
-#    for status in status_counts:
-#        if status['status'] == 'Accepted':
-#            status_data['مقبول'] = status['count']
-#        elif status['status'] == 'Rejected':
-#            status_data['مرفوض'] = status['count']
-#        elif status['status'] == 'Pending':
-#            status_data['قيد المعالجة'] = status['count']
-#        elif status['status'] == 'No-request':
-#            status_data['لا طلب'] = status['count']
-#
-#    print(status_data)
-#    
-#    #suppliers = SupplierProfile.objects.all()
-#    open_count = Report.objects.filter(status='open').count()
-#    closed_count = Report.objects.filter(status='closed').count()
-#    in_progress_count = Report.objects.filter(status='in_progress').count()
-#
-#
-#    context = {
-#
-#        'new_suppliers_count': new_suppliers_count,
-#        'beneficiaries_count': beneficiaries_count,
-#        'total_users': total_users,
-#        'status_counts': status_data, 
-#        'suppliers': new_suppliers,
-#        'open_count': open_count,
-#        'closed_count': closed_count,
-#        'in_progress_count': in_progress_count
-#
-#
-#
-#    }
-#
-#    return render(request, 'administration/dashboard.html', context)
-#
 
 
 def dashboard(request):
@@ -132,36 +81,6 @@ def dashboard(request):
     return render(request, 'administration/dashboard.html', context)
 
 
-#دالة مع حذف سبلاير 
-#def suppliers_list_view(request):
-#    suppliers = SupplierProfile.objects.select_related('user').all()
-#
-#    if request.method == 'POST':
-#        supplier_id = request.POST.get('supplier_id')
-#
-#        try:
-#            if 'delete_supplier' in request.POST:
-#                supplier_profile = SupplierProfile.objects.get(id=supplier_id)
-#
-#                supplier_profile.user.delete()
-#                supplier_profile.delete()
-#
-#
-#
-#                messages.success(request, "تم حذف المورد بنجاح.")
-#        except SupplierProfile.DoesNotExist:
-#            messages.error(request, "المورد غير موجود.")
-#        except Exception as e:
-#            messages.error(request, f"حدث خطأ: {str(e)}")
-#
-#        return redirect('administration:suppliers_list_view')
-#
-#    return render(request, 'administration/supplier/suppliers_list.html', {
-#        'suppliers': suppliers,
-#
-#        'hide_header': True
-#
-#    })
 
 def suppliers_list_view(request):
     """
@@ -467,16 +386,6 @@ def reply_to_report_view(request, report_id):
 
     })
 
-
-#def order_list_view(request:HttpRequest):
-#    if request.user.is_staff:
-#        orders = Order.objects.all()
-#    else:
-#        orders = Order.objects.filter(user=request.user)
-#
-#    return render(request, 'administration/orders/order_list.html', {
-#        'orders': orders,
-#    })
 
 
 
