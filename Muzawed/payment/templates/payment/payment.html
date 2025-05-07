@@ -12,9 +12,9 @@
     <script>
       Moyasar.init({
         element: '.mysr-form',
-        amount: 10000,
+        amount: { amount },
         currency: 'SAR',
-        description: 'Muzawed Order #1',
+        description: 'Muzawed Order #1{{ order_id }}',
         publishable_api_key: 'pk_test_3wkYhtTqESiNDrgecUxsDfFKAphzupRWi4JKL9af', 
         callback_url: 'http://127.0.0.1:8000/', 
         methods: ['creditcard'],
@@ -29,7 +29,7 @@
                 body: JSON.stringify(payment)
             });
         }
-
+        
       });
     </script>
 </body>
