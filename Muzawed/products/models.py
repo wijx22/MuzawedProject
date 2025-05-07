@@ -113,3 +113,16 @@ class Product(models.Model):
         products = Product.objects.filter(City__id=self.City.id, City__suppliers=supplier).exclude(pk=self.pk) 
         return products
        
+
+class CategoryImage(models.Model):
+    category_name = models.CharField(
+        max_length=50,
+        unique=True,
+        choices=[(tag.value, tag.label) for tag in Product.ProductCategory],
+    )  # Match ProductCategory choices
+    image = models.ImageField(
+        upload_to="category_images/", null=True, blank=True
+    )  # Default image for the category
+
+    def __str__(self):
+        return self.category_name

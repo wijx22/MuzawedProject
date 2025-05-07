@@ -1,79 +1,276 @@
 {% extends 'main/base.html' %}
 {% load static %}
+{% load custom_tags %}
 
 {% block title %}مزودينا{% endblock %}
+{% block ref %}
 
+<style>
+  .card-body.products {
+    overflow-x: auto;
+    /* Enable horizontal scrolling */
+  }
+
+  .horizontal-scroll {
+    display: flex;
+    /* Use flexbox for horizontal layout */
+    flex-wrap: nowrap;
+    /* Prevent wrapping to the next line */
+    overflow-x: auto;
+    /* Enable horizontal scrolling */
+    padding-bottom: 10px;
+    /* Add padding for scrollbar */
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .product-item {
+    width: 250px;
+    flex: 0 0 auto;
+  }
+
+  .card-header {
+    background-color: white;
+  }
+
+  .card-item {
+    height: 270px;
+    background: var(--card-bg);
+    border-radius: 25px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+
+  }
+
+  .card-img-top {
+    height: 150px;
+    /* Set a fixed height for the images */
+    object-fit: cover;
+    /* Maintain aspect ratio and cover the area */
+  }
+
+  .card-body {
+    flex: 1 0 auto;
+    /* Allow the card body to grow and fill available space */
+    overflow: hidden;
+    /* Hide overflowing content */
+  }
+
+  .card-title {
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .card-text {
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .card__price {
+    color: #204a3a;
+    font-weight: 700;
+    font-size: 1em;
+    transition: all 0.3s ease;
+  }
+
+  /* Styling for "No Suppliers Found" message */
+  .no-suppliers-found {
+    text-align: center;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-top: 20px;
+    background-color: #f9f9f9;
+  }
+
+  .no-suppliers-found i {
+    font-size: 4em;
+    color: #aaa;
+    margin-bottom: 15px;
+  }
+
+  .no-suppliers-found p {
+    font-size: 1.2em;
+    color: #777;
+  }
+</style>
+{% endblock %}
 {% block content %}
-<div class="container py-5">
+<div class="container-fluid py-5">
 
-  <div class="row justify-content-center text-center mb-5">
+
+  <div class="row d-none d-md-flex justify-content-center text-center mb-5">
     <div class="col-md-6">
       <h2 class="fw-bold mb-4" style="color: #EFC234;">وش حاب تطلب اليوم؟</h2>
-      <img src="{% static 'img/photo.svg' %}" alt="مزودينا" class="img-fluid mx-auto d-block" style="max-width: 500px;">
+      <img src="{% static 'img/photo.svg' %}" alt="مزودينا" class="img-fluid mx-auto d-block"
+        style="max-width: 500px;">
     </div>
   </div>
+  <div class="row justify-content-center align-items-center mb-4">
+    <!-- Filter Icon -->
+    <div class="col-auto text-center">
+      <a type="button" class="border-none " data-bs-toggle="modal" data-bs-target="#filterModal">
+        <i class="bi bi-filter"></i>
+      </a>
+    </div>
+    <!-- Reset Button -->
+    {% if request.GET.category or request.GET.min_price or request.GET.max_price or request.GET.delivery_type or request.GET.city or request.GET.q%}
+    <div class="col-auto text-center">
+      <a href="{{ request.path }}" class="border-none">
+        <i class="bi bi-arrow-counterclockwise"></i>
+      </a>
+    </div>
+    {% endif %}
+    <div class="col-8">
 
-  <div class="row justify-content-center mb-4">
-    <div class="col-md-8">
       <form method="GET">
         <div class="input-group">
-          <input type="text" name="q" class="form-control rounded-start-pill" placeholder="ابحث عن منتجات أو موردين...">
-          <button class="btn btn-outline-success rounded-end-pill" type="submit" style="background-color: #EFC234; color: #fff;">بحث</button>
+          <input type="text" name="q" class="form-control rounded-start-pill"
+            placeholder="ابحث عن منتجات أو موردين...">
+          <button class="btn btn-outline-success rounded-end-pill" type="submit"
+            style="background-color: #e67e22; color: #fff;">بحث</button>
         </div>
       </form>
     </div>
   </div>
-
-  <h4 class="text-center mb-4 fw-bold" style="color: #1F3F2E;">التصنيفات</h4>
-  <div class="row row-cols-2 row-cols-md-4 g-4 mb-5">
+  <div class="row gap-2 justify-content-center mb-5">
+    <a href="{{ request.path }}"
+      class="category-card {% if not request.GET.category %}active{% endif %} col-auto ms-2">جميع الفئات</a>
     {% for value, label in product_categories %}
-    <div class="col">
-      <a href="?category={{ value }}" class="text-decoration-none">
-        <div class="card h-100 shadow-sm text-center border-0" style="background-color: #f9f9f9;">
-          <div class="card-body d-flex flex-column justify-content-center align-items-center">
-            <i class="fa fa-box fa-2x mb-2 text-success"></i>
-            <h6 class="card-title text-dark">{{ label }}</h6>
-          </div>
-        </div>
-      </a>
-    </div>
+    <a href="?category={{ value }}"
+      class=" col-auto category-card {% if request.GET.category == value %}active {% endif %}col-auto">
+      {{ label }}
+    </a>
     {% endfor %}
   </div>
 
-  {% if selected_category %}
-  <form method="GET">
-    <input type="hidden" name="category" value="{{ selected_category }}">
-    <div class="row justify-content-center mb-4">
-      <div class="col-md-6">
-        <label for="subcategorySelect" class="form-label">اختر تصنيف فرعي:</label>
-        <select name="subcategory" id="subcategorySelect" class="form-select">
-          <option value="">-- الكل --</option>
-          {% for val, label in subcategories %}
-            <option value="{{ val }}" {% if selected_subcategory == val %}selected{% endif %}>{{ label }}</option>
+
+  <!-- Modal -->
+  <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="filterModalLabel">تصفية إضافية</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Filter Form -->
+          <form method="GET" action="">
+            <input type="hidden" name="q" value="{{ request.GET.q }}">
+            <!-- Hidden input for supplier_id -->
+
+            <div class="filter-group">
+              <h5 class="filter-title">الفئة</h5>
+              <select class="form-select form-select-sm" name="category" id="categorySelect">
+                <option value="">جميع الفئات</option>
+                {% for val, label in categories %}
+                <option value="{{ val }}" {% if request.GET.category == val %}selected{% endif %}>
+                  {{ label }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            {% if subcategories %}
+            <div class="filter-group">
+              <h5 class="filter-title">التصنيف الفرعي</h5>
+              <select class="form-select form-select-sm" name="subcategory" id="subcategorySelect">
+                <option value="">-- الكل --</option>
+                {% for val, label in subcategories %}
+                <option value="{{ val }}" {% if request.GET.subcategory == val %}selected{% endif %}>
+                  {{ label }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            {% endif %}
+
+            <div class="filter-group">
+              <h5 class="filter-title">نطاق السعر</h5>
+              <div class="price-range">
+                <label for="form-check-label" class="form-check-label ">الحد الأدنى:</label>
+                <input class="form-control form-control-sm" min="1" type="number" id="min-price" name="min_price"
+                  value="{{ request.GET.min_price }}">
+                <label for="form-check-label" class="form-check-label ">الحد الأقصى:</label>
+                <input class="form-control form-control-sm" min="1" type="number" id="max-price" name="max_price"
+                  value="{{ request.GET.max_price }}">
+              </div>
+            </div>
+            <div class="filter-group">
+              <h5 class="filter-title">نوع التوصيل</h5>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="delivery_type" value="fast"
+                  id="fastDeliveryRadio" {% if request.GET.delivery_type == 'fast' %}checked{% endif %}>
+                <label class="form-check-label" for="fastDeliveryRadio">
+                  توصيل فوري
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="delivery_type" value="shipping"
+                  id="shippingDeliveryRadio" {% if request.GET.delivery_type == 'shipping' %}checked{% endif %}>
+                <label class="form-check-label" for="shippingDeliveryRadio">
+                  شحن
+                </label>
+              </div>
+
+            </div>
+       
+            <div class="modal-footer">
+              <button type="submit" class=" btn-primary-custom">تطبيق التصفية</button>
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="container">
+    {% for supplier, products in supplier_products.items %}
+    <!-- Supplier Card -->
+    <div class="card mb-4">
+      <div class="card-header d-flex flex-row justify-content-between align-items-center">
+        <h5 class="card-title">{{ supplier.commercial_info.store_name }}</h5>
+        <a href="{% url 'supplier:store_view' %}?supplier_id={{ supplier.supply_details.id }}"
+          class="btn btn-primary-custom">اذهب للمتجر </a>
+
+      </div>
+      <div class="card-body mt-2 products">
+        <div class="row horizontal-scroll">
+          {% for product in products %}
+          <!-- Product Card -->
+          <div class="col-md-3 mb-3 product-item">
+            <div class="card-item">
+              {% if product.image %}
+              <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+              {% else %}
+              <img src="{% get_category_image product.category %}" class="img-fluid" alt="{{ product.name }}">
+              {% endif %}
+              <div class="card-body">
+                <h6 class="card-title">{{ product.name }}</h6>
+                <p class="card-text">{{ product.description|truncatechars:50 }}</p>
+                <div class="card__price">{{ product.price }} ﷼ </div>
+
+              </div>
+            </div>
+          </div>
           {% endfor %}
-        </select>
-      </div>
-      <div class="col-md-2 d-flex align-items-end">
-        <button type="submit" class="btn btn-success w-100">تصفية</button>
-      </div>
-    </div>
-  </form>
-  {% endif %}
-
-  <div class="row">
-    {% for supplier in suppliers %}
-      <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-header text-center">
-            <strong>{{ supplier.user.get_full_name }}</strong><br>
-            <a href="{% url 'supplier:store_view' %}?supplier_id={{ supplier.id }}" class="btn btn-sm btn-outline-success mt-2">عرض المتجر</a>
-          </div>
         </div>
       </div>
+    </div>
     {% empty %}
-      <p class="text-center">لا توجد موردين مطابقين للتصفية.</p>
+    <!-- No Suppliers Found Message -->
+    <div class="no-suppliers-found">
+      <i class="bi bi-search "></i>
+      <p>لا يوجد مزودين يطابقون معايير البحث الخاصة بك. يرجى محاولة تصفية مختلفة.</p>
+    </div>
     {% endfor %}
   </div>
-
 </div>
 {% endblock %}

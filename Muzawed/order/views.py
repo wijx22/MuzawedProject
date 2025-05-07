@@ -1,4 +1,4 @@
-from time import timezone
+from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from notification.models import Notification 
@@ -20,6 +20,7 @@ from django.utils import timezone
 #     return render(request, "order/cart.html",{"items":items})
 
 
+
 def cart_view(request: HttpRequest, order_id: int):
     """Display the contents of the cart to the user."""
     if not request.user.is_authenticated:
@@ -28,9 +29,18 @@ def cart_view(request: HttpRequest, order_id: int):
 
     cart = get_object_or_404(Order, id=order_id)
     items = cart.items.all()
-    return render(request, "order/cart.html", {"order":cart,"items": items})
+
+    if not items:  # Check if the cart is empty
+        cart.delete()
+        messages.info(request, "سلة التسوق الخاصة بالطلب اصبحت فارغة.", "alert-info")  
+        return redirect("order:cart_orders_view") 
+
+    return render(request, "order/cart.html", {"order": cart, "items": items})
 
 def add_to_cart_view(request: HttpRequest, product_id: int):
+    if not request.user.is_authenticated:
+        messages.error(request, "يجب عليك تسجيل الدخول لاضافة منتجات لسلة التسوق الخاصة بك.", "alert-danger")
+        return redirect("accounts:sign_in")
     supplier_id = request.GET.get('supplier_id')
     print("this is the error ")
     print(request.GET)
@@ -99,9 +109,21 @@ def add_to_cart_view(request: HttpRequest, product_id: int):
         print(e)
         messages.error(request, f"حدث خطأ أثناء إضافة المنتج: {e}", "alert-danger")
 
-    return redirect(reverse("products:product_details_view", kwargs={'product_id': product_id}) + f"?supplier_id={supplier_id}")
+    return redirect(reverse("supplier:store_view") + f"?supplier_id={supplier_id}")
 
 
+def remove_from_cart_view(request:HttpRequest ,order_id, cartItem_id):
+    try:
+
+        item = get_object_or_404(CartItem, id=cartItem_id)
+        item.delete()  
+        
+
+    except Exception as error :
+        messages.error(request, f"حدث خطأ أثناء حذف المنتج", "alert-danger")
+    return redirect("order:cart_view", order_id)
+
+        
 
 def cart_orders_view(request):
     """
@@ -109,7 +131,9 @@ def cart_orders_view(request):
     with options to view details/checkout or delete the order.
     """
     if not request.user.is_authenticated:
-        return render(request, 'accounts/sign_in.html')  
+        messages.error(request, "يجب عليك تسجيل الدخول لعرض سلة التسوق الخاصة بك.", "alert-danger")
+        return redirect("accounts:sign_in")
+
 
     cart_orders = Order.objects.filter(beneficiary=request.user, in_cart=True).order_by('created_at')
 
@@ -125,8 +149,10 @@ def delete_cart_order_view(request, order_id):
     """
 
     order = get_object_or_404(Order, id=order_id, beneficiary=request.user, in_cart=True)
-    order.delete()  # This will also delete associated CartItems due to on_delete=CASCADE
-    return redirect('order:cart_orders_view')  # Redirect back to the cart view
+    order.delete()  
+    messages.success(request, "تم حذف الطلب بنجاح!")
+
+    return redirect('order:cart_orders_view')  
 
 
 
@@ -155,7 +181,10 @@ def supplier_orders_view(request):
     })
 
 
-def process_order(request, order_id):  # Pass order_id as an argument
+def process_order(request, order_id):  
+    if not request.user.is_authenticated:
+        messages.error(request, "يجب عليك تسجيل الدخول لاتمام الطلب.", "alert-danger")
+        return redirect("accounts:sign_in")
     try:
         order = get_object_or_404(Order,pk=order_id)
 
@@ -201,8 +230,7 @@ def process_order(request, order_id):  # Pass order_id as an argument
         return redirect('order:cart_orders_view')
     return redirect('order:cart_orders_view')
 
-
-    #return render(request,'order/cart_orders.html')
+    return render(request,'order/cart_orders.html')
 
 
  
@@ -366,7 +394,8 @@ def supplier_order_detail(request, order_id):
 #    })
 
 def beneficiary_orders_view(request):
-    current_orders = Order.objects.filter(status='open')  # Replace with your actual filter
+    
+    current_orders = Order.objects.filter(status='processing')  # Replace with your actual filter
     closed_orders = Order.objects.filter(status='closed')    # Replace with your actual filter
 
     context = {

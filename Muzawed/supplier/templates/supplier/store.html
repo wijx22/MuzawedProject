@@ -1,5 +1,6 @@
 {% extends 'main/base.html' %}
 {% load static %}
+{% load custom_tags %}
 {% block title %}طلب توريد{% endblock %}
 {% block ref %}
 <link rel="stylesheet" href="{% static 'css/products_style.css' %}">
@@ -76,8 +77,8 @@
                         <div class=" mb-1">
                             <div class="card-body">
                                 <h5 class="card-title"><i class="bi bi-truck me-2"></i> معلومات التوصيل</h5>
-                                <p><strong>خدمة التوصيل:</strong> {{
-                                    supply_details.get_delivery_service_display}}</p>
+                                <p><strong>خدمة التوصيل:</strong> 
+                                    {{ supply_details.get_delivery_service_display}}</p>
                                 <p><strong>مدة تنفيذ الطلب للشحن:</strong>
                                     {{supply_details.order_lead_time_days|default_if_none:"-" }} أيام</p>
                                 <p><strong>مدة تنفيذ الطلب للتوصيل:</strong>
