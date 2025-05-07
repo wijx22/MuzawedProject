@@ -1,1 +1,1 @@
-Muzawed.Muzawed.wsgi:application
+web: gunicorn Muzawed.Muzawed.wsgi:application
