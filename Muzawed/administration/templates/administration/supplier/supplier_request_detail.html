@@ -357,7 +357,7 @@
           {% if supply_details.supply_days.all %}
               <ul>
                   {% for day in supply_details.supply_days.all %}
-                      <li>{{ day.name }}</li>
+                    <li>{{ day.get_name_display }}</li>
                   {% endfor %}
               </ul>
           {% else %}
