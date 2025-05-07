@@ -1,1 +1,1 @@
-web: gunicorn MuzawedProject.wsgi 
+web: gunicorn Muzawed.wsgi
