@@ -1,1 +1,1 @@
-web: gunicorn Muzawed.Muzawed.wsgi:application --env DJANGO_SETTINGS_MODULE=Muzawed.Muzawed.settings
+web: gunicorn Muzawed.wsgi:application --env DJANGO_SETTINGS_MODULE=Muzawed.settings
