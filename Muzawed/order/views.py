@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-
+from notification.models import Notification 
 from payment.models import Payment
 from .models import Order
 from django.http import HttpRequest
@@ -13,6 +13,8 @@ from django.contrib import messages
 from django.db import transaction
 from django.db.models import F
 from accounts.models import ProfileBeneficiary, SupplierProfile
+from django.utils import timezone
+
 # def cart_view(request:HttpRequest):
 #     items =Product.objects.all()
 #     return render(request, "order/cart.html",{"items":items})
@@ -169,7 +171,10 @@ def supplier_orders_view(request):
     supplier: SupplierProfile = request.user.supplier
     orders = Order.objects.filter(supplier=supplier)
 
+    order_status = request.GET.get('status')  
 
+    if order_status:
+        orders = orders.filter(status=order_status)  
 
     return render(request, 'order/supplier_orders_list.html', {
         'orders': orders
@@ -225,13 +230,56 @@ def process_order(request, order_id):
         return redirect('order:cart_orders_view')
     return redirect('order:cart_orders_view')
 
-    # return render(request,'order/cart_orders.html')
+    return render(request,'order/cart_orders.html')
 
 
  
 
+
+#def check_and_delete_expired_orders():
+#    """
+#    Function that checks orders with fast shipping that are not accepted by the supplier
+#    after a certain amount of time (2 hours). If the order is not accepted, it gets canceled.
+#    """
+#    # تحديد الوقت قبل ساعتين من الآن
+#    two_hours_ago = timezone.now() - timezone.timedelta(hours=2)
+#
+#    # البحث عن الطلبات السريعة المفتوحة ولم يتم قبولها بعد
+#    pending_orders = Order.objects.filter(
+#        shipping_method="fast",
+#        status="open",
+#        created_at__lte=two_hours_ago
+#    )
+#
+#    for order in pending_orders:
+#        # تغيير الحالة إلى ملغى
+#        order.status = "cancelled"
+#        order.save()
+#
+#        # الحصول على المستفيد من الطلب
+#        beneficiary = order.beneficiary
+#
+#        # إنشاء الإشعار
+#        message = f"عذراً، تم إلغاء الطلب رقم {order.id} بسبب عدم قبول المورد خلال ساعتين."
+#        
+#        # إرسال إشعار للمستفيد
+#        Notification.objects.create(
+#            recipient=beneficiary.user,
+#            notification_type='alert',  # يمكنك تخصيص نوع الإشعار حسب الحاجة
+#            message=message
+#        )
+#
 def supplier_order_detail(request, order_id):
     '''Shows the details of a specific order for the supplier and allows them to accept, reject, delete, or mark as delivered.'''
+
+    if not request.user.is_authenticated:
+        messages.error(request, "يجب عليك تسجيل الدخول للوصول إلى هذه الصفحة.", "alert-danger")
+        return redirect("accounts:sign_in")
+
+    if not SupplierProfile.objects.filter(user=request.user).exists():
+        messages.error(request, "هذه الصفحة مخصصة لحسابات الموردين فقط.", "alert-danger")
+        return redirect('main:index_view')
+
     order = Order.objects.get(id=order_id)
 
     # Check if order is already in "processing" or "closed" state
@@ -244,11 +292,25 @@ def supplier_order_detail(request, order_id):
             order.status = 'processing'  
             order.save()
             messages.success(request, "تم قبول الطلب وهو الآن قيد المعالجة.")
+
+            Notification.objects.create(
+                recipient=order.beneficiary,  # المستفيد
+                notification_type='alert',
+                message='تم قبول طلبك وهو الآن قيد المعالجة.'
+            )
+
         
         elif action == "reject" and order.status == 'open':
             order.status = 'cancelled'  
             order.save()
             messages.warning(request, "تم رفض الطلب.")
+
+            Notification.objects.create(
+                recipient=order.beneficiary,
+                notification_type='alert',
+                message=' تم رفض طلبك من قبل المورد .'
+            )
+
         
         elif action == "delete" and not actions_disabled:
             order.delete()
@@ -260,6 +322,13 @@ def supplier_order_detail(request, order_id):
             order.delivery_date = timezone.now()  
             order.save()
             messages.success(request, "تم تسليم الطلب بنجاح.")
+
+            Notification.objects.create(
+                recipient=order.beneficiary,
+                notification_type='alert',
+                message='تم تسليم طلبك بنجاح.'
+            )
+
         
         return redirect('order:supplier_order_detail', order_id=order.id)
 
@@ -270,6 +339,59 @@ def supplier_order_detail(request, order_id):
         'actions_disabled': actions_disabled
     })
 
+
+#def supplier_order_detail(request, order_id):
+#    '''Shows the details of a specific order for the supplier and allows them to accept, reject, delete, or mark as delivered.'''
+#
+#    if not request.user.is_authenticated:
+#        messages.error(request, "يجب عليك تسجيل الدخول للوصول إلى هذه الصفحة.", "alert-danger")
+#        return redirect("accounts:sign_in")
+#
+#    if not SupplierProfile.objects.filter(user=request.user).exists():
+#        messages.error(request, "هذه الصفحة مخصصة لحسابات الموردين فقط.", "alert-danger")
+#        return redirect('main:index_view')
+#
+#    order = Order.objects.get(id=order_id)
+#
+#    # Check if order is already in "processing" or "closed" state
+#    actions_disabled = order.status in ['processing', 'closed', 'cancelled']
+#    
+#    # تحقق من صلاحية الطلب وحذفه إذا لزم الأمر
+#    if order.shipping_method == "fast" and order.status == "open":
+#        check_and_delete_expired_orders()  # تنفيذ منطق الحذف بناءً على الوقت
+#    
+#    if request.method == "POST":
+#        action = request.POST.get("action")
+#        
+#        if action == "accept" and order.status == 'open':
+#            order.status = 'processing'  
+#            order.save()
+#            messages.success(request, "تم قبول الطلب وهو الآن قيد المعالجة.")
+#        
+#        elif action == "reject" and order.status == 'open':
+#            order.status = 'cancelled'  
+#            order.save()
+#            messages.warning(request, "تم رفض الطلب.")
+#        
+#        elif action == "delete" and not actions_disabled:
+#            order.delete()
+#            messages.success(request, "تم حذف الطلب.")
+#            return redirect('order:supplier_orders')  
+#        
+#        elif action == "mark_delivered" and order.status == 'processing':  
+#            order.status = 'closed'  
+#            order.delivery_date = timezone.now()  
+#            order.save()
+#            messages.success(request, "تم تسليم الطلب بنجاح.")
+#        
+#        return redirect('order:supplier_order_detail', order_id=order.id)
+#
+#    cart_items = order.items.all()
+#    return render(request, 'order/supplier_order_detail.html', {
+#        'order': order,
+#        'cart_items': cart_items,
+#        'actions_disabled': actions_disabled
+#    })
 
 def beneficiary_orders_view(request):
     

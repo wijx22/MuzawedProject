@@ -57,7 +57,6 @@
         <h3 class="mb-4 text-center text-dark">
             رد على شكوى: 
         </h3>
-        <!-- عرض الملف المرفق إن وُجد -->
         {% if report.attachment %}
         <div class="p-3 rounded" style="background-color: #e9f1ee;">
             <strong style="color: #0b4f35;">الملف المرفق:</strong><br>
@@ -70,7 +69,6 @@
         <form method="POST">
             {% csrf_token %}
 
-            <!-- شكوى المورد داخل حقل -->
             <fieldset class="border p-3 mb-4">
                 <legend class="fw-bold" style="font-size: 1.2rem; color: #0b4f35;">شكوى المورد:</legend>
                 <p class="text-dark" style="font-size: 1.1rem;">{{ report.description }}

@@ -1,0 +1,72 @@
+{% extends 'main/supplier_base.html' %}
+{% load static %}
+
+
+    
+{% block ref %}
+
+    <link rel="stylesheet" href="{% static 'css/report_style.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2>لوحة تقارير المورد</h2>
+
+<div id="tabs">
+  <div class="tab active">الايرادات</div>
+</div>
+
+<div id="category1" class="table-container active">
+  <div class="filterDetails">
+    <div>
+      <button class="filter-toggle" onclick="toggleFilters()">
+        <i class="fa-solid fa-filter"></i> فلترة
+      </button>
+
+      <div class="filters" id="filterSection">
+        <input
+          type="text"
+          id="filterProduct"
+          placeholder="فلترة حسب المنتج..."
+          onkeyup="filterTable()"
+        />
+        <br />
+        <input
+          type="text"
+          id="filterCustomer"
+          placeholder="فلترة حسب العميل..."
+          onkeyup="filterTable()"
+        />
+      </div>
+    </div>
+  </div>
+
+  <table id="revenueTable">
+    <thead>
+      <tr>
+        <th>المنتج</th>
+        <th>الايراد</th>
+        <th>عدد مرات الطلب</th>
+        <th>العميل</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in data %}
+      <tr>
+        <td class="prodA clickable">{{ row.product__name }}</td>
+
+
+        <td>${{ row.total_revenue|floatformat:2 }}</td>
+        <td>{{ row.total_quantity }}</td>
+        <td class="clientA">{{ row.client_name }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4">لا توجد بيانات</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock %}

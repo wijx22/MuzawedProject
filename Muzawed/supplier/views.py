@@ -8,6 +8,25 @@ from .models import City, SupplyDetails , CommercialInfo,Day
 from accounts.models import SupplierProfile
 from products.models import Product
 from django.core.paginator import Paginator
+#for reports
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, F
+from order.models import CartItem
+from django.http import HttpResponseForbidden
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
+
+
+
+
+
+
+
+
+
+
 def supplier_details(request: HttpRequest):
     if request.user.is_authenticated:
         try:
@@ -17,6 +36,8 @@ def supplier_details(request: HttpRequest):
                 messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
                 return redirect("main:index_view")
             supply_details = supplier.supply_details
+
+
                   
 
         except AttributeError:
@@ -429,3 +450,71 @@ def store_view(request: HttpRequest ):
     #         "selected_categories": selected_categories,  
     #     },
     # )
+    
+    
+    
+    
+
+
+ 
+ 
+# Dashboard for reports waiting for finish products (should have a user or supplier for each product)
+# This is a placeholder for the dashboard view   
+@login_required
+def supplier_reports_dashboard(request):
+    # Overview page with links or charts
+    return render(request, "supplier/reports/dashboard.html")
+
+
+
+
+
+@login_required
+def report_revenue_by_product(request):
+    
+    # Ensure user is authenticated 
+    # if  hasattr(request.user, 'staff'):
+    #     return HttpResponseForbidden("هذه الصفحة مخصصة للموردين فقط.")
+
+    # # Fetch supplier's products
+    # supplier_products = Product.objects.filter(supplier=SupplierProfile)
+
+    # # Calculate revenue per product for completed orders
+    # revenue_data = (
+    #     CartItem.objects
+    #     .filter(product__in=supplier_products, order__status='closed')
+    #     .values('product__name')
+    #     .annotate(
+    #         total_quantity=Sum('quantity'),
+    #         total_revenue=Sum(F('quantity') * F('unit_price'))
+    #     )
+    #     .order_by('-total_revenue')
+    # )
+
+    # context = {
+    #     "data": revenue_data
+    # }
+    return render(request, "supplier/reports/revenue.html")
+
+
+
+
+@login_required
+def report_user_behavior(request):
+    # Analyze customer behavior
+    context = {
+        "data": []  # Placeholder for unique users and order frequency
+    }
+    return render(request, "supplier/reports/user_behavior.html", context)
+
+
+
+
+@login_required
+def report_product_performance(request):
+    # Evaluate performance and low-performing products
+    context = {
+        "data": []  # Placeholder for product stats, ratings
+    }
+    return render(request, "supplier/reports/product_performance.html", context)
+
