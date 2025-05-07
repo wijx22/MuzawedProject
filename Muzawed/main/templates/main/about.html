@@ -4,14 +4,25 @@
 
 {% block content %}
 
-<div class="container py-5" style="max-width: 900px;">
-    <h2 class="fw-bold text-center mb-4" style="color: #1F3F2E;">عن مزود</h2>
-    <p class="text-center text-muted mb-5" style="font-size: 1.1rem;">
+
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>AOS.init();</script>
+
+<div class="container py-5" style="max-width: 1000px;">
+
+
+    <h2 class="fw-bold text-center mb-3" data-aos="fade-up" data-aos-delay="200">عن مزود</h2>
+    <p class="text-center text-muted mb-5" style="font-size: 1.1rem;" data-aos="fade-up" data-aos-delay="400">
         مزود هي منصة إلكترونية سعودية تهدف إلى تمكين أصحاب المشاريع الغذائية الصغيرة من الوصول إلى موردين محليين بسهولة، دون وسطاء، وبجودة عالية وسعر منافس.
     </p>
+    <div class="text-center mb-4" data-aos="fade-up" data-aos-duration="1000">
+        <img src="{% static 'img/man.png' %}" alt="شخص يرحب" style="max-width: 300px;">
+    </div>
+
 
     <div class="row text-center">
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="100">
             <div class="p-4 bg-white shadow-sm rounded-4 h-100">
                 <span class="material-symbols-outlined" style="font-size: 48px; color: #1F3F2E;">flag</span>
                 <h5 class="fw-bold mt-3">هدفنا</h5>
@@ -19,7 +30,7 @@
             </div>
         </div>
 
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="250">
             <div class="p-4 bg-white shadow-sm rounded-4 h-100">
                 <span class="material-symbols-outlined" style="font-size: 48px; color: #1F3F2E;">star</span>
                 <h5 class="fw-bold mt-3">تميزنا</h5>
@@ -27,7 +38,7 @@
             </div>
         </div>
 
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="400">
             <div class="p-4 bg-white shadow-sm rounded-4 h-100">
                 <span class="material-symbols-outlined" style="font-size: 48px; color: #1F3F2E;">diversity_3</span>
                 <h5 class="fw-bold mt-3">رسالتنا</h5>
