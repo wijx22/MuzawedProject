@@ -3,22 +3,16 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from notification.models import Notification 
 from payment.models import Payment
-from .models import Order
 from django.http import HttpRequest
 from django.urls import reverse
-# Create your views here.
 from .models import Product
 from .models import Order, CartItem
-from django.contrib import messages
 from django.db import transaction
 from django.db.models import F
 from accounts.models import ProfileBeneficiary, SupplierProfile
 from django.utils import timezone
-
-# def cart_view(request:HttpRequest):
-#     items =Product.objects.all()
-#     return render(request, "order/cart.html",{"items":items})
-
+from django.shortcuts import render, redirect, get_object_or_404
+from payment.models import Payment  
 
 
 def cart_view(request: HttpRequest, order_id: int):
@@ -181,94 +175,67 @@ def supplier_orders_view(request):
     })
 
 
-def process_order(request, order_id):  
+def process_order(request, order_id):
     if not request.user.is_authenticated:
         messages.error(request, "يجب عليك تسجيل الدخول لاتمام الطلب.", "alert-danger")
         return redirect("accounts:sign_in")
+
     try:
-        order = get_object_or_404(Order,pk=order_id)
+        order = get_object_or_404(Order, pk=order_id)
 
         if request.method == 'POST':
-            # 1. Get Payment Method
             payment_method = request.POST.get('payment_method')
+            cart_items = order.items.all()
+            total_amount = order.total
 
-            # 2. Access Cart Items from the Order
-            cart_items = order.items.all()  # Assuming 'items' is the related_name in your CartItem model
-            total_amount = order.total 
-        
-            # 3. Stock Check
             out_of_stock_items = []
             for item in cart_items:
                 if item.product.stock < item.quantity:
                     out_of_stock_items.append(item.product.name)
 
             if out_of_stock_items:
-                error_message = "المنتجات التالية غير متوفرة بالكمية المطلوبة: " + ", ".join(out_of_stock_items)
+                error_message = " المنتجات التالية غير متوفرة بالكمية المطلوبة يرجى حذفها لاتمام الطلب: " + ", ".join(out_of_stock_items)
                 messages.error(request, error_message)
-                return redirect('order:cart_view' ,order.id)  # Redirect back to cart
+                return redirect('order:cart_view', order.id)
 
-            # 4. Create Payment Object (if stock is sufficient)
+            # Create Payment object with PENDING status
             payment = Payment(
                 order=order,
                 payment_method=payment_method,
-                total_amount=total_amount,  # Use the order's total
+                total_amount=total_amount,
+                status=Payment.StatusChoices.PENDING  # Use the enum
             )
             payment.save()
 
-            for item in cart_items:
-                product = item.product
-                product.stock -= item.quantity
-                product.save()
+            if payment_method == 'credit':
+                # Redirect to payment gateway with payment ID
+             
+                return redirect( reverse('payment:payment_gateway', kwargs={'payment_id': payment.id}) )
+            else:
+                # For cash or deferred, complete the order immediately
+                complete_order(order, cart_items, payment)
+                messages.success(request, "تم اتمام الطلب بنجاح!")
+                return redirect('order:cart_orders_view')
 
-            order.in_cart=False
-            order.save()
-
-            messages.success(request, "تم اتمام الطلب بنجاح!")
-    except Exception as error :
+    except Exception as error:
         messages.error(request, "حدث خطأ اثناء محاولة الوصول للعربة")
         print(error)
         return redirect('order:cart_orders_view')
-    return redirect('order:cart_orders_view')
 
-    return render(request,'order/cart_orders.html')
-
-
- 
+    return render(request, 'order/cart_orders.html')
 
 
-#def check_and_delete_expired_orders():
-#    """
-#    Function that checks orders with fast shipping that are not accepted by the supplier
-#    after a certain amount of time (2 hours). If the order is not accepted, it gets canceled.
-#    """
-#    # تحديد الوقت قبل ساعتين من الآن
-#    two_hours_ago = timezone.now() - timezone.timedelta(hours=2)
-#
-#    # البحث عن الطلبات السريعة المفتوحة ولم يتم قبولها بعد
-#    pending_orders = Order.objects.filter(
-#        shipping_method="fast",
-#        status="open",
-#        created_at__lte=two_hours_ago
-#    )
-#
-#    for order in pending_orders:
-#        # تغيير الحالة إلى ملغى
-#        order.status = "cancelled"
-#        order.save()
-#
-#        # الحصول على المستفيد من الطلب
-#        beneficiary = order.beneficiary
-#
-#        # إنشاء الإشعار
-#        message = f"عذراً، تم إلغاء الطلب رقم {order.id} بسبب عدم قبول المورد خلال ساعتين."
-#        
-#        # إرسال إشعار للمستفيد
-#        Notification.objects.create(
-#            recipient=beneficiary.user,
-#            notification_type='alert',  # يمكنك تخصيص نوع الإشعار حسب الحاجة
-#            message=message
-#        )
-#
+
+def complete_order(order, cart_items, payment):
+    """Completes the order process: reduces stock, marks order as complete."""
+    for item in cart_items:
+        product = item.product
+        product.stock -= item.quantity
+        product.save()
+
+    order.in_cart = False
+    order.save()
+
 def supplier_order_detail(request, order_id):
     '''Shows the details of a specific order for the supplier and allows them to accept, reject, delete, or mark as delivered.'''
 
@@ -339,67 +306,12 @@ def supplier_order_detail(request, order_id):
         'actions_disabled': actions_disabled
     })
 
-
-#def supplier_order_detail(request, order_id):
-#    '''Shows the details of a specific order for the supplier and allows them to accept, reject, delete, or mark as delivered.'''
-#
-#    if not request.user.is_authenticated:
-#        messages.error(request, "يجب عليك تسجيل الدخول للوصول إلى هذه الصفحة.", "alert-danger")
-#        return redirect("accounts:sign_in")
-#
-#    if not SupplierProfile.objects.filter(user=request.user).exists():
-#        messages.error(request, "هذه الصفحة مخصصة لحسابات الموردين فقط.", "alert-danger")
-#        return redirect('main:index_view')
-#
-#    order = Order.objects.get(id=order_id)
-#
-#    # Check if order is already in "processing" or "closed" state
-#    actions_disabled = order.status in ['processing', 'closed', 'cancelled']
-#    
-#    # تحقق من صلاحية الطلب وحذفه إذا لزم الأمر
-#    if order.shipping_method == "fast" and order.status == "open":
-#        check_and_delete_expired_orders()  # تنفيذ منطق الحذف بناءً على الوقت
-#    
-#    if request.method == "POST":
-#        action = request.POST.get("action")
-#        
-#        if action == "accept" and order.status == 'open':
-#            order.status = 'processing'  
-#            order.save()
-#            messages.success(request, "تم قبول الطلب وهو الآن قيد المعالجة.")
-#        
-#        elif action == "reject" and order.status == 'open':
-#            order.status = 'cancelled'  
-#            order.save()
-#            messages.warning(request, "تم رفض الطلب.")
-#        
-#        elif action == "delete" and not actions_disabled:
-#            order.delete()
-#            messages.success(request, "تم حذف الطلب.")
-#            return redirect('order:supplier_orders')  
-#        
-#        elif action == "mark_delivered" and order.status == 'processing':  
-#            order.status = 'closed'  
-#            order.delivery_date = timezone.now()  
-#            order.save()
-#            messages.success(request, "تم تسليم الطلب بنجاح.")
-#        
-#        return redirect('order:supplier_order_detail', order_id=order.id)
-#
-#    cart_items = order.items.all()
-#    return render(request, 'order/supplier_order_detail.html', {
-#        'order': order,
-#        'cart_items': cart_items,
-#        'actions_disabled': actions_disabled
-#    })
-
 def beneficiary_orders_view(request):
-    
-    current_orders = Order.objects.filter(status='processing')  # Replace with your actual filter
-    closed_orders = Order.objects.filter(status='closed')    # Replace with your actual filter
+    open_or_processing_orders = Order.objects.filter(status__in=['open', 'processing'],beneficiary=request.user)
+    cancelled_or_rejected_orders = Order.objects.filter(status__in=['cancelled', 'closed'],beneficiary=request.user)
 
     context = {
-        'current_orders': current_orders,
-        'closed_orders': closed_orders,
+        'current_orders': open_or_processing_orders,
+        'closed_orders': cancelled_or_rejected_orders,
     }
     return render(request, 'order/orders.html', context)

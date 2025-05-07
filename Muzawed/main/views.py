@@ -5,6 +5,7 @@ from django.contrib.auth.views import LoginView
 from supplier.models import SupplyDetails, SupplierProfile
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from supplier.models import SupplyDetails, SupplierProfile 
 from datetime import datetime
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError

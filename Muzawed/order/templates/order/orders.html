@@ -135,28 +135,24 @@
     .item-quantity {
         color: #888;
     }
+    .order-table {
+  width: 100%;
+  border-collapse: collapse; /* Remove borders between cells */
+}
 
-    .order-total {
-        text-align: right;
-        margin-top: 15px;
-        font-size: 1.2em;
-        font-weight: bold;
-        color: #2c5545;
-    }
+.order-table th, .order-table td {
+  padding: 8px; /* Add some spacing */
+  text-align: right; /* Align text to the right */
+}
 
-    .no-orders {
-        text-align: center;
-        color: #777;
-        font-style: italic;
-    }
+.order-table th {
+  font-weight: bold; /* Make header text bold */
+}
 
-    .order-details {
-        margin-top: 15px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 15px;
-        background-color: #f9f9f9;
-    }
+/* Optional: Add some subtle background color on hover */
+.order-table tr:hover {
+  background-color: #f5f5f5;
+}
 
     .detail-row {
         display: flex;
@@ -172,6 +168,16 @@
     .detail-value {
         color: #777;
     }
+    .price-quantity {
+  display: flex;
+  flex-direction: row; /* Arrange items horizontally */
+  justify-content: flex-end; /* Push items to the end (right) */
+  align-items: center; /* Vertically center items */
+}
+
+.price-quantity span {
+  margin-left: 10px; /* Add some spacing between quantity and price */
+}
 </style>
 {% endblock %}
 
@@ -196,14 +202,27 @@
                                 <h3 class="order-id brown-title">الطلب #{{ order.id }}</h3>
                                 <p class="order-date">{{ order.created_at }}</p>
                             </div>
-                            <ul class="order-items">
-                                {% for item in order.items.all %}
-                                <li class="order-item">
-                                    <span class="item-name green-title">{{ item.product.name }}</span>
-                                    <span class="item-quantity">{{ item.quantity }} x {{ item.unit_price }}</span>
-                                </li>
-                                {% endfor %}
-                            </ul>
+                            <table class="order-table">
+                                <thead>
+                                    <tr>
+                                        <th>اسم المنتج</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order.items.all %}
+                                    <tr>
+                                        <td>{{ item.product.name }}</td>
+                                        <td>
+                                            <div class="price-quantity">
+                                                <span>الكمية : {{ item.quantity }}</span>
+                                                <span> السعر: {{ item.unit_price }}</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                             <p class="order-total orange-title">المجموع: {{ order.total }}</p>
 
                             <!-- Order Details (Inline) -->
@@ -214,7 +233,7 @@
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">طريقة الدفع:</span>
-                                    <span class="detail-value">{{ order.payment.payment_method }}</span>
+                                    <span class="detail-value">{{order.payments.all.0.get_payment_method_display}}</span>
                                 </div>
                                 <!-- Add other details as needed -->
                             </div>
@@ -238,14 +257,27 @@
                                 <h3 class="order-id brown-title">الطلب #{{ order.id }}</h3>
                                 <p class="order-date">{{ order.created_at }}</p>
                             </div>
-                            <ul class="order-items">
-                                {% for item in order.items.all %}
-                                <li class="order-item">
-                                    <span class="item-name green-title">{{ item.product.name }}</span>
-                                    <span class="item-quantity">{{ item.quantity }} x {{ item.unit_price }}</span>
-                                </li>
-                                {% endfor %}
-                            </ul>
+                            <table class="order-table">
+                                <thead>
+                                    <tr>
+                                        <th>اسم المنتج</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order.items.all %}
+                                    <tr>
+                                        <td>{{ item.product.name }}</td>
+                                        <td>
+                                            <div class="price-quantity">
+                                                <span>الكمية : {{ item.quantity }}</span>
+                                                <span> السعر: {{ item.unit_price }}</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                             <p class="order-total orange-title">المجموع: {{ order.total }}</p>
 
                             <!-- Order Details (Inline) -->
@@ -256,17 +288,10 @@
                                 </div>
                                 <div class="detail-row">
                                     <span class="detail-label">طريقة الدفع:</span>
-                                    <span class="detail-value">{{ order.payment.payment_method }}</span>
+                                    <span class="detail-value">{{ order.payments.all.0.get_payment_method_display}}</span>
                                 </div>
                                 <!-- Add other details as needed -->
                             </div>
-
-                            <form method="post" action="{% url 'your_app_name:reorder' order.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-success btn-sm">
-                                    <i class="bi bi-arrow-clockwise me-1"></i> إعادة الطلب
-                                </button>
-                            </form>
                         </div>
                         {% endfor %}
                         {% else %}

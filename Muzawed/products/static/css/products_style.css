@@ -9,10 +9,7 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.btn-light{
-    color: #F3F1EC;
-    background-color: #264f3f;
-} 
+
 
 .btn:hover {
     background-color: #204a3a;
@@ -409,7 +406,23 @@ td i{
   .card:active {
     transform: translateY(-5px) scale(0.98);
   }
-  
+  .card__button.disabled {
+    opacity: 0.5; 
+    cursor: not-allowed; 
+    pointer-events: none; 
+}
+
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
   /* Animations */
   @keyframes shine {
     0% {
