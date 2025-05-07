@@ -26,3 +26,7 @@ p{
     overflow: hidden;     
     text-overflow: ellipsis;
 }
+.product-name {
+    word-break: break-word; 
+    
+}

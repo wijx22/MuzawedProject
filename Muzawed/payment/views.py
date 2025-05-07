@@ -2,52 +2,53 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
+from django.contrib import messages
+from order.views import complete_order
 from payment.models import Payment
 from order.models import Order
 from django.shortcuts import render, get_object_or_404
 
-
-def payment_page(request, order_id):
-    order = Order.objects.get(id=order_id)
-    amount = int(order.total * 100)  
+def payment_gateway(request, payment_id):
+    payment = get_object_or_404(Payment, pk=payment_id)
+    order = payment.order
 
     return render(request, 'payment/payment.html', {
-        'amount': amount,
-        'order_id': order.id
+        'payment': payment,
+        'amount': order.total,  
+        'order_id': order.id,
     })
 
 @csrf_exempt
 def save_payment(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         try:
+            import json
             data = json.loads(request.body)
-            print("بيانات الدفع:", data)
+            payment_id = data.get('order_id')
+            payment = get_object_or_404(Payment, order_id=payment_id)
 
-            order_id = data.get('order_id')
-            ref_id = data.get('id')
-            status = data.get('status')
-            amount = data.get('amount') / 100
+            # Update payment status and ref_id
+    
+            if data.get('status') == 'initiated':
+                payment.status = Payment.StatusChoices.COMPLETED
+                payment.ref_id = data.get('id')  # Assuming 'id' is the Moyasar payment ID
+                cart_items = payment.order.items.all()
+                complete_order(payment.order, cart_items, payment)
+                messages.success(request, "تم اتمام الطلب بنجاح!")
+                payment.save()
 
-            order = Order.objects.get(id=order_id)
+            else:
+                payment.status = Payment.StatusChoices.CANCELLED
+                messages.success(request, "حدث خطأاثناء محاولة الدفع !")
 
-            Payment.objects.create(
-                order=order,
-                status='completed' if status == 'paid' else 'cancelled',
-                total_amount=amount,
-                payment_method='credit',
-                ref_id=ref_id
-            )
 
-            # نحدث حالة الطلب
-            order.status = 'processing'
-            order.in_cart = False
-            order.save()
 
-            return JsonResponse({'message': 'تم حفظ الدفع بنجاح'}, status=201)
+            return JsonResponse({'status': 'success'})
 
-        except Order.DoesNotExist:
-            return JsonResponse({'error': 'الطلب غير موجود'}, status=404)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            print(f"Error saving payment: {e}")
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    return JsonResponse({'status': 'invalid method'}, status=405)
 
-    return JsonResponse({'error': 'طلب غير صالح'}, status=400)
+
+  

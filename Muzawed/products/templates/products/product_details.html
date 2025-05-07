@@ -11,6 +11,11 @@
 {% block content %}
 <section class="py-5">
     <div class="container">
+        <div style="text-align: left;">
+            <a href="{% url 'supplier:store_view' %}?supplier_id={{ request.GET.supplier_id }}" class="text-decoration-none mb-3">
+                <i class="bi bi-arrow-left"></i> رجوع
+            </a>
+        </div>
         <div class="row justify-content-center align-items-center gx-5">
             <aside class="col-lg-6">
                 <div class=" rounded-4 mb-3 d-flex justify-content-center">
@@ -48,7 +53,9 @@
                     </dl>
 
                     <hr />
-
+                    {% if product.stock == 0 %}
+                    <p>عذرًا هذا المنتج غير متوفر حاليا </p>
+                    {%else%}
                     <div class="row mb-4">
                         <div class="col-md-4 col-6 mb-2 mb-md-0">
                             <label class="mb-0">الكمية:</label>
@@ -57,26 +64,28 @@
                                         class="fa fa-minus"></i> </button>
                                 <input class="form-control text-center border border-secondary" type="text" value="1"
                                     style="max-width: 40px" id="counter" readonly>
-                                <button class="btn btn-light border icon-hover px-2" id="increment"> <i
+                                <button class="btn btn-primary-custom border icon-hover px-2" id="increment"> <i
                                         class="fa fa-plus"></i> </button>
                             </div>
                         </div>
                     </div>
-                    <a href="#" class="btn mazood-main-btn shadow-0" id="add-to-cart-btn" data-product-id="{{ product.id }}">
+                    {% endif %}
+
+                    <a href="#" class="{% if product.stock == 0 %}disabled{% endif %} btn btn-primary-custom shadow-0" id="add-to-cart-btn" data-product-id="{{ product.id }}">
                         أضف إلى السلة <i class="bi bi-basket2-fill"></i>
                     </a>
-                    <!-- <a href="#" class="btn mazood-main-btn shadow-0"> أضف إلى السلة <i
-                            class="bi bi-basket2-fill"></i> </a> -->
-
+               
                 </div>
             </main>
         </div>
     </div>
-    <div>
+    {%if products%}
+    <div class="p-5 m-3 container">
         <h1>منتجات مماثلة</h1>
-    </div>
-    {%include 'products/product_list.html'%}
+        {%include 'products/product_list.html'%}
 
+    </div>
+    {%endif%}
     <input type="hidden" id="product-stock" value="{{ product.stock }}">
     <input type="hidden" id="product-min-order-quantity" value="{{ product.min_order_quantity }}">
 

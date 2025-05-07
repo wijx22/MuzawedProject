@@ -1,6 +1,6 @@
 {% extends 'main/base.html' %}
 {% load static %}
-
+{% load custom_tags %}
 {% block title %}العربة {% endblock %}
 {% block ref %}
 <link rel="stylesheet" href="{% static 'css/order_style.css' %}">
@@ -38,12 +38,15 @@
                                             <div class="d-flex justify-content-between">
                                                 <div class="d-flex flex-row align-items-center">
                                                     <div>
-                                                        <img src={% if item.product.image %} "{{ item.product.image.url }}" {% else%} "{% static 'image/default.png' %}" {% endif %}
-                                                            class="img-fluid rounded-3" alt="product item"
-                                                            style="width: 65px;">
+                                                        {% if  item.product.image  %}
+                                                        <img src="{{item.product.image.url}}" class="img-fluid rounded-3 " alt="{{ item.product.name }}" style="width: 75px; height: 60px;">
+                                                    {% else %}
+                                                        <img src="{% get_category_image item.product.category %}" class="img-fluid rounded-3" alt="{{ item.product.name }}" style="width: 75px; height: 60px;">
+                                                    {% endif %}
+                                                    
                                                     </div>
                                                     <div class="ms-3">
-                                                        <h5>{{item.product.name}} </h5>
+                                                        <h5 class=" product-name">{{item.product.name}} </h5>
                                                         <p class="small mb-0">الكمية :{{item.quantity}}
                                                             {{item.product.get_unit_display}}</p>
                                                     </div>
