@@ -5,7 +5,6 @@ from django.contrib.auth.views import LoginView
 from supplier.models import SupplyDetails, SupplierProfile
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from supplier.models import SupplyDetails, SupplierProfile 
 from datetime import datetime
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
@@ -113,7 +112,9 @@ def store_status_handler(request):
     return redirect('main:index_view')
 
 
-def our_suppliers_view(request):
+
+
+def our_suppliers_view(request): 
     category = request.GET.get("category")
     subcategory = request.GET.get("subcategory")
     products = Product.objects.all()
@@ -124,7 +125,6 @@ def our_suppliers_view(request):
     if subcategory:
         products = products.filter(subcategory=subcategory)
 
-    # التصنيفات الفرعية حسب التصنيف المختار
     category_subs = {
         'agricultural': Product.AgriculturalSubcategory.choices,
         'processed': Product.ProcessedFoodSubcategory.choices,
@@ -135,12 +135,16 @@ def our_suppliers_view(request):
 
     subcategories = category_subs.get(category, [])
 
+    supplier_cities = products.values_list('City', flat=True).distinct()
+    suppliers = SupplierProfile.objects.filter(cities_covered__in=supplier_cities).distinct()
+
     context = {
         'product_categories': Product.ProductCategory.choices,
         'subcategories': subcategories,
         'selected_category': category,
         'selected_subcategory': subcategory,
         'products': products,
+        'suppliers': suppliers,
     }
 
     return render(request, 'main/our_suppliers.html', context)
