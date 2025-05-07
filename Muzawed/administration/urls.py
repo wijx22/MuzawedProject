@@ -21,6 +21,7 @@ urlpatterns = [
   path('supplier/reject/<int:supplier_id>/', views.reject_supplier_view, name='reject_supplier'),
   path('supplier/<int:supplier_id>/', views.supplier_detail_view, name='supplier_detail'),
   path('orders/', views.order_list_view, name='order_list'),
+  path('orders/detail/<int:order_id>/', views.order_detail_view, name='order_detail_view')
 
 
 

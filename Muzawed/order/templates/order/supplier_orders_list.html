@@ -1,32 +1,30 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block title %}العربة {% endblock %}
+{% block title %}العربة{% endblock %}
 {% block ref %}
 <link rel="stylesheet" href="{% static 'css/order_style.css' %}">
-
 {% endblock %}
+
 {% block content %}
+<h2 class="my-4 text-center">الطلبات المرتبطة بك كمورد</h2>
 
-
-<h2 class="my-4 text-center">طلباتي</h2>
-
-<div class="table-responsive">
-  <table class="table table-bordered table-striped text-center align-middle">
-    <thead class="table-dark">
+<div class="table-responsive" style="max-width: 1000px; margin: auto;">
+  <table class="table table-bordered text-center align-middle" style="background-color: #f9f9f9; font-size: 15px;">
+    <thead style="background-color: #264F3F; color: white;">
       <tr>
-        <th scope="col">رقم الطلب</th>
-        <th scope="col">المستفيد</th>
-        <th scope="col">تاريخ الإنشاء</th>
-        <th scope="col">الحالة</th>
-        <th scope="col">وقت التوصيل</th>
-
-        <th scope="col">المزيد</th>
+        <th>رقم الطلب</th>
+        <th>المستفيد</th>
+        <th>تاريخ الإنشاء</th>
+        <th>الحالة</th>
+        <th>وقت التوصيل</th>
+        <th>طريقة الدفع</th>
+        <th>المزيد</th>
       </tr>
     </thead>
     <tbody>
       {% for order in orders %}
-        <tr>
+        <tr style="background-color: #ffffff;">
           <td>{{ order.id }}</td>
           <td>{{ order.beneficiary.username }}</td>
           <td>{{ order.created_at|date:"Y-m-d" }}</td>
@@ -38,7 +36,6 @@
               {{ order.get_status_display }}
             </span>
           </td>
-    
           <td>
             {% if order.status == 'closed' %}
               <span class="text-success">تم التوصيل</span>
@@ -46,19 +43,29 @@
               <span class="text-danger">لم يتم التوصيل</span>
             {% endif %}
           </td>
-    
           <td>
-            <a href="{% url 'order:supplier_order_detail' order.id %}" class="btn btn-sm btn-primary">
-              عرض التفاصيل
-            </a>
+            {% if order.payments.all %}
+              <span class="badge bg-secondary">
+                {{ order.payments.all.0.get_payment_method_display }}
+              </span>
+            {% else %}
+              <span class="text-muted">غير مدفوعة</span>
+            {% endif %}
           </td>
+          <td>
+            <a href="{% url 'order:supplier_order_detail' order.id %}"
+            class="btn btn-sm"
+            style="background-color: #1e3b2f; color: white;">
+            عرض التفاصيل
+         </a>
+                   </td>
         </tr>
       {% empty %}
         <tr>
-          <td colspan="6" class="text-muted">لا توجد طلبات حتى الآن.</td>
+          <td colspan="7" class="text-muted">لا توجد طلبات حتى الآن.</td>
         </tr>
       {% endfor %}
     </tbody>
-      </table>
+  </table>
 </div>
-{%endblock%}
+{% endblock %}

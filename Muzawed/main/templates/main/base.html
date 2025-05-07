@@ -50,6 +50,7 @@
               <li><a class="dropdown-item" href="{% url 'accounts:supplier_profile_view' request.user.username %}">الملف الشخصي</a></li>
             {% else %}
               <li><a class="dropdown-item" href="{% url 'accounts:beneficiary_profile_view' request.user.username %}">الملف الشخصي</a></li>
+              <li><a class="dropdown-item" href="{% url 'support:view_report'%}">الشكوى </a></li>
             {% endif %}
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item text-danger" href="{% url 'accounts:log_out' %}?next={{ request.path }}">تسجيل الخروج</a></li>
