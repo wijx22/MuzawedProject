@@ -52,8 +52,7 @@
     <tbody>
       {% for row in data %}
       <tr>
-        <!--<td class="prodA clickable">{{ row.product__name }}</td>-->
-        <td class="prodA clickable">{{ item.product.name }}</td>
+        <td class="prodA clickable">{{ row.product__name }}</td>
 
 
         <td>${{ row.total_revenue|floatformat:2 }}</td>

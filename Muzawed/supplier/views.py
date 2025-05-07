@@ -36,6 +36,8 @@ def supplier_details(request: HttpRequest):
                 messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
                 return redirect("main:index_view")
             supply_details = supplier.supply_details
+
+
                   
 
         except AttributeError:
