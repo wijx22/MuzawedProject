@@ -53,6 +53,8 @@
       {% for row in data %}
       <tr>
         <td class="prodA clickable">{{ row.product__name }}</td>
+
+
         <td>${{ row.total_revenue|floatformat:2 }}</td>
         <td>{{ row.total_quantity }}</td>
         <td class="clientA">{{ row.client_name }}</td>

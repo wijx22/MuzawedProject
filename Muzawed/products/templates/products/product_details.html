@@ -1,6 +1,6 @@
-{% extends 'main/supplier_base.html' %}
+{% extends 'main/base.html' %}
 {% load static %}
-
+{% load custom_tags %}
 {% block title %}ادارة المخزون{% endblock %}
 {% block ref %}
 <link rel="stylesheet" href="{% static 'css/products_style.css' %}">
@@ -13,13 +13,13 @@
     <div class="container">
         <div class="row justify-content-center align-items-center gx-5">
             <aside class="col-lg-6">
-                <div class="border rounded-4 mb-3 d-flex justify-content-center">
+                <div class=" rounded-4 mb-3 d-flex justify-content-center">
                     {% if product.image %}
                         <a href="{{ product.image.url }}" data-fancybox>
-                            <img style="max-width: 100%; max-height: 500px;" src="{{ product.image.url }}" class="rounded-4 fit" alt="{{ product.name }}" />
+                            <img style="max-width: 100%; max-height: 500px; min-height: 350px;" src="{{ product.image.url }}" class="rounded-4 fit" alt="{{ product.name }}" />
                         </a>
                     {% else %}
-                        <img style="max-width: 100%; max-height: 500px;" src="{% static 'image/default.png' %}" class="rounded-4 fit" alt="صورة المنتج الافتراضية" />
+                        <img style="max-width: 100%; max-height: 500px;" src="{% get_category_image product.category %}" class="rounded-4 fit" alt="صورة المنتج الافتراضية" />
                     {% endif %}
                 </div>
             </aside>
@@ -83,46 +83,7 @@
 </section>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- 
-<script>
-    $(document).ready(function () {
-        let stock = parseInt($('#product-stock').val());
-        let minOrderQuantity = parseInt($('#product-min-order-quantity').val());
-        let count = minOrderQuantity;
-        $('#counter').val(count);
 
-        $('#increment').click(function () {
-            if (stock >= count + 1) {
-                count++;
-                $('#counter').val(count);
-            } else {
-                alert("الكمية المطلوبة غير متوفرة");
-            }
-            $('#counter').val(count); // Update the counter after incrementing
-        });
-
-        $('#decrement').click(function () {
-            if (count > minOrderQuantity) {
-                count--;
-                $('#counter').val(count);
-            }
-            $('#counter').val(count); // Update the counter after decrementing
-        });
-
-        $('#add-to-cart-btn').click(function (event) {
-            event.preventDefault(); // Prevent the default link behavior
-
-            let productId = $(this).data('product-id');
-            let quantity = parseInt($('#counter').val());
-
-            // Construct the URL for your "Add Item" view
-            let addToCartUrl = `/add_item/${productId}/?quantity=${quantity}`;  // Replace with your actual URL
-
-            // Redirect the user to the "Add Item" view
-            window.location.href = addToCartUrl;
-        });
-    });
-</script> -->
 <script>
     $(document).ready(function () {
         let stock = parseInt($('#product-stock').val());

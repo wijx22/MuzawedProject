@@ -14,6 +14,11 @@
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
   {% block ref %}{% endblock %}
 </head>
+{%url 'main:index_view' as home_url %}
+{%url 'main:our_suppliers' as our_suppliers_url %}
+{%url 'main:contact_view' as contact_url %}
+{%url 'main:about_view' as about_url %}
+
 <body>
   {% if not hide_header %}
   <nav class="navbar navbar-expand-lg py-3">
@@ -31,10 +36,10 @@
   
       <div class="collapse navbar-collapse justify-content-center" id="navbarNav" style="padding-left: 4rem;">
         <ul class="navbar-nav text-center">
-          <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:index_view' %}">الرئيسية</a></li>
-          <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:our_suppliers' %}">مزوديننا</a></li>
-          <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:contact_view' %}">تواصل معنا</a></li>
-          <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:about_view' %}">عن مزود</a></li>
+          <li class="nav-item"><a class="nav-link mx-2 {%if request.path == home_url%}active disabled{%endif%}" href="{% url 'main:index_view' %}">الرئيسية</a></li>
+          <li class="nav-item"><a class="nav-link mx-2 {%if request.path == our_suppliers_url%}active disabled{%endif%}" href="{% url 'main:our_suppliers' %}">مزوديننا</a></li>
+          <li class="nav-item"><a class="nav-link mx-2 {%if request.path == contact_url%}active disabled{%endif%}" href="{% url 'main:contact_view' %}">تواصل معنا</a></li>
+          <li class="nav-item"><a class="nav-link mx-2 {%if request.path == about_url%}active disabled{%endif%}" href="{% url 'main:about_view' %}">عن مزود</a></li>
         </ul>
       </div>
   
