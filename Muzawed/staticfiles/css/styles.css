@@ -1,0 +1,251 @@
+
+/*      الخط واللون    */
+body {
+    font-family: 'Tajawal', sans-serif;
+    background-color: #F3F1EC;
+    color: #1F3F2E;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+/*     ترتيب اماكن الهيدر والفوتر    */
+main {
+    flex: 1; 
+}
+html{
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+
+}
+html, body {
+    height: 100%;
+  }
+
+
+/*          الهيدر           */
+
+.navbar {
+    background-color: transparent;
+}
+
+.navbar .nav-link {
+    color: #264F3F;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+    color: #6AA894;
+}
+
+.navbar .btn {
+    font-weight: 500;
+    border-radius: 30px;
+}
+
+.navbar .btn-dark {
+    background-color: #264F3F;
+    border: none;
+}
+
+.navbar .btn-dark:hover {
+    background-color: #1F3F2E;
+}
+
+.navbar .btn-outline-dark {
+    border-color: #264F3F;
+    color: #264F3F;
+}
+
+.navbar .btn-outline-dark:hover {
+    background-color: #264F3F;
+    color: white;
+}
+
+
+/*         الأزرار           */
+
+.btn-primary-custom {
+    background-color: #1F3F2E;
+    color: white;
+    border-radius: 9px;
+    padding: 8px 24px;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+.btn-primary-custom:hover {
+    background-color: #264F3F;
+    color: white;
+
+}
+
+.btn-outline-custom {
+    border: 1px solid #1F3F2E;
+    color: #1F3F2E;
+    border-radius: 9px;
+    padding: 5px 15px;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+.btn-outline-custom:hover {
+    background-color: #1F3F2E;
+    color: white;
+}
+.mazood-main-btn{
+    background-color: #e67e22;
+    color: white;
+}
+.mazood-main-btn:hover{
+    background-color: #e67d22cb;
+}
+.btn-outline-danger{
+    border: 1px solid #8d0303;
+    color: #8d0303;
+    border-radius: 9px;
+    padding: 5px 15px;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+.btn-outline-danger:hover{
+    background-color: #8d0303;
+    color: white;
+}
+
+/*         الفوتر            */
+footer {
+    background-color: #FFFFFF;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    padding: 40px 0;
+}
+
+footer img {
+    max-width: 80px;
+}
+
+footer .text-dark {
+    transition: 0.3s;
+}
+
+footer .text-dark:hover {
+    color: #6AA894;
+}
+
+/*         الأيقونات         */
+
+.material-symbols-outlined {
+    font-size: 64px;
+    color: #1F3F2E;
+    transition: transform 0.3s ease;
+}
+
+.material-symbols-outlined:hover {
+    transform: scale(1.1);
+}
+
+
+/*     ايفكت     */
+
+.section-divider {
+    height: 2px;
+    background-color: #6AA894;
+    width: 60px;
+    margin: 20px auto;
+}
+
+/*         روابط          */
+
+a {
+  color: #1F3F2E;
+  transition: color 0.3s ease;
+}
+
+/* a:hover {
+  color: #6AA894; 
+} */
+
+.custom {
+    color: #FFFFFF; 
+    transition: 0.3s ease; 
+}
+
+.custom:hover {
+    color: #FFFFFF; 
+    font-weight: 500; 
+}
+
+
+/* يشيل اللون الازرق الافتراضي */
+.dropdown-menu .dropdown-item {
+    background-color: transparent;
+    color: #212529; 
+  }
+  
+  .dropdown-menu .dropdown-item:hover,
+  .dropdown-menu .dropdown-item:focus {
+    background-color: #f8f9fa; 
+    color: #006C48; 
+  }
+   
+  .dropdown-menu .dropdown-item:active {
+    background-color: #f8f9fa;
+    color: #006C48;
+  }
+  
+  .form-control:focus {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: #264f3f;
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgba(38, 79, 63, .25); 
+}
+.form-check-input:checked {
+    background-color: #264f3f;
+    border-color: #264f3f;
+}
+.index{
+    padding-right: 8rem;
+}
+/* files format */
+
+.file-upload {
+    border: 1px dashed #ced4da;
+    border-radius: 4px;
+    padding: 15px;
+    text-align: center;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.file-upload:hover {
+    background-color: #e9ecef;
+}
+.file-upload i {
+    font-size: 24px;
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+.file-upload-text {
+    color: #6c757d;
+}
+.file-name {
+    margin-top: 10px;
+    white-space: nowrap;     
+    overflow: hidden;            
+    text-overflow: ellipsis;  
+    font-size: 0.875rem;
+}
+
+.supplier-card {
+    background-color: #FAFAF7;
+    border-radius: 15px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .supplier-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }

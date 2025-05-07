@@ -1,0 +1,166 @@
+
+.details-container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 30px;
+    margin: 30px auto;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
+
+.action-btn {
+    background-color: #2c5545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: 500;
+    margin-left: 10px;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.detail-value {
+    color: #4A3A20;
+}
+
+.supplier-logo {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 5px;
+    background-color: #f8f9fa;
+}
+
+.detail-section {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.detail-section:last-child {
+    border-bottom: none;
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 6px 10px;
+}
+
+.timestamp {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.city-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.city-actions {
+    width: 100px;
+}
+
+.modal-header,
+.modal-footer {
+    border-color: #e9ecef;
+}
+
+.modal-title {
+    color: #2c5545;
+    font-weight: 600;
+}
+
+.btn-add-city {
+    background-color: #2c5545;
+    color: white;
+}
+/* create page */
+.form-container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 30px;
+    margin: 30px auto;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
+.submit-btn {
+    background-color: #2c5545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    width: 100%;
+    font-weight: 500;
+}
+.form-control{
+    text-align: right;
+    direction: rtl; 
+}
+.form-label {
+    font-weight: 500;
+}
+.section-title {
+    color: #4A3A20;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    margin-top: 30px;
+}
+.form-text {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+.file-upload {
+    border: 1px dashed #ced4da;
+    border-radius: 4px;
+    padding: 15px;
+    text-align: center;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.file-upload:hover {
+    background-color: #e9ecef;
+}
+.file-upload i {
+    font-size: 24px;
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+.file-upload-text {
+    color: #6c757d;
+}
+.file-name {
+    margin-top: 10px;
+    white-space: nowrap;     
+    overflow: hidden;            
+    text-overflow: ellipsis;  
+    font-size: 0.875rem;
+}
+.form-select:focus {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: #264f3f;
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgba(38, 79, 63, .25);
+}
+
+.form-select option {
+    color: #000; 
+    background-color: #fff; 
+}
+
+.form-select:focus option:checked {
+    background-color: #264f3f; 
+    color: #fff; 
+}
+
+

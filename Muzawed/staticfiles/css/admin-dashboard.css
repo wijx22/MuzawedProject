@@ -1,0 +1,407 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  background-color: #f9f9f9;
+}
+
+.header {
+  background-color: #264F3F;
+  color: #fff;
+  padding: 15px 25px;
+  font-size: 18px;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  display: none;
+}
+
+
+.dashboard {
+  display: flex;
+  padding-top: 0;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #356150;
+  color: #fff;
+  padding: 20px;
+  height: 100%;
+  position: fixed;  
+  top: 59px;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  transition: width 0.3s ease; 
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+}
+.card canvas {
+  width: 100% !important;
+  height: 150px !important;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  margin: 15px 0;
+}
+
+.sidebar ul li a {
+  color: #ecf0f1;
+  text-decoration: none;
+  display: block;
+  padding: 10px;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.sidebar ul li a:hover {
+  background-color: #356150;
+}
+
+.main {
+  flex: 1;
+  margin-right: 220px;
+  padding: 30px;
+  transition: margin-right 0.3s ease;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.card {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  min-width: 250px;
+  flex: 1;
+}
+
+.card h3 {
+  margin-bottom: 10px;
+  color: #4A3A20;
+}
+
+.card p {
+  font-size: 24px;
+  color: #204a3a;
+  margin: 0;
+}
+
+
+.charts-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.chart-card {
+  flex: 1 1 calc(50% - 10px); 
+  min-width: 250px;
+  max-width: 48%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.full-width {
+  flex: 1 1 100%;
+  max-width: 100%;
+}
+
+.chart-card canvas {
+  width: 100% !important;
+  height: 150px !important; 
+}
+
+@media (max-width: 1024px) {
+  .menu-btn {
+    display: block;
+  }
+  
+  .sidebar {
+    position: fixed;
+    top: 60px;
+    right: 0;
+    left: auto;
+    bottom: 0;
+    width: 70%;
+    max-width: 300px;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    background-color: #356150;
+    z-index: 1001;
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
+  }
+
+  .main {
+    margin-right: 0;
+  }
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: space-between;
+}
+
+.card .chart-container {
+  width: 100%;
+  height: 200px;
+  position: relative;
+}
+
+
+.chart-card {
+  flex: 1 1 48%;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+  .chart-card {
+    flex: 1 1 100%;
+  }
+}
+
+.bg-dark-green {
+  background-color: #0a371d !important;
+  color: #000;
+}
+
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none;
+  }
+  .table td, .table th {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+}
+
+.table thead th {
+  background-color: #1F3F2E !important;
+  color: white !important;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.styled-table th, .styled-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.styled-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.styled-table tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.styled-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+@media (max-width: 768px) {
+  .styled-table th, .styled-table td {
+    padding: 10px;
+  }
+}
+
+.icon-spacing{
+  margin-right: 20px;
+  margin-left: 20px;
+}
+
+.section-space {
+    margin-bottom: 40px; 
+  }
+
+
+/*General design of the file list page (supplier/beneficiary)*/
+.bg-dark-green {
+  background-color: #204a3a !important;
+  color: #fff;
+}
+
+.profile-container {
+  margin: 100px auto 25px;
+  padding: 0 15px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.profile-card {
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1100px;
+  border: 2px solid #204a3a;
+}
+
+.profile-header {
+  background-color: #204a3a;
+  color: #fff;
+  text-align: right;
+  padding: 10px 15px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #f8f9fa;
+  margin-bottom: 0;
+}
+
+.profile-header h5 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.profile-badge {
+  background-color: #f8f9fa;
+  color: #204a3a;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 5px 15px;
+  border-radius: 20px;
+  border: 2px solid #204a3a;
+}
+
+.profile-table-responsive {
+  margin-top: 0;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.profile-table {
+  text-align: left;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.profile-table th, .profile-table td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 10px 15px;
+}
+
+.profile-table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.action-btn {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.action-btn.text-success {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.action-btn.text-danger {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-success {
+  color: #28a745;
+}
+
+.text-danger {
+  color: #dc3545;
+}
+
+/* استجابة للشاشات الصغيرة */
+@media (max-width: 768px) {
+  .profile-header {
+    font-size: 16px;
+  }
+
+  .profile-badge {
+    font-size: 14px;
+  }
+
+  .profile-table th, .profile-table td {
+    padding: 10px;
+  }
+
+  .profile-table-responsive {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .action-btn {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-header {
+    font-size: 14px;
+  }
+
+  .profile-table th, .profile-table td {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .profile-badge {
+    font-size: 12px;
+  }
+
+  .text-center {
+    font-size: 14px;
+  }
+}
+

@@ -1,0 +1,93 @@
+.orange-title{
+    
+    color: #e67e22;
+}
+
+.logo-container {
+    width: 250px; 
+    height: 250px; 
+    border-radius: 50%; 
+    overflow: hidden; 
+    margin: 0 ; 
+    border: 2px solid #ccc; 
+}
+.logo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.store-name {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5em;
+}
+.store-description {
+    color: #666;
+    line-height: 1.6;
+}
+.status-badge {
+    margin-top: 10px;
+}
+.card-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #e67e22;
+}
+
+.list-unstyled li {
+    margin-bottom: 0.3em;
+}
+.vl {
+    border-left: 1px dashed #e67e22;
+}
+.store-card{
+    padding: 30px;
+    width: 100%;
+    margin: 5px 0;
+    height: auto;
+    overflow: auto;
+    background: #ffffff81;
+    border-radius: 8px;
+}
+
+.form-check-label {
+    font-size: 12px;
+    font-weight: normal;
+}
+.filter-title{
+    font-size: 16px;
+    color: #4A3A20;
+}
+/* pagination */
+.pagination {
+    margin-top: auto;        /* Push pagination to the bottom */
+}
+.pagination a {
+    text-decoration: none; 
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.pagination a:hover {
+    color: #e67e22 !important;
+}
+
+.pagination .current {
+    font-weight: bold;
+    font-size: 1em;
+}
+
+.pagination .disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.pagination .disabled:hover {
+    background-color: #e67e22 !important; 
+    color: #fff !important;
+}
+.current_page{
+    background-color: #e67e22 !important; 
+
+}
+
