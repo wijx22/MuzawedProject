@@ -25,11 +25,11 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <a class="navbar-brand mx-auto" href="{% url 'main:index_view' %}">
-          <img src="{% static 'img/logo.svg' %}" alt="مزود" width="80">
+          <img src="{% static 'img/logo.svg' %}" alt="مزود" width="200">
         </a>
       </div>
   
-      <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <div class="collapse navbar-collapse justify-content-center" id="navbarNav" style="padding-left: 4rem;">
         <ul class="navbar-nav text-center">
           <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:index_view' %}">الرئيسية</a></li>
           <li class="nav-item"><a class="nav-link mx-2" href="{% url 'main:our_suppliers' %}">مزوديننا</a></li>
@@ -50,6 +50,7 @@
               <li><a class="dropdown-item" href="{% url 'accounts:supplier_profile_view' request.user.username %}">الملف الشخصي</a></li>
             {% else %}
               <li><a class="dropdown-item" href="{% url 'accounts:beneficiary_profile_view' request.user.username %}">الملف الشخصي</a></li>
+              <li><a class="dropdown-item" href="{% url 'order:beneficiary_orders_view' %}">طلباتي </a></li>
               <li><a class="dropdown-item" href="{% url 'support:view_report'%}">الشكوى </a></li>
             {% endif %}
             <li><hr class="dropdown-divider"></li>

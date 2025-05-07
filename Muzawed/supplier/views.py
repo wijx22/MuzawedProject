@@ -36,6 +36,9 @@ def supplier_details(request: HttpRequest):
                 messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
                 return redirect("main:index_view")
             supply_details = supplier.supply_details
+            if not supply_details.is_today_available():
+                messages.warning(request, 'المتجر مغلق اليوم')
+                return redirect("main:index_view")
                   
 
         except AttributeError:
