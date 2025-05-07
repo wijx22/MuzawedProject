@@ -145,7 +145,10 @@ def supplier_orders_view(request):
     supplier: SupplierProfile = request.user.supplier
     orders = Order.objects.filter(supplier=supplier)
 
+    order_status = request.GET.get('status')  
 
+    if order_status:
+        orders = orders.filter(status=order_status)  
 
     return render(request, 'order/supplier_orders_list.html', {
         'orders': orders
@@ -261,11 +264,25 @@ def supplier_order_detail(request, order_id):
             order.status = 'processing'  
             order.save()
             messages.success(request, "تم قبول الطلب وهو الآن قيد المعالجة.")
+
+            Notification.objects.create(
+                recipient=order.beneficiary,  # المستفيد
+                notification_type='alert',
+                message='تم قبول طلبك وهو الآن قيد المعالجة.'
+            )
+
         
         elif action == "reject" and order.status == 'open':
             order.status = 'cancelled'  
             order.save()
             messages.warning(request, "تم رفض الطلب.")
+
+            Notification.objects.create(
+                recipient=order.beneficiary,
+                notification_type='alert',
+                message=' تم رفض طلبك من قبل المورد .'
+            )
+
         
         elif action == "delete" and not actions_disabled:
             order.delete()
@@ -277,6 +294,13 @@ def supplier_order_detail(request, order_id):
             order.delivery_date = timezone.now()  
             order.save()
             messages.success(request, "تم تسليم الطلب بنجاح.")
+
+            Notification.objects.create(
+                recipient=order.beneficiary,
+                notification_type='alert',
+                message='تم تسليم طلبك بنجاح.'
+            )
+
         
         return redirect('order:supplier_order_detail', order_id=order.id)
 
