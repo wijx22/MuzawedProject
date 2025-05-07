@@ -39,25 +39,6 @@ def sign_up_beneficiary(request: HttpRequest):
 
 
 
-#def sign_in(request:HttpRequest):
-#    if request.user.is_authenticated:
-#        return redirect("main:index_view")
-#    
-#    if request.method == "POST":
-#        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
-#        if user:
-#            login(request, user)
-#            messages.success(request,"مرحبًا بك من جديد", "alert-success" )
-#            return redirect(request.GET.get("next", "/"))
-#
-#        else:
-#            messages.error(request, "اسم المستخدم أو كلمة المرور غير صالحة")
-#
-    
-#
-#
-#
-#   return render(request, "accounts/signin.html")
 
 
 
@@ -69,10 +50,10 @@ def sign_in(request: HttpRequest):
         user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         if user:
             login(request, user)
-            messages.success(request, "مرحبًا بك من جديد", "alert-success")
+            #messages.success(request, "مرحبًا بك من جديد", "alert-success")
 
             if user.is_staff:
-                return redirect("administration:dashboard")  # عدلي اسم المسار إذا مختلف
+                return redirect("administration:dashboard") 
             else:
                 return redirect(request.GET.get("next", "main:index_view"))
         else:
@@ -191,10 +172,6 @@ def supplier_profile_view(request: HttpRequest, user_name):
 
         profile, created = SupplierProfile.objects.get_or_create(user=user)
 
-        #if not profile.is_active:
-        #    messages.error(request, "حسابك قيد المراجعة من قبل الإدارة. سيتم تفعيله قريبًا.")
-        #    return redirect('main:index_view') 
-#
 
         return render(request, 'accounts/supplier/supplier_profile.html', {
             'user': user,
@@ -260,13 +237,10 @@ def delete_supplier_account(request: HttpRequest):
         user = request.user
         profile = SupplierProfile.objects.get(user=user)
 
-        # تسجيل الخروج قبل حذف الحساب
         logout(request)
 
-        # حذف الملف الشخصي للمورد
         profile.delete()
 
-        # حذف المستخدم من قاعدة البيانات
         user.delete()
 
         messages.success(request, "تم حذف حسابك بنجاح.")

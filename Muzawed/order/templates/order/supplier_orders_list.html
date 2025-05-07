@@ -7,7 +7,68 @@
 {% endblock %}
 
 {% block content %}
+<style>
+  .filters-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+
+  .filters {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    display: inline-block;
+  }
+
+  .filters label {
+    font-weight: bold;
+    margin-right: 10px;
+    color: #264F3F;
+  }
+
+  .filters select {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    min-width: 150px;
+  }
+
+  .filters button {
+    padding: 6px 16px;
+    background-color: #264F3F;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .filters button:hover {
+    background-color: #1e3b2f;
+  }
+
+
+</style>
 <h2 class="my-4 text-center">الطلبات المرتبطة بك كمورد</h2>
+
+<div class="filters-container">
+  <div class="filters">
+    <form method="get">
+      <label for="status">تصفية الحالة:</label>
+      <select name="status" id="status">
+        <option value="">-- اختر الحالة --</option>
+        <option value="open" {% if request.GET.status == "open" %}selected{% endif %}>مفتوح</option>
+        <option value="processing" {% if request.GET.status == "processing" %}selected{% endif %}>قيد المعالجة</option>
+        <option value="closed" {% if request.GET.status == "closed" %}selected{% endif %}>مستلم</option>
+        <option value="cancelled" {% if request.GET.status == "cancelled" %}selected{% endif %}>ملغاة</option>
+      </select>
+      <button type="submit">تصفية</button>
+    </form>
+  </div>
+</div>
 
 <div class="table-responsive" style="max-width: 1000px; margin: auto;">
   <table class="table table-bordered text-center align-middle" style="background-color: #f9f9f9; font-size: 15px;">

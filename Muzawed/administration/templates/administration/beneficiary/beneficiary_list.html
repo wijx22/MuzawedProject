@@ -31,49 +31,6 @@
   
 </style>
 
-<!--<div class="container mt-4">
-  <div class="card shadow-sm">
-    <div class="card-header bg-dark-green text-white d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">ملفّات المستفيدين</h5>
-      <span class="badge bg-light text-dark">{{ beneficiaries|length }} مستفيد</span>
-    </div>
-    <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-striped table-hover mb-0">
-          <thead class="table-light">
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">اسم المستخدم</th>
-              <th scope="col">البريد الإلكتروني</th>
-              <th scope="col">رقم التواصل</th>
-              <th scope="col">العنوان</th>
-              <th scope="col">الحالة</th>
-
-            </tr>
-          </thead>
-          <tbody>
-            {% for b in beneficiaries %}
-            <tr>
-              <th scope="row">{{ b.pk }}</th>
-              <td>{{ b.user.username }}</td>
-              <td><a href="mailto:{{ b.user.email }}">{{ b.user.email }}</a></td>
-              <td>{{ b.contact_info }}</td>
-              <td>{{ b.address }}</td> 
-              <td>{{ b.status }}</td>  
- 
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="5" class="text-center py-3">لا توجد ملفات مستفيدين.</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>-->
-
 
 <div class="profile-container mt-7">
   <div class="profile-card shadow-sm">

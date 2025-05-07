@@ -8,21 +8,6 @@
 {% endblock %}
 {% block content %}
 <style>
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f6f9;
-    padding: 20px;
-    direction: rtl;
-  }
-
-  .card {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-  }
-
   h2, h3 {
     color: #2c3e50;
     margin-bottom: 15px;
@@ -77,7 +62,6 @@
   <h2>تفاصيل الطلب رقم {{ order.id }}</h2>
   <div class="order-header">
     <p><strong>المستفيد:</strong> {{ order.beneficiary.username }}</p>
-    <p><strong>رقم الطلب:</strong> {{ order.id }}</p>
     <p><strong>تاريخ الإنشاء:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</p>
     <p><strong>تاريخ التوصيل:</strong> {{ order.delivery_date|date:"Y-m-d H:i" }}</p>
     <p><strong>الحالة:</strong> {{ order.get_status_display }}</p>
