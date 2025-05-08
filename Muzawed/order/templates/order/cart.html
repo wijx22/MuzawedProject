@@ -1,6 +1,6 @@
 {% extends 'main/base.html' %}
 {% load static %}
-
+{% load custom_tags %}
 {% block title %}العربة {% endblock %}
 {% block ref %}
 <link rel="stylesheet" href="{% static 'css/order_style.css' %}">
@@ -30,6 +30,7 @@
                                 <h5 class="mb-3"></h5>
                                 <hr>
                                 <div style="max-height: 700px; overflow-y: auto;">
+                                    {%if items%}
                                     {%for item in items%}
 
                                     <div class="card mb-3">
@@ -37,12 +38,15 @@
                                             <div class="d-flex justify-content-between">
                                                 <div class="d-flex flex-row align-items-center">
                                                     <div>
-                                                        <img src={% if item.product.image %} "{{ item..product.image.url }}" {% else%} "{% static 'image/default.png' %}" {% endif %}
-                                                            class="img-fluid rounded-3" alt="product item"
-                                                            style="width: 65px;">
+                                                        {% if  item.product.image  %}
+                                                        <img src="{{item.product.image.url}}" class="img-fluid rounded-3 " alt="{{ item.product.name }}" style="width: 75px; height: 60px;">
+                                                    {% else %}
+                                                        <img src="{% get_category_image item.product.category %}" class="img-fluid rounded-3" alt="{{ item.product.name }}" style="width: 75px; height: 60px;">
+                                                    {% endif %}
+                                                    
                                                     </div>
                                                     <div class="ms-3">
-                                                        <h5>{{item.product.name}} </h5>
+                                                        <h5 class=" product-name">{{item.product.name}} </h5>
                                                         <p class="small mb-0">الكمية :{{item.quantity}}
                                                             {{item.product.get_unit_display}}</p>
                                                     </div>
@@ -51,14 +55,18 @@
                                                     <div style="width: 100px;">
                                                         <h5 class="mb-0">{{item.subtotal}} ﷼</h5>
                                                     </div>
-                                                    <a href="#!" style="color: #cecece;"><i
+                                                    <a href="{%url 'order:remove_from_cart_view' order.id item.id%}" style="color: #9e1818;"><i
                                                             class="fas fa-trash-alt"></i></a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     {%endfor%}
-
+                                    {%else%}
+                                    <div class="card mb-3">
+                                        <Span> لا توجد منتجات </Span>
+                                    </div>
+                                    {%endif%}
 
                                 </div>
 
@@ -67,8 +75,9 @@
                             <!-- payment method -->
                             <div class="col-lg-5">
 
-                                <div class="card bg-orange text-white rounded-3">
-                                    <div class="card-body">
+                                <div class="card bg-orange d-flex flex-column justify-content-between p-4 text-white rounded-3">
+                                    <div class="card-title"><h3><span>اختر طريقة الدفع</span></h3></div>
+                                    <div class="card-body  ">
 
                                         <form method="POST" action="{% url 'order:process_order' order.id %}">  
                                             {% csrf_token %}
@@ -101,26 +110,17 @@
                                         
                                             <hr class="my-4">
                                         
-                                            <div class="d-flex justify-content-between">
-                                                <p class="mb-2">المجموع الفرعي </p>
-                                                <p class="mb-2">{{items.price}} ﷼</p>
-                                            </div>
+                                    
                                         
-                                            <div class="d-flex justify-content-between">
-                                                <p class="mb-2">رسوم التوصيل</p>
-                                                <p class="mb-2"> 20.00 ﷼</p>
-                                            </div>
-                                            <hr class="my-4">
+                                            
                                         
                                             <div class="d-flex justify-content-between mb-4">
                                                 <p class="mb-2">المجموع (شامل ضريبة القيمة المضافة)</p>
-                                                <p class="mb-2">{{items.price}} ﷼</p>
+                                                <p class="mb-2">{{order.total}} ﷼</p>
                                             </div>
                                         
-                                            <button type="submit" class="btn-primary-custom">
-                                                <div class="d-flex justify-content-between">
+                                            <button type="submit" class="btn-primary-custom w-100 text-center ">
                                                     <span>اتمام الطلب </span>
-                                                </div>
                                             </button>
                                         </form>
 

@@ -3,31 +3,63 @@
 {% block title %}تواصل معنا{% endblock %}
 
 {% block content %}
-<div class="container py-5" style="max-width: 700px;">
-    <h2 class="fw-bold text-center mb-4" style="color: #1F3F2E;">تواصل معنا</h2>
-    <p class="text-center text-muted mb-5">يسعدنا تواصلك معنا! الرجاء تعبئة النموذج أدناه وسنقوم بالرد في أقرب وقت ممكن.</p>
+<div class="container py-2">
+  <h2 class="fw-bold text-center mb-3" style="color: #1F3F2E;">تواصل معنا</h2>
+  <p class="text-center text-muted mb-5">يسعدنا تواصلك معنا! الرجاء تعبئة النموذج أدناه وسنقوم بالرد في أقرب وقت ممكن.</p>
 
-    <form method="post" novalidate>
+  <div class="row justify-content-center align-items-center">
+    
+    <div class="col-lg-4 col-md-4 text-center">
+      <img src="{% static 'img/wemen.svg' %}" alt="مزود" class="img-fluid" style="max-width: 270px; padding-bottom: 3rem;">
+    </div>
+
+    <div class="col-lg-6 col-md-7 mb-4">
+      <form method="post" novalidate class="p-4 shadow-sm rounded-4 bg-white">
         {% csrf_token %}
 
         <div class="mb-3">
-            <label for="email" class="form-label">البريد الإلكتروني</label>
-            <input type="email" class="form-control rounded-3" id="email" name="email" required>
+          <label for="email" class="form-label">البريد الإلكتروني</label>
+          <input type="email" class="form-control rounded-3" id="email" name="email" required>
         </div>
 
         <div class="mb-3">
-            <label for="subject" class="form-label">الموضوع</label>
-            <input type="text" class="form-control rounded-3" id="subject" name="subject" required>
+          <label for="subject" class="form-label">الموضوع</label>
+          <input type="text" class="form-control rounded-3" id="subject" name="subject" required>
         </div>
 
         <div class="mb-3">
-            <label for="message" class="form-label">الرسالة</label>
-            <textarea class="form-control rounded-3" id="message" name="message" rows="5" required  required minlength="10"></textarea>
+          <label for="message" class="form-label">الرسالة</label>
+          <textarea class="form-control rounded-3" id="message" name="message" rows="4" required minlength="10"></textarea>
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-primary-custom px-5">إرسال</button>
+          <button type="submit" class="btn btn-primary-custom px-5">إرسال</button>
         </div>
-    </form>
+        <div class="text-center mt-4">
+          <p class="text-muted">او تواصل معنا عبر:</p>
+          <p><i class="bi bi-envelope"></i> Muzawed7@gmail.com</p>
+      </div>
+      </form>
+    </div>
+
+  </div>
 </div>
+
+
+<script>
+    (function () {
+      const form = document.getElementById('contactForm');
+  
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+  
+        form.classList.add('was-validated');
+      }, false);
+    })();
+  </script>
+  
+  
 {% endblock %}

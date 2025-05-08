@@ -36,6 +36,8 @@ def supplier_details(request: HttpRequest):
                 messages.warning(request, 'انت غير مصرح للوصول الى هذه الصفحة')
                 return redirect("main:index_view")
             supply_details = supplier.supply_details
+
+
                   
 
         except AttributeError:
@@ -421,7 +423,7 @@ def store_view(request: HttpRequest ):
 
     page_number = request.GET.get("page", 1)
 
-    paginator = Paginator(products, 4)
+    paginator = Paginator(products, 6)
     store_page = paginator.get_page(page_number)
     return render(
         request,

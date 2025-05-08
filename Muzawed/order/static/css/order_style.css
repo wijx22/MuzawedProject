@@ -1,5 +1,7 @@
 .bg-orange{
-    background-color: #f8a760;
+    background-color: #fab980;
+    border: none;
+    min-height: 300px;
 }
 .brown-title{
     color: #4A3A20;   
@@ -23,4 +25,8 @@ p{
     white-space: nowrap; 
     overflow: hidden;     
     text-overflow: ellipsis;
+}
+.product-name {
+    word-break: break-word; 
+    
 }

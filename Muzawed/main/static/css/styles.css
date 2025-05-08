@@ -27,7 +27,9 @@ html, body {
 .navbar {
     background-color: transparent;
 }
-
+.navbar-nav .nav-link.active {
+    color:#e67e22;
+  }
 .navbar .nav-link {
     color: #264F3F;
     font-weight: 500;
@@ -113,6 +115,8 @@ html, body {
     background-color: #8d0303;
     color: white;
 }
+
+
 
 /*         الفوتر            */
 footer {
@@ -206,6 +210,24 @@ a {
     background-color: #264f3f;
     border-color: #264f3f;
 }
+
+.form-select:focus {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: #264f3f;
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgba(38, 79, 63, .25);
+}
+
+.form-select option {
+    color: #000; 
+    background-color: #fff; 
+}
+
+.form-select:focus option:checked {
+    background-color: #264f3f; 
+    color: #fff; 
+}
 .index{
     padding-right: 8rem;
 }
@@ -248,4 +270,24 @@ a {
   .supplier-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+
+  .category-card{
+    background-color: transparent;
+    border: #4A3A20 solid 2px;
+    border-radius: 10px;
+    color: #4A3A20;
+    height: 30px;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+  }
+
+  .category-card.active{
+    background-color: #e67e22;
+    border: #e67e22 solid 2px;
+  
+    color: #fff;
+  
   }

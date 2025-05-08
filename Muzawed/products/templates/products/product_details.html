@@ -1,6 +1,6 @@
-{% extends 'main/supplier_base.html' %}
+{% extends 'main/base.html' %}
 {% load static %}
-
+{% load custom_tags %}
 {% block title %}ادارة المخزون{% endblock %}
 {% block ref %}
 <link rel="stylesheet" href="{% static 'css/products_style.css' %}">
@@ -11,15 +11,20 @@
 {% block content %}
 <section class="py-5">
     <div class="container">
+        <div style="text-align: left;">
+            <a href="{% url 'supplier:store_view' %}?supplier_id={{ request.GET.supplier_id }}" class="text-decoration-none mb-3">
+                <i class="bi bi-arrow-left"></i> رجوع
+            </a>
+        </div>
         <div class="row justify-content-center align-items-center gx-5">
             <aside class="col-lg-6">
-                <div class="border rounded-4 mb-3 d-flex justify-content-center">
+                <div class=" rounded-4 mb-3 d-flex justify-content-center">
                     {% if product.image %}
                         <a href="{{ product.image.url }}" data-fancybox>
-                            <img style="max-width: 100%; max-height: 500px;" src="{{ product.image.url }}" class="rounded-4 fit" alt="{{ product.name }}" />
+                            <img style="max-width: 100%; max-height: 500px; min-height: 350px;" src="{{ product.image.url }}" class="rounded-4 fit" alt="{{ product.name }}" />
                         </a>
                     {% else %}
-                        <img style="max-width: 100%; max-height: 500px;" src="{% static 'image/default.png' %}" class="rounded-4 fit" alt="صورة المنتج الافتراضية" />
+                        <img style="max-width: 100%; max-height: 500px;" src="{% get_category_image product.category %}" class="rounded-4 fit" alt="صورة المنتج الافتراضية" />
                     {% endif %}
                 </div>
             </aside>
@@ -48,7 +53,9 @@
                     </dl>
 
                     <hr />
-
+                    {% if product.stock == 0 %}
+                    <p>عذرًا هذا المنتج غير متوفر حاليا </p>
+                    {%else%}
                     <div class="row mb-4">
                         <div class="col-md-4 col-6 mb-2 mb-md-0">
                             <label class="mb-0">الكمية:</label>
@@ -57,72 +64,35 @@
                                         class="fa fa-minus"></i> </button>
                                 <input class="form-control text-center border border-secondary" type="text" value="1"
                                     style="max-width: 40px" id="counter" readonly>
-                                <button class="btn btn-light border icon-hover px-2" id="increment"> <i
+                                <button class="btn btn-primary-custom border icon-hover px-2" id="increment"> <i
                                         class="fa fa-plus"></i> </button>
                             </div>
                         </div>
                     </div>
-                    <a href="#" class="btn mazood-main-btn shadow-0" id="add-to-cart-btn" data-product-id="{{ product.id }}">
+                    {% endif %}
+
+                    <a href="#" class="{% if product.stock == 0 %}disabled{% endif %} btn btn-primary-custom shadow-0" id="add-to-cart-btn" data-product-id="{{ product.id }}">
                         أضف إلى السلة <i class="bi bi-basket2-fill"></i>
                     </a>
-                    <!-- <a href="#" class="btn mazood-main-btn shadow-0"> أضف إلى السلة <i
-                            class="bi bi-basket2-fill"></i> </a> -->
-
+               
                 </div>
             </main>
         </div>
     </div>
-    <div>
+    {%if products%}
+    <div class="p-5 m-3 container">
         <h1>منتجات مماثلة</h1>
-    </div>
-    {%include 'products/product_list.html'%}
+        {%include 'products/product_list.html'%}
 
+    </div>
+    {%endif%}
     <input type="hidden" id="product-stock" value="{{ product.stock }}">
     <input type="hidden" id="product-min-order-quantity" value="{{ product.min_order_quantity }}">
 
 </section>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- 
-<script>
-    $(document).ready(function () {
-        let stock = parseInt($('#product-stock').val());
-        let minOrderQuantity = parseInt($('#product-min-order-quantity').val());
-        let count = minOrderQuantity;
-        $('#counter').val(count);
 
-        $('#increment').click(function () {
-            if (stock >= count + 1) {
-                count++;
-                $('#counter').val(count);
-            } else {
-                alert("الكمية المطلوبة غير متوفرة");
-            }
-            $('#counter').val(count); // Update the counter after incrementing
-        });
-
-        $('#decrement').click(function () {
-            if (count > minOrderQuantity) {
-                count--;
-                $('#counter').val(count);
-            }
-            $('#counter').val(count); // Update the counter after decrementing
-        });
-
-        $('#add-to-cart-btn').click(function (event) {
-            event.preventDefault(); // Prevent the default link behavior
-
-            let productId = $(this).data('product-id');
-            let quantity = parseInt($('#counter').val());
-
-            // Construct the URL for your "Add Item" view
-            let addToCartUrl = `/add_item/${productId}/?quantity=${quantity}`;  // Replace with your actual URL
-
-            // Redirect the user to the "Add Item" view
-            window.location.href = addToCartUrl;
-        });
-    });
-</script> -->
 <script>
     $(document).ready(function () {
         let stock = parseInt($('#product-stock').val());

@@ -1,4 +1,5 @@
 {%load static%}
+{% load custom_tags %}
 <html>
 
 <head>
@@ -6,7 +7,7 @@
 </head>
 
 <body>
-    <section class="d-flex flex-row justify-content-center align-items-center">
+    <section class="d-flex flex-row mt-3 justify-content-start align-items-center">
 
             <div class="row justify-content-center gap-1">
                 {% for product in products %}
@@ -17,10 +18,11 @@
                         <div class="card__glow"></div>
                         <div class="card__content">
                             <div class="card__badge">{{ product.get_subcategory_display }}</div>
-                            <div class="card__image"> {% if product.image %}
-                                <img src="{{ product.image.url }}" class="img-fluid " />
+                            <div class="card__image">
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" class="img-fluid " alt="{{ product.name }}">
                                 {% else %}
-                                <img src="{% static 'image/default.png' %}" class="img-fluid " />
+                                    <img src="{% get_category_image product.category %}" class="img-fluid" alt="{{ product.name }}">
                                 {% endif %}
                             </div>
                             <div class="card__text">
@@ -29,13 +31,14 @@
                             </div>
                             <div class="card__footer">
                                 <div class="card__price">{{ product.price }} ﷼ </div>
-                                <a class="card__button" href="{%url 'order:add_to_cart_view' product.id %}?supplier_id={{ request.GET.supplier_id }}">
-                                    <svg height="16" width="16" viewBox="0 0 24 24">
-                                        <path stroke-width="2" stroke="currentColor" d="M4 12H20M12 4V20"
-                                            fill="currentColor">
-                                        </path>
-                                    </svg>
-                                </a>
+                                <a class="card__button {% if product.stock == 0 %}disabled{% endif %}"
+                                href="{% url 'order:add_to_cart_view' product.id %}?supplier_id={{ request.GET.supplier_id }}">
+                                 <svg height="16" width="16" viewBox="0 0 24 24">
+                                     <path stroke-width="2" stroke="currentColor" d="M4 12H20M12 4V20"
+                                           fill="currentColor">
+                                     </path>
+                                 </svg>
+                             </a>
                             </div>
                         </div>
                     </div>

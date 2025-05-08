@@ -3,28 +3,53 @@
 
 {% block title %}العربة{% endblock %}
 {% block ref %}
-<link rel="stylesheet" href="{% static 'css/order_style.css' %}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="{% static 'css/order_style.css' %}">
 <style>
   .card {
-    height: 500px; /* Fixed height for the card */
+    height: 500px;
     display: flex;
     flex-direction: column;
   }
 
   .card-body {
-    flex: 1; /* Allow card body to grow and take up available space */
+    flex: 1;
     display: flex;
     flex-direction: column;
   }
 
   .list-group {
-    overflow-y: auto; /* Make item list scrollable */
-    flex: 1; /* Allow list group to grow and take up available space */
+    overflow-y: auto;
+    flex: 1;
   }
 
   .card-footer {
-    margin-top: auto; /* Stick the footer to the bottom */
+    margin-top: auto;
+  }
+
+  .product-name {
+    word-break: break-word;
+  }
+
+  .list-group-item.grid {
+    display: grid;
+    grid-template-columns: 1fr auto auto; 
+    align-items: center;
+    gap: 1rem; 
+  }
+
+  .list-group-item.grid .product-name {
+    grid-column: 1;
+  }
+
+  .list-group-item.grid .badge {
+    grid-column: 2;
+    justify-self: end; 
+  }
+
+  .list-group-item.grid .text-muted {
+    grid-column: 3;
+    justify-self: end; 
   }
 </style>
 {% endblock %}
@@ -37,15 +62,15 @@
     {% if cart_orders %}
       <div class="row">
         {% for order in cart_orders %}
-          <div class="col-md-4 mb-4">
+          <div class="col-md-6 mb-4">
             <div class="card shadow-sm">
               <div class="card-body">
                 <h5 class="orange-title card-title mb-3 ">{{ order.supplier.commercial_info.store_name }}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">رقم الطلب: {{ order.id }}</h6>
                 <ul class="list-group list-group-flush">
                   {% for item in order.items.all %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                      <span>{{ item.product.name }}</span>
+                    <li class="list-group-item grid">
+                      <span class="product-name">{{ item.product.name }}</span>
                       <span class="badge bg-light text-secondary rounded-pill">{{ item.quantity }} {{item.product.get_unit_display}} </span>
                       <span class="text-muted">{{ item.subtotal }} ﷼</span>
                     </li>
@@ -70,8 +95,7 @@
         {% endfor %}
       </div>
     {% else %}
-    
-    <i class="bi bi-basket2 orange-title text-center" style="font-size: 2rem;"></i>
+
       <p class="text-center lead">عربتك فارغة.</p>
     {% endif %}
   </div>

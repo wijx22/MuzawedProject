@@ -110,6 +110,19 @@ class Product(models.Model):
             return Product.objects.none()  
 
         
-        products = Product.objects.filter(City__id=self.City.id, City__suppliers=supplier).exclude(pk=self.pk) 
+        products = Product.objects.filter(category=self.category,City__id=self.City.id, City__suppliers=supplier).exclude(pk=self.pk) [:6]
         return products
        
+
+class CategoryImage(models.Model):
+    category_name = models.CharField(
+        max_length=50,
+        unique=True,
+        choices=[(tag.value, tag.label) for tag in Product.ProductCategory],
+    )  # Match ProductCategory choices
+    image = models.ImageField(
+        upload_to="category_images/", null=True, blank=True
+    )  
+
+    def __str__(self):
+        return self.category_name

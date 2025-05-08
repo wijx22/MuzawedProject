@@ -50,10 +50,10 @@ def sign_in(request: HttpRequest):
         user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         if user:
             login(request, user)
-            messages.success(request, "مرحبًا بك من جديد", "alert-success")
+            #messages.success(request, "مرحبًا بك من جديد", "alert-success")
 
             if user.is_staff:
-                return redirect("administration:dashboard")  # عدلي اسم المسار إذا مختلف
+                return redirect("administration:dashboard") 
             else:
                 return redirect(request.GET.get("next", "main:index_view"))
         else:
